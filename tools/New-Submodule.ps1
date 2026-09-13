@@ -35,22 +35,50 @@ param (
     [string]$ServiceName
 )
 
+#===========================================================================
+# VARIABLES
+#===========================================================================
+
 $ErrorActionPreference = 'Stop'
 $repoRoot = Split-Path -Parent $PSScriptRoot
 $testRoot = Join-Path -Path $repoRoot -ChildPath 'test'
 $moduleFullName = "Boyles.PowerShell.$ServiceName"
 $serviceRoot = Join-Path $repoRoot "src\Boyles.PowerShell.$ServiceName"
 
+#===========================================================================
+# FUNCTIONS
+#===========================================================================
+
+function Ensure-XUnit3Template {
+    $output = dotnet new list xunit3 2>&1 | Out-String
+    if ($output -notmatch '\bxunit3\b') {
+        Write-Host 'Installing XUnit 3 Templates...'
+        $null = dotnet new install xunit.v3.templates 2>$null
+    }
+}
+
+#===========================================================================
+# EXECUTION
+#===========================================================================
+
+# Test to make sure we don't already have a service with
+# this name
+
 if (Test-Path $serviceRoot) {
     throw "'$serviceRoot' already exists - pick a different -ServiceName or remove it first."
 }
 
+# Scaffold the directories
+
 Write-Host "Scaffolding $moduleFullName under src\Boyles.PowerShell.$ServiceName ..." -ForegroundColor Cyan
 
 New-Item -Path $serviceRoot -ItemType Directory | Out-Null
+
 foreach ($sub in 'Services', 'Models', 'Module\Public', 'Module\Private', 'Module\en-US', 'Module\bin') {
     New-Item -Path (Join-Path $serviceRoot $sub) -ItemType Directory | Out-Null
 }
+
+# Create the C# project file
 
 $csprojPath = Join-Path $serviceRoot "$moduleFullName.csproj"
 @"
@@ -78,8 +106,14 @@ $csprojPath = Join-Path $serviceRoot "$moduleFullName.csproj"
 </Project>
 "@ | Set-Content -Path $csprojPath -Encoding utf8
 
-$testProjPath = Join-Path $testRoot "$moduleFullName"
+# Create the test project
 
+$testProjPath = Join-Path -Path $testRoot -ChildPath "$moduleFullName.Tests\$moduleFullName.Tests.csproj"
+
+Ensure-XUnit3Template
+dotnet new xunit3 -n "$moduleFullName.Tests" -o "$testRoot\$moduleFullName.Tests" | Out-Null
+
+# Create the PSM1 file
 
 $psm1Path = Join-Path $serviceRoot "Module\$moduleFullName.psm1"
 @"
@@ -127,6 +161,8 @@ foreach (`$functionFile in (`$publicFunctions + `$privateFunctions)) {
 Export-ModuleMember -Function `$publicFunctions.BaseName
 "@ | Set-Content -Path $psm1Path -Encoding utf8
 
+# Create PSD1 file
+
 $guid = [guid]::NewGuid().ToString()
 $psd1Path = Join-Path $serviceRoot "Module\$moduleFullName.psd1"
 @"
@@ -135,7 +171,7 @@ $psd1Path = Join-Path $serviceRoot "Module\$moduleFullName.psd1"
     ModuleVersion     = '0.1.0'
     GUID              = '$guid'
     Author            = 'Wayne Boyles'
-    CompanyName       = 'Boyles'
+    CompanyName       = 'Wayne Boyles'
     Copyright         = '(c) Wayne Boyles. All rights reserved.'
     Description       = 'Cmdlets for interacting with $ServiceName, built on Boyles.PowerShell.Core for authentication and HTTP handling.'
 
@@ -167,6 +203,8 @@ $psd1Path = Join-Path $serviceRoot "Module\$moduleFullName.psd1"
 }
 "@ | Set-Content -Path $psd1Path -Encoding utf8
 
+# Create about help document
+
 $aboutPath = Join-Path $serviceRoot "Module\en-US\about_$moduleFullName.help.txt"
 @"
 TOPIC
@@ -186,12 +224,18 @@ SEE ALSO
 
 New-Item -Path (Join-Path $serviceRoot 'Module\Private\.gitkeep') -ItemType File | Out-Null
 
+# Add the C# projects to the solution
+
 Push-Location $repoRoot
+
 try {
-    dotnet sln 'Boyles.PowerShell.slnx' add $csprojPath | Out-Null
+    dotnet sln 'Boyles.PowerShell.slnx' add $csprojPath --in-root | Out-Null
+    dotnet sln 'Boyles.PowerShell.slnx' add $testProjPath --in-root | Out-Null
 } finally {
     Pop-Location
 }
+
+# Done!
 
 Write-Host 'Done. Next steps:' -ForegroundColor Green
 Write-Host "  1. Add cmdlets under src\$ServiceName\Module\Public\ and API/model code under src\$ServiceName\Services\ and \Models\."
