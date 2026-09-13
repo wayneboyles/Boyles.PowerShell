@@ -1,0 +1,140 @@
+{
+    // ============================================================
+    //  Generic
+    // ============================================================
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true,
+    "editor.formatOnType": true,
+    // ============================================================
+    //  PowerShell-scoped editor behavior
+    //  (only applies when a .ps1 / .psm1 / .psd1 file is focused)
+    // ============================================================
+    "[powershell]": {
+        "editor.formatOnSave": true, // reformat every time you save
+        "editor.formatOnType": true, // tidy up as you type (on newline / closing brace)
+        "editor.formatOnPaste": true,
+        "editor.tabSize": 4, // PowerShell convention is 4 spaces
+        "editor.insertSpaces": true, // spaces, never tabs
+        "editor.detectIndentation": false, // don't let a stray file override the above
+        "editor.trimAutoWhitespace": true,
+        "editor.wordWrap": "off",
+        "editor.semanticHighlighting.enabled": true,
+        "files.trimTrailingWhitespace": true,
+        "files.trimFinalNewlines": true,
+        "files.insertFinalNewline": true
+    },
+    // ============================================================
+    //  C# Development
+    // ============================================================
+    "[csharp]": {
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.formatOnSave": true,
+        "editor.tabSize": 4,
+        "editor.insertSpaces": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.addMissingImports": "explicit"
+        }
+    },
+    // ============================================================
+    //  File encoding
+    //  utf8bom keeps Windows PowerShell 5.1 from mis-reading non-ASCII
+    //  characters. If you target PowerShell 7+ ONLY, switch to "utf8".
+    // ============================================================
+    "files.encoding": "utf8bom",
+    "files.autoGuessEncoding": false,
+    // ============================================================
+    //  Formatting style
+    //  These run through PSScriptAnalyzer's formatter.
+    //  "preset" is the main lever for brace placement:
+    //    - "OTBS"       -> opening brace on the same line (compact, recommended)
+    //    - "Allman"     -> opening brace on its own line (very readable, popular for classes)
+    //    - "Stroustrup" -> same-line braces but else/catch on a new line
+    //  Swap the preset below to taste; the whitespace/casing rules
+    //  underneath apply regardless of which preset you choose.
+    // ============================================================
+    "powershell.codeFormatting.preset": "OTBS",
+    "powershell.codeFormatting.autoCorrectAliases": true, // ls -> Get-ChildItem, etc.
+    "powershell.codeFormatting.useCorrectCasing": true, // Get-childitem -> Get-ChildItem
+    "powershell.codeFormatting.useConstantStrings": true, // single quotes when no interpolation
+    "powershell.codeFormatting.whitespaceBeforeOpenBrace": true,
+    "powershell.codeFormatting.whitespaceBeforeOpenParen": true,
+    "powershell.codeFormatting.whitespaceAroundOperator": true,
+    "powershell.codeFormatting.whitespaceAfterSeparator": true,
+    "powershell.codeFormatting.whitespaceInsideBrace": true,
+    "powershell.codeFormatting.whitespaceBetweenParameters": false,
+    "powershell.codeFormatting.addWhitespaceAroundPipe": true,
+    "powershell.codeFormatting.trimWhitespaceAroundPipe": true,
+    "powershell.codeFormatting.ignoreOneLineBlock": true, // leave short { } blocks compact
+    "powershell.codeFormatting.alignPropertyValuePairs": true, // align = in hashtables / DSC
+    "powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationForFirstPipeline",
+    // ============================================================
+    //  Static analysis (linting)
+    // ============================================================
+    "powershell.scriptAnalysis.enable": true,
+    // Optional: point at a repo-local rules file for consistent team linting.
+    "powershell.scriptAnalysis.settingsPath": "../PSScriptAnalyzerSettings.psd1",
+    // ============================================================
+    //  Readability helpers (global — great for class-heavy code)
+    // ============================================================
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "editor.guides.indentation": true,
+    "editor.renderWhitespace": "boundary",
+    "editor.rulers": [
+        120 // PSScriptAnalyzer's default max line length
+    ],
+    "editor.stickyScroll.enabled": true, // keeps the enclosing function/class header visible
+    // ============================================================
+    //  Integrated console quality-of-life
+    // ============================================================
+    "powershell.integratedConsole.showOnStartup": false,
+    "powershell.integratedConsole.focusConsoleOnExecute": false,
+    "powershell.codeFolding.enable": true,
+    // ============================================================
+    //  Editor / Explorer
+    // ============================================================
+    "explorer.compactFolders": false,
+    // ============================================================
+    //  Hide files from the explorer
+    // ============================================================
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/Boyles.PowerShell.*/bin": true,
+        "**/Boyles.PowerShell.*/obj": true,
+        ".vs": true,
+        "**/Boyles.PowerShell.*/Boyles": true,
+        "**/Boyles.PowerShell.*/System": true,
+        "**/Boyles.PowerShell.*/Models": true,
+        "**/Boyles.PowerShell.*/Services": true,
+        "**/Boyles.PowerShell.*/*.csproj": true,
+        "test/Boyles.PowerShell.*": true
+    },
+    // ============================================================
+    //  DotNET
+    // ============================================================
+    "dotnet.server.useOmnisharp": false,
+    "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+    "dotnet.completion.provideRegexCompletions": true,
+    "dotnet.codeLens.enableReferencesCodeLens": true,
+    "dotnet.codeLens.enableTestsCodeLens": true,
+    "dotnet.inlayHints.enableInlayHintsForParameters": true,
+    "dotnet.inlayHints.enableInlayHintsForLiteralParameters": true,
+    "dotnet.inlayHints.enableInlayHintsForObjectCreationParameters": true,
+    "dotnet.inlayHints.enableInlayHintsForIndexerParameters": true,
+    "dotnet.inlayHints.enableInlayHintsForTypes": true,
+    "dotnet.inlayHints.enableInlayHintsForImplicitVariableTypes": true,
+    "dotnet.inlayHints.enableInlayHintsForLambdaParameterTypes": true,
+    "csharp.semanticHighlighting.enabled": true,
+    "csharp.format.enable": true,
+    "csharp.maxProjectFileCountForDiagnosticAnalysis": 1000,
+    // ============================================================
+    //  Psake
+    // ============================================================
+    "psake.taskProvider.enabled": true,
+    "psake.codeLens.enabled": true
+}

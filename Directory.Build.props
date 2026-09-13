@@ -1,0 +1,36 @@
+<Project>
+
+  <PropertyGroup>
+    <Authors>Wayne Boyles</Authors>
+    <Company>Wayne Boyles</Company>
+    <Copyright>Copyright (c) $([System.DateTime]::Now.Year) Wayne Boyles</Copyright>
+    <Product>Boyles.PowerShell</Product>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <NeutralLanguage>en-US</NeutralLanguage>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+
+    <!--
+      Class libraries don't copy their NuGet dependencies to bin\ by default
+      (only apps do) - they leave that to whatever eventually publishes them.
+      Nothing publishes a PowerShell module, so force it here: every module
+      library's PackageReference dependencies (e.g. System.Text.Json) must
+      land next to its own DLL for Add-Type to find them at runtime.
+    -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!--
+    Module libraries (each src\<Module>\Boyles.PowerShell.<Module>.csproj) set
+    TargetFramework=netstandard2.0 themselves so the compiled assembly can be
+    loaded by both Windows PowerShell 5.1 (.NET Framework) and PowerShell 7+
+    (.NET) - matching how Az.Accounts / Microsoft.Graph.Authentication share a
+    single binary across both hosts. (Can't be conditioned on a property here:
+    Directory.Build.props is imported before the project body sets it.)
+  -->
+
+</Project>

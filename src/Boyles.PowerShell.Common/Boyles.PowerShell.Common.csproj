@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>Boyles.PowerShell.Common</AssemblyName>
+        <RootNamespace>Boyles.PowerShell.Common</RootNamespace>
+        <Description>Common API client and models backing the Boyles.PowerShell.Common cmdlets.</Description>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Boyles.PowerShell.Core\Boyles.PowerShell.Core.csproj" />
+    </ItemGroup>
+
+    <Target Name="CopyToPowerShellModule" AfterTargets="Build">
+        <ItemGroup>
+            <ModuleBinOutput Include="$(TargetDir)**\*.dll" />
+            <!--<ModuleBinOutput Include="$(TargetDir)**\*.pdb" />-->
+        </ItemGroup>
+        <Copy SourceFiles="@(ModuleBinOutput)" DestinationFolder="$(MSBuildProjectDirectory)\Module\bin\%(RecursiveDir)" SkipUnchangedFiles="true" />
+    </Target>
+
+</Project>
