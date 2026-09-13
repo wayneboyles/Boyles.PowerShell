@@ -72,7 +72,9 @@ $ModuleSourceDirs += Get-ChildItem -Path (Join-Path $PSScriptRoot 'src') -Direct
 Import-Module -Name psake -ErrorAction Stop
 
 # Build the properties to pass to psake script
-$Properties = @{}
+$Properties = @{
+    Configuration = $Configuration
+}
 
 Invoke-Psake -BuildFile "$PSScriptRoot/psakefile.ps1" -TaskList $Task -Properties $Properties -NoLogo
 
