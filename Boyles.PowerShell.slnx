@@ -1,13 +1,8 @@
 <Solution>
   <Folder Name="/test/">
-    <Project
-      Path="Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests.csproj"
-      Id="6acbe0a6-2910-4950-a993-07830662d098" />
-    <Project
-      Path="test/Boyles.PowerShell.Core.Tests/Boyles.PowerShell.Core.Tests/Boyles.PowerShell.Core.Tests.csproj"
-      Id="c700e258-6bdf-49c0-b21c-4cf4f3bfdbb0" />
+    <Project Path="test/Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests.csproj" Id="6acbe0a6-2910-4950-a993-07830662d098" />
+    <Project Path="test/Boyles.PowerShell.Core.Tests/Boyles.PowerShell.Core.Tests/Boyles.PowerShell.Core.Tests.csproj" Id="c700e258-6bdf-49c0-b21c-4cf4f3bfdbb0" />
   </Folder>
   <Project Path="src/Boyles.PowerShell.Core/Boyles.PowerShell.Core.csproj" />
   <Project Path="src/Boyles.PowerShell.Hudu/Boyles.PowerShell.Hudu.csproj" />
-  <Project Path="src/Boyles.PowerShell.Common/Boyles.PowerShell.Common.csproj" />
 </Solution>
