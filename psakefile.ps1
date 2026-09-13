@@ -110,7 +110,9 @@ FormatTaskName {
 # TASKS
 #==============================================================================
 
-Task default -Depends Init
+Task default -Depends Build
+
+Task Build -Depends BuildPowerShell
 
 Task Init -Depends Clean {
 
@@ -119,8 +121,12 @@ Task Init -Depends Clean {
     Confirm-Directory $ArtifactsRoot
 
     $ModuleNames | ForEach-Object {
+
         Confirm-Directory (Join-Path -Path $ArtifactsRoot -ChildPath $_)
         Write-Host "Created $ArtifactsRoot\$_"
+
+        Confirm-Directory (Join-Path -Path $ArtifactsRoot -ChildPath $_, 'bin')
+        Write-Host "Created $ArtifactsRoot\$_\bin"
 
         # Make sure the 'bin' folder exists in the module
         $BinDir = Join-Path (Get-PowerShellModulePath -ModuleName $_) -ChildPath 'bin'
@@ -197,4 +203,37 @@ Task BuildCSharp -Depends Init -PreCondition { -not $SkipBuild } {
             '/p:GeneratePackageOnBuild=false'
         )
     }
+}
+
+Task BuildPowerShell -Depends BuildCSharp -PreCondition { -not $SkipBuild } {
+
+    Write-Host 'Building PowerShell Modules...'
+
+    $ModuleNames | ForEach-Object {
+
+        $modulePath = Join-Path -Path (Get-ModuleSourcePath -ModuleName $_) -ChildPath 'Module'
+        $moduleOutPath = Join-Path -Path $ArtifactsRoot -ChildPath $_
+
+        Copy-Item -Path "$modulePath\*.psd1" -Destination $moduleOutPath
+        Copy-Item -Path "$modulePath\*.psm1" -Destination $moduleOutPath
+
+        try {
+            Copy-Item -Path "$modulePath\bin\*.dll" -Destination "$moduleOutPath\bin"
+        } catch {
+            # Boyles.PowerShell doesn't have a bin directory.  Just ignore.
+        }
+
+        Get-ChildItem -Path $modulePath -Filter *.ps1 -File -Recurse | ForEach-Object {
+            $relativePath = $_.FullName.Substring($modulePath.Length).TrimStart('\')
+            $destFile = Join-Path $moduleOutPath $relativePath
+
+            $destDir = Split-Path $destFile -Parent
+            if (-not (Test-Path $destDir)) {
+                New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+            }
+
+            Copy-Item $_.FullName -Destination $destFile -Force
+        }
+    }
+
 }
