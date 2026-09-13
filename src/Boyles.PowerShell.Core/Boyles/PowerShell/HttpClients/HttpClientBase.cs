@@ -76,7 +76,7 @@ namespace Boyles.PowerShell.HttpClients
         /// are resolved against this address using standard Uri combination rules.
         /// The constructor always appends a trailing slash to ensure correct segment resolution.
         /// </summary>
-        protected Uri BaseAddress { get; }
+        public Uri BaseAddress { get; }
 
         /// <summary>
         /// JSON serializer settings used for both serializing request bodies and deserializing

@@ -22,6 +22,6 @@ function Test-BPSClient {
     )
 
     process {
-        [Boyles.PowerShell.Context.BoylesContextCache]::Contains($Key)
+        [Boyles.PowerShell.Context.ContextCache]::Contains($Key)
     }
 }
