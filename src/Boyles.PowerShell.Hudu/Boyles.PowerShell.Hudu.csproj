@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>Boyles.PowerShell.Hudu</AssemblyName>
+		<RootNamespace>Boyles.PowerShell.Hudu</RootNamespace>
+		<Description>Hudu API client and models backing the Boyles.PowerShell.Hudu cmdlets.</Description>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="Module\**" />
+	  <EmbeddedResource Remove="Module\**" />
+	  <None Remove="Module\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Boyles.PowerShell.Core\Boyles.PowerShell.Core.csproj" />
+	</ItemGroup>
+
+	<Target Name="CopyToPowerShellModule" AfterTargets="Build">
+		<ItemGroup>
+			<ModuleBinOutput Include="$(TargetDir)**\*.dll" />
+			<!--<ModuleBinOutput Include="$(TargetDir)**\*.pdb" />-->
+		</ItemGroup>
+		<Copy SourceFiles="@(ModuleBinOutput)" DestinationFolder="$(MSBuildProjectDirectory)\Module\bin\%(RecursiveDir)" SkipUnchangedFiles="true" />
+	</Target>
+
+</Project>

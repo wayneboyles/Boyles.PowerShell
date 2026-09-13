@@ -11,6 +11,9 @@
 *.sln.docstates
 *.env
 
+# Custom scripts
+[Tt]ools/SecretHelpers.ps1
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
@@ -427,3 +430,5 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+CLAUDE.md
