@@ -9,7 +9,7 @@ namespace Boyles.PowerShell.Hudu.Services
 {
     /// <summary>
     /// Hudu API client. Built and registered by Connect-Hudu.ps1; cmdlets look it back up via
-    /// FromContext() (or Get-BoylesClient from PowerShell) rather than constructing it themselves.
+    /// FromContext() (or Get-BPSClient from PowerShell) rather than constructing it themselves.
     /// </summary>
     public partial class HuduClient : HttpClientBase
     {

@@ -110,8 +110,10 @@
         "**/Boyles.PowerShell.*/Boyles": true,
         "**/Boyles.PowerShell.*/System": true,
         "**/Boyles.PowerShell.*/Models": true,
+        "**/Boyles.PowerShell.*/Builders": true,
         "**/Boyles.PowerShell.*/Services": true,
         "**/Boyles.PowerShell.*/*.csproj": true,
+        "**/Boyles.PowerShell.*/*.cs": true,
         "test/Boyles.PowerShell.*": true
     },
     // ============================================================

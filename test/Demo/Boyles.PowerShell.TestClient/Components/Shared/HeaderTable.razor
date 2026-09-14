@@ -1,0 +1,23 @@
+@if (Headers is null || Headers.Count == 0)
+{
+    <span class="text-secondary">none</span>
+}
+else
+{
+    <table class="table table-sm card-table mb-0">
+        <tbody>
+            @foreach (var header in Headers)
+            {
+                <tr>
+                    <td class="text-secondary text-nowrap" style="width: 1%;">@header.Key</td>
+                    <td class="text-break">@header.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter]
+    public IReadOnlyDictionary<string, string>? Headers { get; set; }
+}

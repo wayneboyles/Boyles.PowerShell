@@ -17,6 +17,13 @@
     FunctionsToExport    = @(
         'Connect-Hudu'
         'Disconnect-Hudu'
+
+        'Disable-HuduCompany'
+        'Enable-HuduCompany'
+        'Get-HuduCompany'
+        'New-HuduCompany'
+        'Remove-HuduCompany'
+        'Set-HuduCompany'
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()

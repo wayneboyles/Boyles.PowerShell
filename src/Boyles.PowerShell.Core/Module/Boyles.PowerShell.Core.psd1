@@ -27,6 +27,13 @@
         'Get-BPSClientKey'
         'Remove-BPSClient'
         'Test-BPSClient'
+        'Confirm-BPSClient'
+
+        'Test-HasValue'
+        'Test-RequiredValue'
+
+        'ConvertFrom-JToken'
+        'ConvertTo-StringDictionary'
     )
 
     CmdletsToExport      = @()

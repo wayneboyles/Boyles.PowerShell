@@ -1,0 +1,20 @@
+@if (string.IsNullOrWhiteSpace(Code))
+{
+    <span class="text-secondary">none</span>
+}
+else
+{
+    <pre class="code-block mb-0"><code>@((MarkupString)_html)</code></pre>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public string? Code { get; set; }
+
+    private string _html = string.Empty;
+
+    protected override void OnParametersSet()
+    {
+        _html = JsonHighlighter.ToHtml(Code);
+    }
+}

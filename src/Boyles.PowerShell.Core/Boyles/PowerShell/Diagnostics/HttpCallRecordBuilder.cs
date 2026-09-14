@@ -148,7 +148,7 @@ namespace Boyles.PowerShell.Diagnostics
 
             try
             {
-                var token = JToken.Parse(body);
+                var token = JToken.Parse(body!);
                 return token.ToString(Formatting.Indented);
             }
             catch (JsonException)
