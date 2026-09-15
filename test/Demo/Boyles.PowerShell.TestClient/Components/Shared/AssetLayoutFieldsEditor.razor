@@ -1,0 +1,82 @@
+<div class="mb-2 d-flex justify-content-between align-items-center">
+    <label class="form-label mb-0">Fields</label>
+    <button type="button" class="btn btn-sm btn-outline-primary" @onclick="AddField">
+        <i class="ti ti-plus me-1"></i>Add field
+    </button>
+</div>
+
+@if (Fields.Count == 0)
+{
+    <div class="text-secondary small mb-2">No fields yet - click "Add field" to define the layout's schema.</div>
+}
+
+@foreach (var field in Fields)
+{
+    <div class="card card-sm mb-2">
+        <div class="card-body">
+            <div class="row g-2">
+                <div class="col-md-4">
+                    <label class="form-label">Label</label>
+                    <input class="form-control form-control-sm" @bind="field.Label" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label">Field type</label>
+                    <select class="form-select form-select-sm" @bind="field.FieldType">
+                        @foreach (var type in FieldTypes)
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Min</label>
+                    <input type="number" class="form-control form-control-sm" @bind="field.Min" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label">Max</label>
+                    <input type="number" class="form-control form-control-sm" @bind="field.Max" />
+                </div>
+                <div class="col-md-1 d-flex align-items-end justify-content-end">
+                    <button type="button" class="btn btn-sm btn-outline-danger" @onclick="() => RemoveField(field)" title="Remove field">
+                        <i class="ti ti-trash"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="row g-2 mt-1">
+                <div class="col-md-5">
+                    <label class="form-label">Hint</label>
+                    <input class="form-control form-control-sm" @bind="field.Hint" />
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Options (one per line)</label>
+                    <textarea class="form-control form-control-sm" rows="1" @bind="field.Options"></textarea>
+                </div>
+                <div class="col-md-1 form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="@($"required-{field.Key}")" @bind="field.Required" />
+                    <label class="form-check-label" for="@($"required-{field.Key}")">Required</label>
+                </div>
+                <div class="col-md-2 form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="@($"showinlist-{field.Key}")" @bind="field.ShowInList" />
+                    <label class="form-check-label" for="@($"showinlist-{field.Key}")">Show in list</label>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private static readonly string[] FieldTypes =
+    {
+        HuduFieldType.Text, HuduFieldType.RichText, HuduFieldType.Heading, HuduFieldType.CheckBox,
+        HuduFieldType.Website, HuduFieldType.Password, HuduFieldType.Email, HuduFieldType.Phone,
+        HuduFieldType.Number, HuduFieldType.Date, HuduFieldType.Dropdown, HuduFieldType.ListSelect,
+        HuduFieldType.Embed, HuduFieldType.AssetTag
+    };
+
+    [Parameter, EditorRequired]
+    public List<AssetLayoutFieldRow> Fields { get; set; } = new();
+
+    private void AddField() => Fields.Add(new AssetLayoutFieldRow());
+
+    private void RemoveField(AssetLayoutFieldRow field) => Fields.Remove(field);
+}

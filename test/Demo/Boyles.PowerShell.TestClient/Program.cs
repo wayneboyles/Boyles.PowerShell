@@ -1,5 +1,6 @@
 using Boyles.PowerShell.Diagnostics;
 using Boyles.PowerShell.TestClient.Components;
+using Boyles.PowerShell.TestClient.Configuration;
 using Boyles.PowerShell.TestClient.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +8,12 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// Bound from the "Hudu" config section. In Development, WebApplication.CreateBuilder already
+// layers in User Secrets automatically (via the UserSecretsId in the .csproj), so real
+// credentials set with `dotnet user-secrets set` never need to touch appsettings*.json or
+// source control. Add a sibling Configure<TOptions> call for each future service module.
+builder.Services.Configure<HuduOptions>(builder.Configuration.GetSection("Hudu"));
 
 // DiagnosticsStore is both the IHttpDiagnosticsSink every HuduClient is wired to and the
 // in-memory log the Diagnostics panel reads from - scoped so each browser tab (circuit)

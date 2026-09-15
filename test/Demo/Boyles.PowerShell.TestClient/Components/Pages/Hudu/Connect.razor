@@ -12,6 +12,20 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-body">
+                @if (HuduConnection.HasConfiguredCredentials)
+                {
+                    <div class="alert alert-info d-flex align-items-center justify-content-between">
+                        <div>
+                            <i class="ti ti-key me-1"></i>
+                            Credentials found in User Secrets for <strong>@HuduConnection.ConfiguredBaseUrl</strong>.
+                        </div>
+                        <button type="button" class="btn btn-sm btn-info ms-2" @onclick="ConnectFromConfigurationAsync" disabled="@_busy">
+                            Use saved credentials
+                        </button>
+                    </div>
+                    <div class="hr-text">or connect manually</div>
+                }
+
                 <EditForm Model="_model" OnValidSubmit="ConnectAsync">
                     <DataAnnotationsValidator />
                     <div class="mb-3">
@@ -52,7 +66,12 @@
                 <h3 class="card-title">Status</h3>
                 @if (HuduConnection.IsConnected)
                 {
-                    <div class="mb-2"><span class="badge bg-success-lt"><i class="ti ti-plug-connected me-1"></i>Connected</span></div>
+                    <div class="mb-2">
+                        <span class="badge bg-success-lt"><i class="ti ti-plug-connected me-1"></i>Connected</span>
+                        <span class="badge bg-secondary-lt ms-1">
+                            @(HuduConnection.ConnectedFromConfiguration ? "via User Secrets" : "manual")
+                        </span>
+                    </div>
                     <div class="text-secondary">@HuduConnection.BaseUrl</div>
                 }
                 else
@@ -69,6 +88,13 @@
     private bool _busy;
     private string? _error;
 
+    protected override void OnInitialized()
+    {
+        // Only the base URL is ever pre-filled - the API key stays out of the form/DOM
+        // entirely unless the user types it in themselves.
+        _model.BaseUrl ??= HuduConnection.ConfiguredBaseUrl;
+    }
+
     private async Task ConnectAsync()
     {
         _busy = true;
@@ -76,6 +102,24 @@
         try
         {
             await Task.Run(() => HuduConnection.Connect(_model.BaseUrl!, _model.ApiKey!));
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private async Task ConnectFromConfigurationAsync()
+    {
+        _busy = true;
+        _error = null;
+        try
+        {
+            await Task.Run(() => HuduConnection.TryConnectFromConfiguration());
         }
         catch (Exception ex)
         {

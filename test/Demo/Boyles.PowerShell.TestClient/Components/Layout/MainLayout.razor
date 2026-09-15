@@ -17,7 +17,8 @@
                     @if (HuduConnection.IsConnected)
                     {
                         <span class="badge bg-success-lt" title="@HuduConnection.BaseUrl">
-                            <i class="ti ti-plug-connected me-1"></i>Connected
+                            <i class="ti ti-plug-connected me-1"></i>
+                            Connected@(HuduConnection.ConnectedFromConfiguration ? " (User Secrets)" : "")
                         </span>
                     }
                     else
@@ -61,14 +62,35 @@
                                     <i class="ti ti-plug-connected me-2"></i>Connect
                                 </NavLink>
                                 <div class="dropdown-divider"></div>
-                                <h6 class="dropdown-header">Companies</h6>
-                                <NavLink class="dropdown-item" href="/hudu/companies/get-companies">GetCompanies</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/get-company">GetCompany</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/new-company">NewCompany</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/update-company">UpdateCompany</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/archive-company">ArchiveCompany</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/unarchive-company">UnarchiveCompany</NavLink>
-                                <NavLink class="dropdown-item" href="/hudu/companies/delete-company">DeleteCompany</NavLink>
+
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
+                                        <i class="ti ti-building me-2"></i>Companies
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <NavLink class="dropdown-item" href="/hudu/companies/get-companies">GetCompanies</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/get-company">GetCompany</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/new-company">NewCompany</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/update-company">UpdateCompany</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/archive-company">ArchiveCompany</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/unarchive-company">UnarchiveCompany</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/companies/delete-company">DeleteCompany</NavLink>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
+                                        <i class="ti ti-layout-list me-2"></i>AssetLayouts
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/get-asset-layouts">GetAssetLayouts</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/get-asset-layout">GetAssetLayout</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/new-asset-layout">NewAssetLayout</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/update-asset-layout">UpdateAssetLayout</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/add-asset-layout-fields">AddAssetLayoutFields</NavLink>
+                                    </div>
+                                </div>
+
                                 <div class="dropdown-divider"></div>
                                 <NavLink class="dropdown-item" href="/hudu/invoke">
                                     <i class="ti ti-terminal-2 me-2"></i>Invoke (raw)
@@ -103,6 +125,14 @@
     {
         HuduConnection.Changed += OnStateChanged;
         Diagnostics.Changed += OnStateChanged;
+
+        // Auto-connect this circuit from User Secrets (or whatever config provider supplied
+        // them) so a test session opens already connected - Connect.razor's manual form and
+        // "use saved credentials" button both remain available to override this.
+        if (!HuduConnection.IsConnected)
+        {
+            HuduConnection.TryConnectFromConfiguration();
+        }
     }
 
     private void OnStateChanged() => InvokeAsync(StateHasChanged);

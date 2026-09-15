@@ -1,0 +1,221 @@
+@page "/hudu/asset-layouts/update-asset-layout"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateAssetLayout</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateAssetLayout</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateAssetLayoutAsync</code> — PUT <code>/api/v1/asset_layouts/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-auto">
+                            <label class="form-label">Asset Layout Id</label>
+                            <input type="number" class="form-control" style="width: 160px;" @bind="_assetLayoutId" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="LoadAsync" disabled="@(_loading || _assetLayoutId is null)">
+                                @if (_loading)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Load current
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (_loadError is not null)
+                    {
+                        <div class="alert alert-danger">@_loadError</div>
+                    }
+
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="_model.Name" />
+                                <ValidationMessage For="() => _model.Name" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icon (Tabler icon name)</label>
+                                <InputText class="form-control" @bind-Value="_model.Icon" placeholder="e.g. server" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Color</label>
+                                <InputText class="form-control" @bind-Value="_model.Color" placeholder="#206bc4" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icon color</label>
+                                <InputText class="form-control" @bind-Value="_model.IconColor" placeholder="#ffffff" />
+                            </div>
+                        </div>
+                        <div class="mb-3 d-flex flex-wrap gap-3">
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_active" />
+                                <span class="form-check-label">Active</span>
+                            </label>
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_includePasswords" />
+                                <span class="form-check-label">Passwords</span>
+                            </label>
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_includePhotos" />
+                                <span class="form-check-label">Photos</span>
+                            </label>
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_includeComments" />
+                                <span class="form-check-label">Comments</span>
+                            </label>
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_includeFiles" />
+                                <span class="form-check-label">Files</span>
+                            </label>
+                        </div>
+
+                        <AssetLayoutFieldsEditor Fields="_fields" />
+
+                        <button type="submit" class="btn btn-primary mt-2" disabled="@(_busy || _assetLayoutId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly AssetLayoutModel _model = new();
+    private readonly List<AssetLayoutFieldRow> _fields = new();
+    private int? _assetLayoutId;
+    private bool _active;
+    private bool _includePasswords;
+    private bool _includePhotos;
+    private bool _includeComments;
+    private bool _includeFiles;
+    private bool _busy;
+    private bool _loading;
+    private string? _error;
+    private string? _loadError;
+    private string? _resultJson;
+
+    private async Task LoadAsync()
+    {
+        if (_assetLayoutId is null)
+        {
+            return;
+        }
+
+        _loading = true;
+        _loadError = null;
+        try
+        {
+            var layout = await HuduConnection.Client!.GetAssetLayoutAsync(_assetLayoutId.Value);
+            if (layout is null)
+            {
+                _loadError = $"Asset layout {_assetLayoutId} was not found.";
+                return;
+            }
+
+            _model.Name = layout.Name;
+            _model.Icon = layout.Icon;
+            _model.Color = layout.Color;
+            _model.IconColor = layout.IconColor;
+            _active = layout.Active ?? false;
+            _includePasswords = layout.IncludePasswords ?? false;
+            _includePhotos = layout.IncludePhotos ?? false;
+            _includeComments = layout.IncludeComments ?? false;
+            _includeFiles = layout.IncludeFiles ?? false;
+
+            _fields.Clear();
+            _fields.AddRange(layout.Fields.Select(AssetLayoutFieldRow.FromField));
+        }
+        catch (ApiException ex)
+        {
+            _loadError = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _loadError = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        if (_assetLayoutId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            _model.Active = _active;
+            _model.IncludePasswords = _includePasswords;
+            _model.IncludePhotos = _includePhotos;
+            _model.IncludeComments = _includeComments;
+            _model.IncludeFiles = _includeFiles;
+
+            var fields = _fields.Select((f, i) => f.ToField(i + 1)).ToArray();
+            var result = await HuduConnection.Client!.UpdateAssetLayoutAsync(_assetLayoutId.Value, _model, fields);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class AssetLayoutModel
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        public string? Icon { get; set; }
+        public string? Color { get; set; }
+        public string? IconColor { get; set; }
+        public bool? Active { get; set; }
+        public bool? IncludePasswords { get; set; }
+        public bool? IncludePhotos { get; set; }
+        public bool? IncludeComments { get; set; }
+        public bool? IncludeFiles { get; set; }
+    }
+}
