@@ -3,7 +3,7 @@
     ModuleVersion        = '0.1.0'
     GUID                 = '8192f6c9-261d-44b4-960f-05d64086c8e1'
     Author               = 'Wayne Boyles'
-    CompanyName          = 'Boyles'
+    CompanyName          = 'Wayne Boyles'
     Copyright            = '(c) Wayne Boyles. All rights reserved.'
     Description          = 'Umbrella module for the Boyles.PowerShell family. Importing this module imports Boyles.PowerShell.Core plus every installed Boyles.PowerShell.<Service> module (e.g. Boyles.PowerShell.Hudu) - the same "meta-module" pattern used by Az and Microsoft.Graph.'
 
@@ -31,8 +31,8 @@
     PrivateData          = @{
         PSData = @{
             Tags         = @('PowerShell', 'API', 'Hudu', 'Halo', 'HaloPSA', 'InControl2')
-            ProjectUri   = ''
-            LicenseUri   = ''
+            ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
+            LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
             ReleaseNotes = 'Initial scaffold.'
         }
     }
