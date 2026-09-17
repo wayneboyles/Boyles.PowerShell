@@ -6,9 +6,7 @@
     )
     process {
 
-        Confirm-BPSClient -Key ([Boyles.PowerShell.Hudu.Consts]::ClientCacheKey) -ServiceName 'Hudu'
-
-        $Client = Get-BPSClient -Key ([Boyles.PowerShell.Hudu.Consts]::ClientCacheKey)
+        $Client = Get-HuduClientInternal
 
         Write-Verbose "Deleting Company with ID $Id"
 

@@ -16,7 +16,6 @@
     RequiredModules      = @(
         @{ ModuleName = 'Boyles.PowerShell.Core'; ModuleVersion = '0.1.0'; GUID = '5b06397d-8350-4a54-8751-b7e44f80adb2' }
         @{ ModuleName = 'Boyles.PowerShell.Hudu'; ModuleVersion = '0.1.0'; GUID = 'e79d0665-d4dd-47e6-85de-a12d0f3c028c' }
-        @{ ModuleName = 'Boyles.PowerShell.Common'; ModuleVersion = '0.1.0'; GUID = 'abf206e2-75f9-47ad-a75e-000bfd571e62' }
     )
 
     FunctionsToExport    = @()
