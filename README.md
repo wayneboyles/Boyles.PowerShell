@@ -1,5 +1,7 @@
 # Boyles.PowerShell
 
+![Project Screenshot](./assets/logo-256x256.png)
+
 A multi-module PowerShell family, structured the way `Az` and `Microsoft.Graph`
 are: one umbrella module, one shared `Boyles.PowerShell.Core` module, and one
 module per service - each service module pairs a thin PowerShell layer with a

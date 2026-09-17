@@ -17,6 +17,20 @@
     FunctionsToExport    = @(
         'Connect-Hudu'
         'Disconnect-Hudu'
+
+        'Disable-HuduCompany'
+        'Enable-HuduCompany'
+        'Get-HuduCompany'
+        'New-HuduCompany'
+        'Remove-HuduCompany'
+        'Set-HuduCompany'
+
+        'Disable-HuduAssetLayout'
+        'Enable-HuduAssetLayout'
+        'Get-HuduAssetLayout'
+        'Get-HuduAssetLayoutFields'
+        'New-HuduAssetLayout'
+        'Set-HuduAssetLayout'
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()
@@ -29,9 +43,9 @@
 
     PrivateData          = @{
         PSData = @{
-            Tags         = @('Boyles', 'Hudu', 'Documentation', 'ITGlue')
-            ProjectUri   = ''
-            LicenseUri   = ''
+            Tags         = @('Boyles', 'Hudu', 'Documentation')
+            ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
+            LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
             ReleaseNotes = 'Initial scaffold.'
         }
     }

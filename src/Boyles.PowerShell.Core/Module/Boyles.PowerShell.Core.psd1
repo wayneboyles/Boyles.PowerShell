@@ -27,6 +27,13 @@
         'Get-BPSClientKey'
         'Remove-BPSClient'
         'Test-BPSClient'
+        'Confirm-BPSClient'
+
+        'Test-HasValue'
+        'Test-RequiredValue'
+
+        'ConvertFrom-JToken'
+        'ConvertTo-StringDictionary'
     )
 
     CmdletsToExport      = @()
@@ -41,8 +48,8 @@
     PrivateData          = @{
         PSData = @{
             Tags         = @('Boyles', 'Http', 'Rest', 'Authentication')
-            ProjectUri   = ''
-            LicenseUri   = ''
+            ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
+            LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
             ReleaseNotes = 'Initial scaffold.'
         }
     }

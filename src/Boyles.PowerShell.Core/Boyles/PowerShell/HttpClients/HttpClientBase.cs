@@ -250,7 +250,7 @@ namespace Boyles.PowerShell.HttpClients
         /// Thrown when any individual page request returns a non-2xx HTTP status code after
         /// all retry attempts have been exhausted.
         /// </exception>
-        protected async Task<List<T>> GetAllPagesAsync<T>(string path, IReadOnlyDictionary<string, string>? baseQuery = null, int pageSize = 100, string itemsProperty = "items", string limitParam = "limit", string offsetParam = "offset", AuthenticationHeaderValue? authOverride = null, Uri? baseOverride = null, CancellationToken ct = default)
+        protected async Task<List<T>> GetAllPagesAsync<T>(string path, IReadOnlyDictionary<string, string>? baseQuery = null, int pageSize = 100, string itemsProperty = "items", string limitParam = "limit", string offsetParam = "offset", AuthenticationHeaderValue? authOverride = null, Uri? baseOverride = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
         {
             var all = new List<T>();
             int offset = 0;
@@ -271,7 +271,7 @@ namespace Boyles.PowerShell.HttpClients
 
                 var uri = BuildUri(path, q, baseOverride);
 
-                var result = await SendWithRetryAsync(HttpMethod.Get, uri, () => null, authOverride, allowReauth: authOverride == null, ct).ConfigureAwait(false);
+                var result = await SendWithRetryAsync(HttpMethod.Get, uri, () => null, authOverride, allowReauth: authOverride == null, ct, sourceMethod).ConfigureAwait(false);
 
                 if (!result.IsSuccess)
                 {

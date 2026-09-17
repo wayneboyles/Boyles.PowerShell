@@ -1,0 +1,87 @@
+@page "/hudu/asset-layouts/add-asset-layout-fields"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · AddAssetLayoutFields</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">AddAssetLayoutFields</h2>
+    <div class="text-secondary">
+        <code>HuduClient.AddAssetLayoutFieldsAsync</code> — appends fields to an existing layout via PUT
+        <code>/api/v1/asset_layouts/{id}</code>, preserving its current fields and their data.
+    </div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Asset Layout Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_assetLayoutId" />
+                    </div>
+
+                    <AssetLayoutFieldsEditor Fields="_fields" />
+
+                    <button type="button" class="btn btn-primary mt-2" @onclick="RunAsync" disabled="@(_busy || _assetLayoutId is null || _fields.Count == 0)">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly List<AssetLayoutFieldRow> _fields = new();
+    private int? _assetLayoutId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_assetLayoutId is null || _fields.Count == 0)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var fields = _fields.Select((f, i) => f.ToField(i + 1)).ToArray();
+            var result = await HuduConnection.Client!.AddAssetLayoutFieldsAsync(_assetLayoutId.Value, fields, CancellationToken.None);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

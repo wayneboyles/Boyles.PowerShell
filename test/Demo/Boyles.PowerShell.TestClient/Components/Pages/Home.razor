@@ -1,0 +1,65 @@
+@page "/"
+@inject HuduConnectionService HuduConnection
+@inject DiagnosticsStore Diagnostics
+
+<PageTitle>Boyles.PowerShell Test Client</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">Boyles.PowerShell Test Client</h2>
+    <div class="text-secondary">A manual smoke-test harness for the Boyles.PowerShell service clients.</div>
+</div>
+
+<div class="row row-cards">
+    <div class="col-sm-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-secondary">Hudu connection</div>
+                <div class="h3 mb-1">
+                    @if (HuduConnection.IsConnected)
+                    {
+                        <span class="text-success">Connected</span>
+                    }
+                    else
+                    {
+                        <span class="text-secondary">Not connected</span>
+                    }
+                </div>
+                @if (HuduConnection.IsConnected)
+                {
+                    <div class="text-secondary text-truncate">@HuduConnection.BaseUrl</div>
+                }
+                else
+                {
+                    <a href="/hudu/connect">Connect now &rarr;</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6 col-lg-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="text-secondary">HTTP calls captured</div>
+                <div class="h3 mb-1">@Diagnostics.Records.Count</div>
+                <div class="text-secondary">open the Diagnostics panel (top right) to inspect them</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-3">
+    <div class="card-body">
+        <h3 class="card-title">What is this?</h3>
+        <p>
+            This app builds real <code>HuduClient</code> instances from
+            <code>Boyles.PowerShell.Hudu</code>, wired to an in-memory
+            <code>IHttpDiagnosticsSink</code> so every attempt made by
+            <code>HttpClientBase</code> - including retries and 401 re-auth cycles -
+            shows up in the Diagnostics panel with its full request/response detail:
+            URL, method, status code, headers, and body.
+        </p>
+        <p class="mb-0">
+            Use the <strong>Hudu</strong> menu above to connect and exercise individual
+            client methods one at a time.
+        </p>
+    </div>
+</div>

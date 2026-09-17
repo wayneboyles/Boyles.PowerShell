@@ -11,6 +11,7 @@
     # Path properties
     $script:RepoRoot = $PSScriptRoot
     $script:ArtifactsRoot = Join-Path -Path $RepoRoot -ChildPath 'out'
+    $script:PackagesRoot = Join-Path -Path $ArtifactsRoot -ChildPath 'Packages'
     $script:DocsRoot = Join-Path -Path $RepoRoot -ChildPath 'docs'
     $script:SrcRoot = Join-Path -Path $RepoRoot -ChildPath 'src'
 
@@ -110,7 +111,9 @@ FormatTaskName {
 # TASKS
 #==============================================================================
 
-Task default -Depends Init
+Task default -Depends Build
+
+Task Build -Depends BuildPowerShell
 
 Task Init -Depends Clean {
 
@@ -119,8 +122,12 @@ Task Init -Depends Clean {
     Confirm-Directory $ArtifactsRoot
 
     $ModuleNames | ForEach-Object {
+
         Confirm-Directory (Join-Path -Path $ArtifactsRoot -ChildPath $_)
         Write-Host "Created $ArtifactsRoot\$_"
+
+        Confirm-Directory (Join-Path -Path $ArtifactsRoot -ChildPath $_, 'bin')
+        Write-Host "Created $ArtifactsRoot\$_\bin"
 
         # Make sure the 'bin' folder exists in the module
         $BinDir = Join-Path (Get-PowerShellModulePath -ModuleName $_) -ChildPath 'bin'
@@ -170,7 +177,12 @@ Task Clean -PreCondition { -not $SkipClean } {
             Get-ChildItem -Path $BinDir | Remove-Item -Force -Recurse
             Write-Host "Removed $BinDir"
         }
+
     }
+
+    # Remove packages from the out directory
+
+    Get-ChildItem -Path "$PackagesRoot\*.nupkg" | Remove-Item -Force
 
     Write-Host ''
 }
@@ -197,4 +209,88 @@ Task BuildCSharp -Depends Init -PreCondition { -not $SkipBuild } {
             '/p:GeneratePackageOnBuild=false'
         )
     }
+
+    Write-Host ''
+}
+
+Task BuildPowerShell -Depends BuildCSharp -PreCondition { -not $SkipBuild } {
+
+    Write-Host 'Building PowerShell Modules...'
+
+    $ModuleNames | ForEach-Object {
+
+        $modulePath = Join-Path -Path (Get-ModuleSourcePath -ModuleName $_) -ChildPath 'Module'
+        $moduleOutPath = Join-Path -Path $ArtifactsRoot -ChildPath $_
+
+        Copy-Item -Path "$modulePath\*.psd1" -Destination $moduleOutPath
+        Copy-Item -Path "$modulePath\*.psm1" -Destination $moduleOutPath
+
+        try {
+            Copy-Item -Path "$modulePath\bin\*.dll" -Destination "$moduleOutPath\bin"
+        } catch {
+            # Boyles.PowerShell doesn't have a bin directory.  Just ignore.
+        }
+
+        Get-ChildItem -Path $modulePath -Filter *.ps1 -File -Recurse | ForEach-Object {
+            $relativePath = $_.FullName.Substring($modulePath.Length).TrimStart('\')
+            $destFile = Join-Path $moduleOutPath $relativePath
+
+            $destDir = Split-Path $destFile -Parent
+            if (-not (Test-Path $destDir)) {
+                New-Item -ItemType Directory -Path $destDir -Force | Out-Null
+            }
+
+            Copy-Item $_.FullName -Destination $destFile -Force
+        }
+    }
+
+    Write-Host ''
+
+}
+
+Task Package -Depends BuildPowerShell {
+
+    Write-Host 'Creating NuGet packages...'
+
+    Confirm-Directory $PackagesRoot
+
+    # Publish-Module needs the NuGet package provider; install it quietly rather than
+    # letting it prompt interactively on a fresh machine/build agent.
+    if (-not (Get-PackageProvider -Name NuGet -ErrorAction SilentlyContinue)) {
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force -Scope CurrentUser | Out-Null
+    }
+
+    # Each module's manifest declares its sibling modules via RequiredModules
+    # (e.g. Boyles.PowerShell.Hudu requires Boyles.PowerShell.Core). Publish-Module
+    # only resolves RequiredModules against modules it can find on PSModulePath - it
+    # does not look inside the repository it's publishing to - so the staged ./out
+    # folder (already laid out as one PSModulePath-shaped folder per module) is
+    # temporarily added to PSModulePath for the duration of packaging.
+    $repoName = "BoylesPowerShellPackageLocal-$([guid]::NewGuid().ToString('N').Substring(0, 8))"
+    $originalPSModulePath = $env:PSModulePath
+
+    Register-PSRepository -Name $repoName -SourceLocation $PackagesRoot -PublishLocation $PackagesRoot -InstallationPolicy Trusted
+
+    try {
+        $env:PSModulePath = "$ArtifactsRoot$([System.IO.Path]::PathSeparator)$originalPSModulePath"
+
+        # Published in dependency order (Core, then Hudu, then the Boyles.PowerShell
+        # umbrella) so each module's RequiredModules can already be resolved from ./out
+        # by the time its dependents are packaged.
+        $ModuleNames | ForEach-Object {
+
+            $moduleOutPath = Join-Path -Path $ArtifactsRoot -ChildPath $_
+
+            Write-Host "Packaging $_"
+
+            Publish-Module -Path $moduleOutPath -Repository $repoName -NuGetApiKey 'local' -Force
+        }
+    } finally {
+        $env:PSModulePath = $originalPSModulePath
+        Unregister-PSRepository -Name $repoName -ErrorAction SilentlyContinue
+    }
+
+    Write-Host ''
+    Write-Host "Packages written to $PackagesRoot"
+    Write-Host ''
 }

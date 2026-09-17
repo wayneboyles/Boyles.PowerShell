@@ -1,0 +1,105 @@
+@page "/hudu/invoke"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · Invoke</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">Invoke (raw)</h2>
+    <div class="text-secondary"><code>HuduClient.InvokeAsync</code> — call any endpoint under <code>/api/v1/</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Method</label>
+                        <select class="form-select" @bind="_method">
+                            <option>GET</option>
+                            <option>POST</option>
+                            <option>PUT</option>
+                            <option>PATCH</option>
+                            <option>DELETE</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Path (relative to /api/v1/)</label>
+                        <input class="form-control" @bind="_path" placeholder="companies" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Items property (optional response envelope key)</label>
+                        <input class="form-control" @bind="_itemsProperty" placeholder="e.g. companies" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Body (JSON, optional)</label>
+                        <textarea class="form-control font-monospace" rows="8" @bind="_bodyJson" placeholder='{ "name": "Acme" }'></textarea>
+                    </div>
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@(_busy || string.IsNullOrWhiteSpace(_path))">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private string _method = "GET";
+    private string? _path;
+    private string? _itemsProperty;
+    private string? _bodyJson;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            object? body = string.IsNullOrWhiteSpace(_bodyJson)
+                ? null
+                : JsonConvert.DeserializeObject(_bodyJson);
+
+            var result = await HuduConnection.Client!.InvokeAsync(
+                _path!,
+                _method,
+                query: null,
+                body: body,
+                itemsProperty: string.IsNullOrWhiteSpace(_itemsProperty) ? null : _itemsProperty);
+
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

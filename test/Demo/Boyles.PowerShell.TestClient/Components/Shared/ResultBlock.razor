@@ -1,0 +1,33 @@
+@if (Busy)
+{
+    <div class="d-flex align-items-center text-secondary">
+        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+        Running…
+    </div>
+}
+else if (!string.IsNullOrEmpty(Error))
+{
+    <div class="alert alert-danger mb-0" role="alert">
+        <div class="fw-bold mb-1">Request failed</div>
+        <div class="text-break" style="white-space: pre-wrap;">@Error</div>
+    </div>
+}
+else if (!string.IsNullOrEmpty(Json))
+{
+    <CodeBlock Code="@Json" />
+}
+else
+{
+    <span class="text-secondary">Nothing to show yet - execute a call to see its result here.</span>
+}
+
+@code {
+    [Parameter]
+    public bool Busy { get; set; }
+
+    [Parameter]
+    public string? Error { get; set; }
+
+    [Parameter]
+    public string? Json { get; set; }
+}

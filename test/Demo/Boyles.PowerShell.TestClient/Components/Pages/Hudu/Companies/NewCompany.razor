@@ -1,0 +1,148 @@
+@page "/hudu/companies/new-company"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewCompany</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewCompany</h2>
+    <div class="text-secondary"><code>HuduClient.NewCompanyAsync</code> — POST <code>/api/v1/companies</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="_model.Name" />
+                            <ValidationMessage For="() => _model.Name" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nickname</label>
+                                <InputText class="form-control" @bind-Value="_model.Nickname" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Company type</label>
+                                <InputText class="form-control" @bind-Value="_model.CompanyType" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Website</label>
+                                <InputText class="form-control" @bind-Value="_model.Website" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Phone number</label>
+                                <InputText class="form-control" @bind-Value="_model.PhoneNumber" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address line 1</label>
+                            <InputText class="form-control" @bind-Value="_model.AddressLine1" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Address line 2</label>
+                            <InputText class="form-control" @bind-Value="_model.AddressLine2" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">City</label>
+                                <InputText class="form-control" @bind-Value="_model.City" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">State</label>
+                                <InputText class="form-control" @bind-Value="_model.State" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Zip</label>
+                                <InputText class="form-control" @bind-Value="_model.Zip" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Country</label>
+                            <InputText class="form-control" @bind-Value="_model.CountryName" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Notes" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewCompanyModel _model = new();
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.NewCompanyAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    // Passed directly as the request body - HttpClientBase's JsonOptions map these PascalCase
+    // properties to snake_case and drop nulls, so unset fields are simply omitted.
+    private sealed class NewCompanyModel
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        public string? Nickname { get; set; }
+        public string? CompanyType { get; set; }
+        public string? Website { get; set; }
+        public string? PhoneNumber { get; set; }
+        public string? AddressLine1 { get; set; }
+        public string? AddressLine2 { get; set; }
+        public string? City { get; set; }
+        public string? State { get; set; }
+        public string? Zip { get; set; }
+        public string? CountryName { get; set; }
+        public string? Notes { get; set; }
+    }
+}
