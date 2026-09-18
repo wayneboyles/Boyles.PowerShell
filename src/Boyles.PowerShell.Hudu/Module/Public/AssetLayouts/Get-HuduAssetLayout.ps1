@@ -18,14 +18,6 @@
 
     $Client = Get-HuduClientInternal
 
-    $query = @{}
-
-    if (Test-HasValue $Name) { $query['name'] = $Name }
-    if (Test-HasValue $Slug) { $query['slug'] = $Slug }
-    if ($PSBoundParameters.ContainsKey('Active')) { $query['active'] = $Active }
-
-    $queryDict = ConvertTo-StringDictionary -Table $query
-
     if ($PSCmdlet.ParameterSetName -eq 'Single') {
 
         try {
@@ -40,10 +32,16 @@
             }
         }
 
-    } else {
-
-        [Boyles.PowerShell.Hudu.Models.HuduAssetLayout[]] $assetLayouts = $Client.GetAssetLayouts($queryDict)
-        return $assetLayouts
-
     }
+
+    $query = @{}
+
+    if ($PSBoundParameters.ContainsKey('Name') -and (Test-HasValue $Name)) { $query['name'] = $Name }
+    if ($PSBoundParameters.ContainsKey('Slug') -and (Test-HasValue $Slug)) { $query['slug'] = $Slug }
+    if ($PSBoundParameters.ContainsKey('Active')) { $query['active'] = $Active }
+
+    $queryDict = ConvertTo-StringDictionary -Table $query
+
+    [Boyles.PowerShell.Hudu.Models.HuduAssetLayout[]] $assetLayouts = $Client.GetAssetLayouts($queryDict)
+    return $assetLayouts
 }

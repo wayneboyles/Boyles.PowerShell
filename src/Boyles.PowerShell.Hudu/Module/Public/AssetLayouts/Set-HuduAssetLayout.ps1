@@ -46,45 +46,16 @@
 
         $body = @{}
 
-        if ($PSBoundParameters.ContainsKey('Name')) {
-            $body['name'] = $Name
-        }
-
-        if ($PSBoundParameters.ContainsKey('Icon')) {
-            $body['icon'] = $Icon
-        }
-
-        if ($PSBoundParameters.ContainsKey('Color')) {
-            $body['icon_color'] = $IconColor
-        }
-
-        if ($PSBoundParameters.ContainsKey('Color')) {
-            $body['color'] = $Color
-        }
-
-        if ($PSBoundParameters.ContainsKey('IncludePasswords')) {
-            $body['include_passwords'] = $IncludePasswords
-        }
-
-        if ($PSBoundParameters.ContainsKey('IncludePhotos')) {
-            $body['include_photos'] = $IncludePhotos
-        }
-
-        if ($PSBoundParameters.ContainsKey('IncludeComments')) {
-            $body['include_comments'] = $IncludeComments
-        }
-
-        if ($PSBoundParameters.ContainsKey('IncludeFiles')) {
-            $body['include_files'] = $IncludeFiles
-        }
-
-        if ($PSBoundParameters.ContainsKey('IncludeProcesses')) {
-            $body['include_processes'] = $IncludeProcesses
-        }
-
-        if ($PSBoundParameters.ContainsKey('Active')) {
-            $body['active'] = $Active
-        }
+        if ($PSBoundParameters.ContainsKey('Name') -and (Test-HasValue $Name)) { $body['name'] = $Name }
+        if ($PSBoundParameters.ContainsKey('Icon') -and (Test-HasValue $Icon)) { $body['icon'] = $Icon }
+        if ($PSBoundParameters.ContainsKey('IconColor') -and (Test-HasValue $IconColor)) { $body['icon_color'] = $IconColor }
+        if ($PSBoundParameters.ContainsKey('Color') -and (Test-HasValue $Color)) { $body['color'] = $Color }
+        if ($PSBoundParameters.ContainsKey('IncludePasswords')) { $body['include_passwords'] = $IncludePasswords }
+        if ($PSBoundParameters.ContainsKey('IncludePhotos')) { $body['include_photos'] = $IncludePhotos }
+        if ($PSBoundParameters.ContainsKey('IncludeComments')) { $body['include_comments'] = $IncludeComments }
+        if ($PSBoundParameters.ContainsKey('IncludeFiles')) { $body['include_files'] = $IncludeFiles }
+        if ($PSBoundParameters.ContainsKey('IncludeProcesses')) { $body['include_processes'] = $IncludeProcesses }
+        if ($PSBoundParameters.ContainsKey('Active')) { $body['active'] = $Active }
 
         if ($PSCmdlet.ShouldProcess($Id, 'Update the Asset Layout')) {
 

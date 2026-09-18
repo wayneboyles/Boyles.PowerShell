@@ -32,13 +32,13 @@
 
     $query = @{}
 
-    if (Test-HasValue $Page) { $query['page'] = $Page }
-    if (Test-HasValue $PageNumber) { $query['page_number'] = $PageNumber }
-    if (Test-HasValue $UserId) { $query['user_id'] = $UserId }
-    if (Test-HasValue $UserEmail) { $query['user_email'] = $UserEmail }
-    if (Test-HasValue $ResourceId) { $query['resource_id'] = $ResourceId }
-    if (Test-HasValue $ResourceType) { $query['resource_type'] = $ResourceType }
-    if (Test-HasValue $ActionMessage) { $query['action_message'] = $ActionMessage }
+    if ($PSBoundParameters.ContainsKey($Page)) { $query['page'] = $Page }
+    if ($PSBoundParameters.ContainsKey($PageNumber)) { $query['page_number'] = $PageNumber }
+    if ($PSBoundParameters.ContainsKey($UserId)) { $query['user_id'] = $UserId }
+    if ($PSBoundParameters.ContainsKey($UserEmail) -and (Test-HasValue $UserEmail)) { $query['user_email'] = $UserEmail }
+    if ($PSBoundParameters.ContainsKey($ResourceId)) { $query['resource_id'] = $ResourceId }
+    if ($PSBoundParameters.ContainsKey($ResourceType) -and (Test-HasValue $ResourceType)) { $query['resource_type'] = $ResourceType }
+    if ($PSBoundParameters.ContainsKey($ActionMessage) -and (Test-HasValue $ActionMessage)) { $query['action_message'] = $ActionMessage }
 
     $queryDict = ConvertTo-StringDictionary -Table $query
 

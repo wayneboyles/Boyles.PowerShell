@@ -11,9 +11,9 @@ function Connect-Hudu {
         [string] $ApiKey
     )
 
-    $Key = [Boyles.PowerShell.Hudu.Consts]::ClientCacheKey
+    [string] $Key = [Boyles.PowerShell.Hudu.Consts]::ClientCacheKey
 
-    $Client = [Boyles.PowerShell.Hudu.Services.HuduClient]::Create($BaseUrl, $ApiKey)
+    [Boyles.PowerShell.Hudu.Services.HuduClient] $Client = [Boyles.PowerShell.Hudu.Services.HuduClient]::Create($BaseUrl, $ApiKey)
 
     Add-BPSClient -Key $Key -Client $Client
 

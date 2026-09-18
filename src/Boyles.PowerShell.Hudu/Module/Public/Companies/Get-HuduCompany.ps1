@@ -27,23 +27,16 @@
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]
-        [string] $Search
+        [string] $Search,
+
+        [Parameter(ParameterSetName = 'All')]
+        [int] $Page,
+
+        [Parameter(ParameterSetName = 'All')]
+        [int] $PageSize
     )
 
     $Client = Get-HuduClientInternal
-
-    $query = @{}
-
-    if (Test-HasValue $Name) { $query['name'] = $Name }
-    if (Test-HasValue $IdNumber) { $query['id_number'] = $IdNumber }
-    if (Test-HasValue $PhoneNumber) { $query['phone_number'] = $PhoneNumber }
-    if (Test-HasValue $Website) { $query['website'] = $Website }
-    if (Test-HasValue $City) { $query['city'] = $City }
-    if (Test-HasValue $State) { $query['state'] = $State }
-    if (Test-HasValue $Slug) { $query['slug'] = $Slug }
-    if (Test-HasValue $Search) { $query['search'] = $Search }
-
-    $queryDict = ConvertTo-StringDictionary -Table $query
 
     if ($PSCmdlet.ParameterSetName -eq 'Single') {
 
@@ -59,10 +52,40 @@
             }
         }
 
-    } else {
+    }
 
-        [Boyles.PowerShell.Hudu.Models.HuduCompany[]] $companies = $Client.GetCompanies($queryDict)
-        return $companies
+    $query = @{}
+
+    if ($PSBoundParameters.ContainsKey('Name') -and (Test-HasValue $Name)) { $query['name'] = $Name }
+    if ($PSBoundParameters.ContainsKey('IdNumber') -and (Test-HasValue $IdNumber)) { $query['id_number'] = $IdNumber }
+    if ($PSBoundParameters.ContainsKey('PhoneNumber') -and (Test-HasValue $PhoneNumber)) { $query['phone_number'] = $PhoneNumber }
+    if ($PSBoundParameters.ContainsKey('Website') -and (Test-HasValue $Website)) { $query['website'] = $Website }
+    if ($PSBoundParameters.ContainsKey('City') -and (Test-HasValue $City)) { $query['city'] = $City }
+    if ($PSBoundParameters.ContainsKey('State') -and (Test-HasValue $State)) { $query['state'] = $State }
+    if ($PSBoundParameters.ContainsKey('Slug') -and (Test-HasValue $Slug)) { $query['slug'] = $Slug }
+    if ($PSBoundParameters.ContainsKey('Search') -and (Test-HasValue $Search)) { $query['search'] = $Search }
+
+    $queryDict = ConvertTo-StringDictionary -Table $query
+
+    if ($PSBoundParameters.ContainsKey('Page') -or $PSBoundParameters.ContainsKey('PageSize')) {
+
+        $effectivePageSize = if ($PSBoundParameters.ContainsKey('PageSize')) {
+            $PageSize
+        } else {
+            50
+        }
+
+        $effectivePage = if ($PSBoundParameters.ContainsKey('Page')) {
+            $Page
+        } else {
+            1
+        }
+
+        [Boyles.PowerShell.Hudu.Models.HuduCompany[]] $companies = $client.GetCompaniesPage($queryDict, $effectivePage, $effectivePageSize)
+        return $articles
 
     }
+
+    [Boyles.PowerShell.Hudu.Models.HuduCompany[]] $companies = $Client.GetCompanies($queryDict)
+    return $companies
 }

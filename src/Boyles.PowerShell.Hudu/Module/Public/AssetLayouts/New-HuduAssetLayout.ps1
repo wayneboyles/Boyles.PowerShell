@@ -44,9 +44,10 @@ function New-HuduAssetLayout {
         name = $Name
     }
 
-    if (Test-HasValue $Color) { $body['color'] = $Color }
-    if (Test-HasValue $Icon) { $body['icon'] = $Icon }
-    if (Test-HasValue $IconColor) { $body['icon_color'] = $IconColor }
+    if ($PSBoundParameters.ContainsKey('Color') -and (Test-HasValue $Color)) { $body['color'] = $Color }
+    if ($PSBoundParameters.ContainsKey('Icon') -and (Test-HasValue $Icon)) { $body['icon'] = $Icon }
+    if ($PSBoundParameters.ContainsKey('IconColor') -and (Test-HasValue $IconColor)) { $body['icon_color'] = $IconColor }
+
 
     if ($IncludePasswords.IsPresent) {
         $body['include_passwords'] = $true
