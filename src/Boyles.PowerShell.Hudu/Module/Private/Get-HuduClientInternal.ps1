@@ -1,4 +1,21 @@
-﻿function Get-HuduClientInternal {
+﻿<#
+.SYNOPSIS
+    Retrieves the currently connected HuduClient, throwing if not connected.
+
+.DESCRIPTION
+    Internal helper used by every public Hudu cmdlet to look up the HuduClient registered by
+    Connect-Hudu, rather than duplicating the Confirm-BPSClient/Get-BPSClient pair in each cmdlet.
+    Throws via Confirm-BPSClient if Connect-Hudu hasn't been run yet.
+
+.EXAMPLE
+    $Client = Get-HuduClientInternal
+
+    Returns the connected HuduClient, or throws if Connect-Hudu hasn't been run.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Services.HuduClient
+#>
+function Get-HuduClientInternal {
     [CmdletBinding()]
     [OutputType([Boyles.PowerShell.Hudu.Services.HuduClient])]
     param ()

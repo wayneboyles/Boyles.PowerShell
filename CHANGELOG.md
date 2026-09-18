@@ -12,21 +12,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - New Logo.
-- [**Hudu**] Activity Log Functions.
-- [**Hudu**] API Info Function.
-- [**Hudu**] Article Functions.
-- [**Hudu**] Asset Layout Functions.
-- [**Hudu**] Company Functions.
-- [**Hudu**] Connectivity Functions / Helpers.
+- [**Hudu**] Activity Log functions.
+- [**Hudu**] API Info function.
+- [**Hudu**] Article functions.
+- [**Hudu**] Asset Layout functions.
+- [**Hudu**] Company functions.
+- [**Hudu**] Connectivity functions / helpers.
 - [**Core**][**Hudu**] Initial Argument Completer Implementation.
 - [**Core**][**Hudu**] Paging Support.
 - [**Core**] Settings Support. You can now save and retrieve settings throughout the modules.
 - [**Core**] Http UserAgent is now set on every request. It defaults to `Boyles.PowerShell\<Version>`.
+- [**Hudu**] Added comments to all PowerShell functions.
 
 ### Fixed
 
 - Fixed `GetAllPagesAsync` to correctly handle a `JArray` instead of just a `JObject`.
--
 
 ### Changed
 
@@ -34,4 +34,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 
-- Section about "changelog" vs "CHANGELOG".
+-

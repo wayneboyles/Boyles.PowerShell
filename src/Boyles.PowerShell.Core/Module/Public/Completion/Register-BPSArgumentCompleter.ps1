@@ -1,6 +1,7 @@
 ﻿<#
 .SYNOPSIS
     Registers a cached, generic tab-completer for one or more command parameters.
+
 .DESCRIPTION
     Wraps Register-ArgumentCompleter with the standard Boyles.PowerShell completion pipeline so every
     module implements tab-completion the same way. The caller supplies a ValueProvider scriptblock that
@@ -12,29 +13,38 @@
     CacheSeconds and is transparently refreshed on the next completion request. If ValueProvider throws
     (most commonly because Connect-Hudu / Connect-ArubaCentral hasn't been run yet) the exception is
     swallowed and whatever is already cached is used instead - a completer must never break Tab.
+
 .PARAMETER CommandName
     Name(s) of the command(s) to attach the completer to.
+
 .PARAMETER ParameterName
     Name of the parameter being completed.
+
 .PARAMETER ValueProvider
     Scriptblock that returns the full candidate set. Invoked with $fakeBoundParameters as its only
     argument on a cache miss, so a completer can filter on another already-bound parameter (e.g. only
     complete -Site for the -Company the user already picked). Should return either plain strings or
     objects, in which case ValueProperty/DisplayProperty/TooltipProperty describe how to read them.
+
 .PARAMETER ValueProperty
     Property on each candidate object to use as the completion value. Omit when ValueProvider already
     returns plain strings.
+
 .PARAMETER DisplayProperty
     Property on each candidate object to show as the completion list-item text. Defaults to
     ValueProperty when omitted.
+
 .PARAMETER TooltipProperty
     Property on each candidate object to show as the tooltip. Optional.
+
 .PARAMETER CacheSeconds
     How long fetched candidates are cached before ValueProvider is invoked again. Defaults to 300.
+
 .PARAMETER CacheKey
     Cache partition key. Defaults to "<first CommandName>:<ParameterName>". Override this if the same
     command/parameter pair needs to be cached separately per connected tenant/client - for example by
     including the active Connect-Hudu context key so switching tenants doesn't serve stale completions.
+
 .EXAMPLE
     Register-BPSArgumentCompleter -CommandName Get-HuduCompany -ParameterName Name -ValueProvider {
         (Get-HuduClientOrThrow).GetCompanies()
@@ -42,6 +52,7 @@
 
     Registers tab-completion for Get-HuduCompany -Name, pulling live company names from Hudu and
     caching them for five minutes.
+
 .EXAMPLE
     Register-BPSArgumentCompleter -CommandName Get-ArubaCentralSite -ParameterName Name -ValueProvider {
         (Get-ArubaCentralClientOrThrow).GetSites()

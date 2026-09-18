@@ -1,4 +1,41 @@
-﻿function Get-HuduAssetLayout {
+﻿<#
+.SYNOPSIS
+    Retrieves one or more asset layouts from the connected Hudu instance.
+
+.DESCRIPTION
+    With -Id, retrieves a single asset layout by ID, returning $null instead of throwing if the
+    ID doesn't exist (Hudu responds with an HTTP 404 in that case). Without -Id, retrieves every
+    asset layout matching the supplied filters.
+
+.PARAMETER Id
+    ID of a single asset layout to retrieve.
+
+.PARAMETER Name
+    Filters results to asset layouts matching the given name.
+
+.PARAMETER Slug
+    Filters results to asset layouts matching the given slug.
+
+.PARAMETER Active
+    Filters results to active (or inactive) asset layouts.
+
+.EXAMPLE
+    Get-HuduAssetLayout -Id 42
+
+    Returns the asset layout with ID 42, or $null if it doesn't exist.
+
+.EXAMPLE
+    Get-HuduAssetLayout -Active $true
+
+    Returns every active asset layout.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAssetLayout
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAssetLayout[]
+#>
+function Get-HuduAssetLayout {
     [CmdletBinding(DefaultParameterSetName = 'All')]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetLayout])]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetLayout[]])]

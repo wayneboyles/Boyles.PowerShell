@@ -1,4 +1,17 @@
-﻿function Disconnect-Hudu {
+﻿<#
+.SYNOPSIS
+    Disconnects from Hudu, removing the registered client from the process-wide client store.
+
+.DESCRIPTION
+    Removes and disposes the HuduClient registered by Connect-Hudu (see Remove-BPSClient). Does
+    nothing, without throwing, if Hudu is not currently connected.
+
+.EXAMPLE
+    Disconnect-Hudu
+
+    Disconnects from Hudu, releasing the underlying HTTP client's resources.
+#>
+function Disconnect-Hudu {
     [CmdletBinding()]
     [OutputType([void])]
     param ()

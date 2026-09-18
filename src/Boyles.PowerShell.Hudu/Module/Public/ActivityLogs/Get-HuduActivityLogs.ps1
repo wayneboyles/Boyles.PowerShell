@@ -1,4 +1,54 @@
-﻿function Get-HuduActivityLogs {
+﻿<#
+.SYNOPSIS
+    Retrieves activity logs from the connected Hudu instance.
+
+.DESCRIPTION
+    Queries the Hudu activity log endpoint via the connected HuduClient (see Connect-Hudu),
+    applying whichever filters were supplied as query parameters. ResourceId and ResourceType
+    must be specified together - supplying only one of the pair throws.
+
+.PARAMETER Page
+    Page size / number of results to return per page.
+
+.PARAMETER PageNumber
+    Page number to retrieve.
+
+.PARAMETER UserId
+    Filters results to activity performed by the given user ID.
+
+.PARAMETER UserEmail
+    Filters results to activity performed by the user with the given email address.
+
+.PARAMETER ResourceId
+    Filters results to activity on the given resource ID. Must be specified together with
+    ResourceType.
+
+.PARAMETER ResourceType
+    Filters results to activity on the given resource type (e.g. 'Asset', 'Article'). Must be
+    specified together with ResourceId.
+
+.PARAMETER ActionMessage
+    Filters results to log entries whose action message matches the given text.
+
+.EXAMPLE
+    Get-HuduActivityLogs
+
+    Returns the most recent activity log entries with no filters applied.
+
+.EXAMPLE
+    Get-HuduActivityLogs -ResourceId 123 -ResourceType 'Asset'
+
+    Returns activity log entries for the asset with ID 123.
+
+.EXAMPLE
+    Get-HuduActivityLogs -UserEmail 'tech@example.com' -PageNumber 2
+
+    Returns page 2 of activity performed by the given user.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduActivityLog[]
+#>
+function Get-HuduActivityLogs {
     [CmdletBinding()]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduActivityLog[]])]
     param (
