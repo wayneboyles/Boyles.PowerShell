@@ -115,6 +115,10 @@ Task default -Depends Build
 
 Task Build -Depends BuildPowerShell
 
+Task Test -Depends TestPowerShell
+
+Task Full -Depends Build, Test
+
 Task Init -Depends Clean {
 
     Write-Host 'Creating directories...'
@@ -231,7 +235,7 @@ Task BuildPowerShell -Depends BuildCSharp -PreCondition { -not $SkipBuild } {
             # Boyles.PowerShell doesn't have a bin directory.  Just ignore.
         }
 
-        Get-ChildItem -Path $modulePath -Filter *.ps1 -File -Recurse | ForEach-Object {
+        Get-ChildItem -Path $modulePath -Filter *.ps1 -Exclude *.Tests.ps1 -File -Recurse | ForEach-Object {
             $relativePath = $_.FullName.Substring($modulePath.Length).TrimStart('\')
             $destFile = Join-Path $moduleOutPath $relativePath
 
@@ -246,6 +250,38 @@ Task BuildPowerShell -Depends BuildCSharp -PreCondition { -not $SkipBuild } {
 
     Write-Host ''
 
+}
+
+Task TestPowerShell -PreCondition { $RunPesterTests } {
+
+    Write-Host 'Running Pester tests...'
+
+    if (-not (Get-Module -ListAvailable -Name Pester | Where-Object { $_.Version -ge [version] '5.0.0' })) {
+        throw 'Pester 5.0+ is required to run TestPowerShell. Install it with: Install-Module Pester -MinimumVersion 5.0 -Scope CurrentUser -Force'
+    }
+
+    Import-Module -Name Pester -MinimumVersion 5.0 -ErrorAction Stop -WarningAction SilentlyContinue
+
+    $testFiles = Get-ChildItem -Path $SrcRoot -Filter '*.Tests.ps1' -File -Recurse
+
+    if (-not $testFiles) {
+        Write-Host 'No *.Tests.ps1 files found under src. Skipping.'
+        Write-Host ''
+        return
+    }
+
+    $pesterConfig = New-PesterConfiguration
+    $pesterConfig.Run.Path = $SrcRoot
+    $pesterConfig.Run.PassThru = $true
+    $pesterConfig.Output.Verbosity = 'Detailed'
+
+    $result = Invoke-Pester -Configuration $pesterConfig
+
+    if ($result.FailedCount -gt 0) {
+        throw "$($result.FailedCount) of $($result.TotalCount) Pester test(s) failed."
+    }
+
+    Write-Host ''
 }
 
 Task Package -Depends BuildPowerShell {

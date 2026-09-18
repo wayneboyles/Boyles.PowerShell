@@ -29,9 +29,10 @@ if (Test-Path -Path $script:BinPath) {
     }
 }
 
-# Dot-source every function script and export only the Public ones.
-$publicFunctions  = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Public')  -Filter '*.ps1' -File -Recurse -ErrorAction SilentlyContinue)
-$privateFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Private') -Filter '*.ps1' -File -Recurse -ErrorAction SilentlyContinue)
+# Dot-source every function script and export only the Public ones. Co-located Pester tests
+# (Function.Tests.ps1, living next to the function they test) are excluded - they aren't functions.
+$publicFunctions  = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Public')  -Filter '*.ps1' -Exclude '*.Tests.ps1' -File -Recurse -ErrorAction SilentlyContinue)
+$privateFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Private') -Filter '*.ps1' -Exclude '*.Tests.ps1' -File -Recurse -ErrorAction SilentlyContinue)
 
 foreach ($functionFile in ($publicFunctions + $privateFunctions)) {
     try {

@@ -3,9 +3,14 @@
     Writes a timestamped log entry to the console and an optional log file.
 
 .DESCRIPTION
-    Reads the log file path from $Global:LogFile set in the calling script.
-    If not set, output goes to the console only. Use -Section to write a
-    visual section header to organize log output into readable blocks.
+    Reads the log file path from $Global:LogFile set in the calling script; when set, every log
+    line is also appended there (creating the containing directory if needed). Use -Section to
+    write a visual section header to organize log output into readable blocks.
+
+    Console output is gated by $Global:LogToConsole: it must be set to $true for console output
+    to appear at all. Leaving it unset (the default, $null) or setting it to $false both suppress
+    console output, same as passing -NoConsole - despite what "if not set" might suggest, an
+    unset $Global:LogToConsole does NOT default to writing to the console.
 
 .PARAMETER Message
     The message to log.
@@ -17,7 +22,8 @@
     Renders the message as a visual section header with divider lines.
 
 .PARAMETER NoConsole
-    Suppresses console output; writes to the log file only.
+    Suppresses console output; writes to the log file only. Console output is already suppressed
+    by default unless $Global:LogToConsole has been explicitly set to $true - see DESCRIPTION.
 
 .EXAMPLE
     $Global:LogFile = "C:\Logs\MyScript_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
