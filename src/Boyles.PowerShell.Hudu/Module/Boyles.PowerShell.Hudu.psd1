@@ -18,6 +18,8 @@
         'Connect-Hudu'
         'Disconnect-Hudu'
 
+        'Get-HuduActivityLogs'
+
         'Disable-HuduCompany'
         'Enable-HuduCompany'
         'Get-HuduCompany'

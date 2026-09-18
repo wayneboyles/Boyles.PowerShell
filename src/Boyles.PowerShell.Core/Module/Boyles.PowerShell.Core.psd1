@@ -34,6 +34,14 @@
 
         'ConvertFrom-JToken'
         'ConvertTo-StringDictionary'
+
+        'Register-BPSArgumentCompleter'
+
+        'Get-BPSSetting'
+        'Get-BPSSettingPath'
+        'Remove-BPSSetting'
+        'Reset-BPSSetting'
+        'Set-BPSSetting'
     )
 
     CmdletsToExport      = @()
