@@ -278,10 +278,20 @@ namespace Boyles.PowerShell.HttpClients
                     throw new ApiException((HttpStatusCode)result.StatusCode, result.Body, $"Paged GET {uri} failed: HTTP {result.StatusCode}");
                 }
 
-                int pageCount = 0;
-                var root = JsonConvert.DeserializeObject<JObject>(string.IsNullOrWhiteSpace(result.Body) ? "{}" : result.Body);
+                var root = string.IsNullOrWhiteSpace(result.Body) ? null : JToken.Parse(result.Body);
 
-                if (root != null && root[itemsProperty] is JArray items)
+                // The endpoint may return a bare array, or an envelope object with the
+                // array under itemsProperty. Support both without requiring callers to
+                // know which shape a given endpoint uses.
+                JArray? items = root as JArray;
+                if (items == null && root is JObject obj && !string.IsNullOrEmpty(itemsProperty))
+                {
+                    items = obj[itemsProperty] as JArray;
+                }
+
+                int pageCount = 0;
+
+                if (items != null)
                 {
                     foreach (var el in items)
                     {
@@ -304,6 +314,58 @@ namespace Boyles.PowerShell.HttpClients
             }
 
             return all;
+            //var all = new List<T>();
+            //int offset = 0;
+
+            //while (true)
+            //{
+            //    var q = new Dictionary<string, string>(StringComparer.Ordinal);
+            //    if (baseQuery != null)
+            //    {
+            //        foreach (var kv in baseQuery)
+            //        {
+            //            q[kv.Key] = kv.Value;
+            //        }
+            //    }
+
+            //    q[limitParam] = pageSize.ToString();
+            //    q[offsetParam] = offset.ToString();
+
+            //    var uri = BuildUri(path, q, baseOverride);
+
+            //    var result = await SendWithRetryAsync(HttpMethod.Get, uri, () => null, authOverride, allowReauth: authOverride == null, ct, sourceMethod).ConfigureAwait(false);
+
+            //    if (!result.IsSuccess)
+            //    {
+            //        throw new ApiException((HttpStatusCode)result.StatusCode, result.Body, $"Paged GET {uri} failed: HTTP {result.StatusCode}");
+            //    }
+
+            //    int pageCount = 0;
+            //    var root = JsonConvert.DeserializeObject<JObject>(string.IsNullOrWhiteSpace(result.Body) ? "{}" : result.Body);
+
+            //    if (root != null && root[itemsProperty] is JArray items)
+            //    {
+            //        foreach (var el in items)
+            //        {
+            //            var item = el.ToObject<T>(_serializer);
+            //            if (item != null)
+            //            {
+            //                all.Add(item);
+            //            }
+
+            //            pageCount++;
+            //        }
+            //    }
+
+            //    offset += pageCount;
+
+            //    if (pageCount < pageSize)
+            //    {
+            //        break;
+            //    }
+            //}
+
+            //return all;
         }
 
         /// <summary>
