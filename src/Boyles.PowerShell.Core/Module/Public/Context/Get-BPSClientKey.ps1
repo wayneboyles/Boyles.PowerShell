@@ -1,10 +1,12 @@
 <#
 .SYNOPSIS
     Lists the keys of every client currently registered in the process-wide Boyles client store.
+
 .DESCRIPTION
-    Wraps [Boyles.PowerShell.Context.BoylesContextCache]::Keys.
+    Wraps [Boyles.PowerShell.Context.ContextCache]::Keys.
+
 .EXAMPLE
-    Get-BoylesClientKey
+    Get-BPSClientKey
 #>
 function Get-BPSClientKey {
     [CmdletBinding()]

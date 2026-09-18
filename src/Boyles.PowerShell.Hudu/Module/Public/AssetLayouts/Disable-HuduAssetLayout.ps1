@@ -1,3 +1,23 @@
+<#
+.SYNOPSIS
+    Deactivates a Hudu asset layout.
+
+.DESCRIPTION
+    Sets 'active' to $false on the asset layout with the given ID via the connected HuduClient
+    (see Connect-Hudu). Returns $null instead of throwing when the ID doesn't exist, since Hudu
+    responds with an HTTP 404 in that case. Supports -WhatIf/-Confirm.
+
+.PARAMETER Id
+    ID of the asset layout to deactivate. Accepts pipeline input by property name.
+
+.EXAMPLE
+    Disable-HuduAssetLayout -Id 42
+
+    Deactivates the asset layout with ID 42.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAssetLayout
+#>
 function Disable-HuduAssetLayout {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetLayout])]

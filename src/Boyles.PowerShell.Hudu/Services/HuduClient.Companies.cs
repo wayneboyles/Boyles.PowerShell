@@ -26,6 +26,20 @@ namespace Boyles.PowerShell.Hudu.Services
             return await GetAllPagesAsync<HuduCompany>(path, query, offsetParam: "page", limitParam: "page_size", itemsProperty: "companies", ct: cancellationToken).ConfigureAwait(false);
         }
 
+        public List<HuduCompany> GetCompaniesPage(Dictionary<string, string>? query, int page, int pageSize) => Sync(GetCompaniesPageAsync(query, page, pageSize));
+
+        public async Task<List<HuduCompany>> GetCompaniesPageAsync(Dictionary<string, string>? query, int page, int pageSize, CancellationToken cancellationToken = default)
+        {
+            var q = new Dictionary<string, string>(query ?? new Dictionary<string, string>(), StringComparer.Ordinal)
+            {
+                ["page"] = page.ToString(CultureInfo.InvariantCulture),
+                ["page_size"] = pageSize.ToString(CultureInfo.InvariantCulture)
+            };
+
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies", ApiRoot);
+            return await GetAsync<List<HuduCompany>>(path, q, itemsProperty: "companies", ct: cancellationToken);
+        }
+
         /// <summary>
         /// Retrieves a single company by its ID synchronously.
         /// </summary>

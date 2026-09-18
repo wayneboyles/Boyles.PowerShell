@@ -1,14 +1,17 @@
 <#
 .SYNOPSIS
     Retrieves a previously registered client from the process-wide Boyles client store.
+
 .DESCRIPTION
-    Wraps [Boyles.PowerShell.Context.BoylesContextCache]::Get(). Throws if no client is registered
+    Wraps [Boyles.PowerShell.Context.ContextCache]::Get(). Throws if no client is registered
     under the given key - callers should run the service's Connect-* cmdlet first (see
     Connect-Hudu.ps1).
+
 .PARAMETER Key
-    The key the client was registered under via Add-BoylesClient.
+    The key the client was registered under via Add-BPSClient.
+
 .EXAMPLE
-    $client = Get-BoylesClient -Key 'Hudu'
+    $client = Get-BPSClient -Key 'Hudu'
 #>
 function Get-BPSClient {
     [CmdletBinding()]

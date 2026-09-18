@@ -1,8 +1,10 @@
 $script:ModuleRoot = $PSScriptRoot
 $script:BinPath = Join-Path -Path $script:ModuleRoot -ChildPath 'bin'
 
-# RequiredModules in the manifest guarantees Boyles.PowerShell.Core is already
-# imported (and its types loaded) by the time this file runs.
+# =============================================================
+# Load assemblies
+# =============================================================
+
 if (Test-Path -Path $script:BinPath) {
 
     $resolveHandler = [System.ResolveEventHandler] {
@@ -30,6 +32,10 @@ if (Test-Path -Path $script:BinPath) {
 
 }
 
+# =============================================================
+# Export functions
+# =============================================================
+
 $publicFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Public')  -Filter '*.ps1' -File -Recurse -ErrorAction SilentlyContinue)
 $privateFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Private') -Filter '*.ps1' -File -Recurse -ErrorAction SilentlyContinue)
 
@@ -42,3 +48,11 @@ foreach ($functionFile in ($publicFunctions + $privateFunctions)) {
 }
 
 Export-ModuleMember -Function $publicFunctions.BaseName
+
+# =============================================================
+# Argument completers
+# =============================================================
+
+Register-BPSArgumentCompleter -CommandName Get-HuduCompany -ParameterName Name -CacheSeconds 300 -ValueProperty Name -ToolTipProperty Id -ValueProvider {
+    (Get-HuduClientInternal).GetCompanies()
+}

@@ -1,5 +1,6 @@
 $script:ModuleRoot = $PSScriptRoot
 $script:BinPath = Join-Path -Path $script:ModuleRoot -ChildPath 'bin'
+$script:BPSCompletionCache = [System.Collections.Concurrent.ConcurrentDictionary[string, object]]::new()
 
 # Resolve any dependency DLL (e.g. System.Text.Json.dll) that ships alongside
 # the compiled module library, since the PowerShell host's own probing path

@@ -1,18 +1,24 @@
 <#
 .SYNOPSIS
     Writes a timestamped log entry to the console and an optional log file.
+
 .DESCRIPTION
     Reads the log file path from $Global:LogFile set in the calling script.
     If not set, output goes to the console only. Use -Section to write a
     visual section header to organize log output into readable blocks.
+
 .PARAMETER Message
     The message to log.
+
 .PARAMETER Level
     Log severity level: INFO, WARNING, ERROR, DEBUG, or SUCCESS. Defaults to INFO.
+
 .PARAMETER Section
     Renders the message as a visual section header with divider lines.
+
 .PARAMETER NoConsole
     Suppresses console output; writes to the log file only.
+
 .EXAMPLE
     $Global:LogFile = "C:\Logs\MyScript_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
 

@@ -18,6 +18,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// </summary>
         private const string ApiRoot = "api/v1";
 
+
         public HuduClient(string baseUrl, ApiKeyAuthenticationProvider auth, JsonSerializerSettings? json = null, IHttpDiagnosticsSink? diagnosticsSink = null)
             : base(baseUrl, auth, json, diagnosticsSink)
         {

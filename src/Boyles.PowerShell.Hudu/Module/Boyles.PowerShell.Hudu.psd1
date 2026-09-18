@@ -15,8 +15,23 @@
     )
 
     FunctionsToExport    = @(
-        'Connect-Hudu'
-        'Disconnect-Hudu'
+        'Get-HuduActivityLogs'
+
+        'Get-HuduApiInfo'
+
+        'Disable-HuduArticle'
+        'Enable-HuduArticle'
+        'Get-HuduArticle'
+        'New-HuduArticle'
+        'Remove-HuduArticle'
+        'Set-HuduArticle'
+
+        'Disable-HuduAssetLayout'
+        'Enable-HuduAssetLayout'
+        'Get-HuduAssetLayout'
+        'Get-HuduAssetLayoutFields'
+        'New-HuduAssetLayout'
+        'Set-HuduAssetLayout'
 
         'Disable-HuduCompany'
         'Enable-HuduCompany'
@@ -25,12 +40,8 @@
         'Remove-HuduCompany'
         'Set-HuduCompany'
 
-        'Disable-HuduAssetLayout'
-        'Enable-HuduAssetLayout'
-        'Get-HuduAssetLayout'
-        'Get-HuduAssetLayoutFields'
-        'New-HuduAssetLayout'
-        'Set-HuduAssetLayout'
+        'Connect-Hudu'
+        'Disconnect-Hudu'
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()
