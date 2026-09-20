@@ -36,8 +36,6 @@ if (Test-Path -Path $script:BinPath) {
 # Export functions
 # =============================================================
 
-# Co-located Pester tests (Function.Tests.ps1, living next to the function they test) are
-# excluded - they aren't functions.
 $publicFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Public')  -Filter '*.ps1' -Exclude '*.Tests.ps1' -File -Recurse -ErrorAction SilentlyContinue)
 $privateFunctions = @(Get-ChildItem -Path (Join-Path $script:ModuleRoot 'Private') -Filter '*.ps1' -Exclude '*.Tests.ps1' -File -Recurse -ErrorAction SilentlyContinue)
 

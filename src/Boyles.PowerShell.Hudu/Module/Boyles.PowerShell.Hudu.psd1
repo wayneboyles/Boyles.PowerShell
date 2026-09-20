@@ -1,6 +1,6 @@
 @{
     RootModule           = 'Boyles.PowerShell.Hudu.psm1'
-    ModuleVersion        = '0.1.0'
+    ModuleVersion        = '0.2.1'
     GUID                 = 'e79d0665-d4dd-47e6-85de-a12d0f3c028c'
     Author               = 'Wayne Boyles'
     CompanyName          = 'Wayne Boyles'
@@ -11,14 +11,17 @@
     CompatiblePSEditions = @('Desktop', 'Core')
 
     RequiredModules      = @(
-        @{ ModuleName = 'Boyles.PowerShell.Core'; ModuleVersion = '0.1.0'; GUID = '5b06397d-8350-4a54-8751-b7e44f80adb2' }
+        @{ ModuleName = 'Boyles.PowerShell.Core'; ModuleVersion = '0.2.1'; GUID = '5b06397d-8350-4a54-8751-b7e44f80adb2' }
     )
 
     FunctionsToExport    = @(
+        # Activity Logs
         'Get-HuduActivityLogs'
 
+        # Api Info
         'Get-HuduApiInfo'
 
+        # Articles
         'Disable-HuduArticle'
         'Enable-HuduArticle'
         'Get-HuduArticle'
@@ -26,6 +29,7 @@
         'Remove-HuduArticle'
         'Set-HuduArticle'
 
+        # Asset Layouts
         'Disable-HuduAssetLayout'
         'Enable-HuduAssetLayout'
         'Get-HuduAssetLayout'
@@ -33,6 +37,15 @@
         'New-HuduAssetLayout'
         'Set-HuduAssetLayout'
 
+        # Asset Passwords
+        'Disable-HuduAssetPassword'
+        'Enable-HuduAssetPassword'
+        'Get-HuduAssetPassword'
+        'New-HuduAssetPassword'
+        'Remove-HuduAssetPassword'
+        'Set-HuduAssetPassword'
+
+        # Companies
         'Disable-HuduCompany'
         'Enable-HuduCompany'
         'Get-HuduCompany'
@@ -40,6 +53,12 @@
         'Remove-HuduCompany'
         'Set-HuduCompany'
 
+        # Assets
+        'Disable-HuduAsset'
+        'Enable-HuduAsset'
+        'Get-HuduAsset'
+
+        # Connectivity
         'Connect-Hudu'
         'Disconnect-Hudu'
     )
@@ -57,7 +76,7 @@
             Tags         = @('Boyles', 'Hudu', 'Documentation')
             ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
             LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
-            ReleaseNotes = 'Initial scaffold.'
+            ReleaseNotes = ''
         }
     }
 }

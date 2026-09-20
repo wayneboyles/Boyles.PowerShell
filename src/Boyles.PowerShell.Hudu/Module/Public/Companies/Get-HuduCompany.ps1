@@ -140,7 +140,7 @@ function Get-HuduCompany {
         }
 
         [Boyles.PowerShell.Hudu.Models.HuduCompany[]] $companies = $client.GetCompaniesPage($queryDict, $effectivePage, $effectivePageSize)
-        return $articles
+        return $companies
 
     }
 

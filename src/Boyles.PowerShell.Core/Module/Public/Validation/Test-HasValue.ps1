@@ -43,12 +43,20 @@ function Test-HasValue {
             return $false
         }
 
-        switch ($Value) {
-            { $_ -is [string] } { return ![string]::IsNullOrWhiteSpace($_) }
-            { $_ -is [System.Collections.ICollection] } { return $_.Count -gt 0 }
-            { $_ -is [System.Collections.IEnumerable] } { return $_.GetEnumerator().MoveNext() }
-            { $_ -is [ValueType] } { return $_ -ne [Activator]::CreateInstance($_.GetType()) }
-            default { return $true }
+        # Deliberately an if/elseif chain rather than `switch ($Value) { ... }`: switch
+        # auto-enumerates an array/collection value and tests each element separately, which
+        # would break the ICollection/IEnumerable branches below (they need to test $Value as a
+        # single object, e.g. its .Count, not its first element).
+        if ($Value -is [string]) {
+            return ![string]::IsNullOrWhiteSpace($Value)
+        } elseif ($Value -is [System.Collections.ICollection]) {
+            return $Value.Count -gt 0
+        } elseif ($Value -is [System.Collections.IEnumerable]) {
+            return $Value.GetEnumerator().MoveNext()
+        } elseif ($Value -is [ValueType]) {
+            return $Value -ne [Activator]::CreateInstance($Value.GetType())
+        } else {
+            return $true
         }
     }
 }

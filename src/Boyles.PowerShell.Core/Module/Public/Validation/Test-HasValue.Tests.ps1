@@ -83,32 +83,27 @@ Describe 'Test-HasValue' {
         'hello' | Test-HasValue | Should -Be $true
     }
 
-    Context 'array inputs (known gotcha - see below)' {
-        # PowerShell's `switch` statement auto-enumerates a plain array/collection before testing
-        # any of Test-HasValue's `-is [...]` branches (it does NOT do this for a Hashtable, which
-        # switch treats as one scalar object - that's why the hashtable tests above behave as
-        # documented). For an array, this means the -is [ICollection]/[IEnumerable] branches -
-        # which are supposed to check "does the collection have any elements" - are never actually
-        # reached: switch instead evaluates the branches against the FIRST ELEMENT only, and
-        # `return` inside that case exits the function immediately. The result for an array
-        # therefore depends on the type/value of its first element, not on whether the array
-        # itself has content - these tests lock in that verified (buggy) behavior rather than the
-        # documented intent, so a fix doesn't silently change behavior unnoticed.
+    Context 'array inputs' {
+        # Regression coverage for a fixed bug: the function used to test $Value via a `switch`
+        # statement, which auto-enumerates a plain array/collection (it does NOT do this for a
+        # Hashtable, which switch treats as one scalar object - that's why the hashtable tests
+        # above were never affected). That meant the -is [ICollection] branch - meant to check
+        # "does the collection have any elements" - was never actually reached for an array:
+        # switch instead evaluated the branches against the array's FIRST ELEMENT only. An empty
+        # array returned $null (zero switch iterations), and a non-empty array's result depended
+        # on its first element's type/value rather than whether the array had content at all.
+        # Rewritten as an if/elseif chain, which tests $Value as a whole and fixes all of this.
 
-        It 'returns $null (not $false) for an empty array, because switch performs zero iterations' {
-            Test-HasValue -Value @() | Should -BeNullOrEmpty
+        It 'returns $false for an empty array' {
+            Test-HasValue -Value @() | Should -Be $false
         }
 
-        It 'returns $false for a non-empty array whose first element is a default value type, even though the array has content' {
-            Test-HasValue -Value @(0, 'real value') | Should -Be $false
+        It 'returns $true for a non-empty array, regardless of its first element' {
+            Test-HasValue -Value @(0, 'real value') | Should -Be $true
         }
 
-        It 'returns $true for a non-empty array whose first element is a non-default value type' {
-            Test-HasValue -Value @(5, 0) | Should -Be $true
-        }
-
-        It 'gives a different result for the same content in a different order (order-dependent)' {
-            Test-HasValue -Value @(0, 5) | Should -Be $false
+        It 'returns the same result regardless of element order' {
+            Test-HasValue -Value @(0, 5) | Should -Be $true
             Test-HasValue -Value @(5, 0) | Should -Be $true
         }
     }

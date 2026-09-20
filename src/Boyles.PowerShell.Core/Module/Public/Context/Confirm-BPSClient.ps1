@@ -27,13 +27,12 @@ function Confirm-BPSClient {
         [ValidateNotNullOrEmpty()]
         [string] $Key,
 
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Mandatory, Position = 1)]
         [ValidateNotNullOrEmpty()]
         [string] $ServiceName
     )
 
     if (-not (Test-BPSClient -Key $Key)) {
-        Write-Host $Key
         throw "$ServiceName is not connected!  Run Connect-$ServiceName to connect to the API."
     }
 }

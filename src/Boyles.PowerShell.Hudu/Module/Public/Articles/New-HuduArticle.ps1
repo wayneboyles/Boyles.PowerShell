@@ -40,28 +40,24 @@ function New-HuduArticle {
         [Parameter()]
         [string] $Content,
 
+        [BodyProperty('enable_sharing')]
         [Parameter()]
         [bool] $EnableSharing,
 
+        [BodyProperty('folder_id')]
         [Parameter()]
         [int] $FolderId,
 
+        [BodyProperty('company_id')]
         [Parameter()]
         [int] $CompanyId
     )
 
     $Client = Get-HuduClientInternal
 
-    $body = @{
-        name = $Name
-    }
+    $body = ConvertTo-RequestBody -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters
 
-    if ($PSBoundParameters.ContainsKey('Content') -and (Test-HasValue $Content)) { $body['content'] = $Content }
-    if ($PSBoundParameters.ContainsKey('EnableSharing')) { $body['enable_sharing'] = $EnableSharing }
-    if ($PSBoundParameters.ContainsKey('FolderId') -and (Test-HasValue $FolderId)) { $body['folder_id'] = $FolderId }
-    if ($PSBoundParameters.ContainsKey('CompanyId') -and (Test-HasValue $CompanyId)) { $body['company_id'] = $CompanyId }
-
-    Write-Verbose "Body = $body"
+    Write-Verbose "Body = $($body | ConvertTo-Json)"
 
     if ($PSCmdlet.ShouldProcess($Name, 'Create a new article in Hudu')) {
         [Boyles.PowerShell.Hudu.Models.HuduArticle] $result = $client.NewArticle($body)

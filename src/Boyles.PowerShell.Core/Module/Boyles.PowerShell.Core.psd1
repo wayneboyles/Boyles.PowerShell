@@ -1,6 +1,6 @@
 @{
     RootModule           = 'Boyles.PowerShell.Core.psm1'
-    ModuleVersion        = '0.1.0'
+    ModuleVersion        = '0.2.1'
     GUID                 = '5b06397d-8350-4a54-8751-b7e44f80adb2'
     Author               = 'Wayne Boyles'
     CompanyName          = 'Wayne Boyles'
@@ -42,6 +42,9 @@
         'Remove-BPSSetting'
         'Reset-BPSSetting'
         'Set-BPSSetting'
+
+        'ConvertTo-RequestBody'
+        'ConvertTo-RequestQuery'
     )
 
     CmdletsToExport      = @()
@@ -58,7 +61,7 @@
             Tags         = @('Boyles', 'Http', 'Rest', 'Authentication')
             ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
             LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
-            ReleaseNotes = 'Initial scaffold.'
+            ReleaseNotes = ''
         }
     }
 }

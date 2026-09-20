@@ -98,9 +98,6 @@ function Register-BPSArgumentCompleter {
     $completer = {
         param($commandNameParam, $parameterNameParam, $wordToComplete, $commandAst, $fakeBoundParameters)
 
-        # DEBUG
-        "$(Get-Date -Format o) INVOKED command=$commandNameParam param=$parameterNameParam word='$wordToComplete' cacheKey='$CacheKey'" | Add-Content "$env:TEMP\bps-completer.log"
-
         try {
             $now = [DateTimeOffset]::UtcNow
             $entry = $null
@@ -110,9 +107,6 @@ function Register-BPSArgumentCompleter {
                 try {
                     $values = & $ValueProvider $fakeBoundParameters
                 } catch {
-                    # DEBUG
-                    "$(Get-Date -Format o) VALUEPROVIDER THREW: $($_.Exception.Message)" | Add-Content "$env:TEMP\bps-completer.log"
-
                     # Most commonly: the relevant Connect-* cmdlet hasn't been run yet. Fall back to
                     # whatever is already cached (possibly nothing) rather than throwing out of Tab.
                     $values = if ($cacheHit) { $entry.Values } else { @() }
@@ -125,9 +119,6 @@ function Register-BPSArgumentCompleter {
 
                 $cache[$CacheKey] = $entry
             }
-
-            # DEBUG
-            "$(Get-Date -Format o) cacheHit=$cacheHit candidateCount=$($entry.Values.Count) sample='$($entry.Values | Select-Object -First 1)'" | Add-Content "$env:TEMP\bps-completer.log"
 
             $matchCount = 0
 
@@ -151,13 +142,8 @@ function Register-BPSArgumentCompleter {
                 )
             }
 
-            # DEBUG
-            "$(Get-Date -Format o) matchCount=$matchCount" | Add-Content "$env:TEMP\bps-completer.log"
         } catch {
-            # DEBUG - this is the one that matters: PowerShell's completion engine swallows any
-            # exception thrown by a completer scriptblock with no error and no hang, so without this
-            # outer catch a bug here looks identical to "nothing happened".
-            "$(Get-Date -Format o) COMPLETER THREW: $($_.Exception.GetType().FullName): $($_.Exception.Message)`nAt: $($_.ScriptStackTrace)" | Add-Content "$env:TEMP\bps-completer.log"
+
         }
     }.GetNewClosure()
 

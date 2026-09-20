@@ -38,5 +38,5 @@ function Connect-Hudu {
 
     Add-BPSClient -Key $Key -Client $Client
 
-    Write-Verbose "Connected to Hudu at '$BaseUri' and registered the client under key '$Key'."
+    Write-Verbose "Connected to Hudu at '$BaseUrl' and registered the client under key '$Key'."
 }

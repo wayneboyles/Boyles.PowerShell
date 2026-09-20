@@ -38,6 +38,7 @@ function Set-HuduArticle {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduArticle])]
     param (
+        [BodyIgnore()]
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         [int] $Id,
 
@@ -47,12 +48,15 @@ function Set-HuduArticle {
         [Parameter()]
         [string] $Content,
 
+        [BodyProperty('enable_sharing')]
         [Parameter()]
         [bool] $EnableSharing,
 
+        [BodyProperty('folder_id')]
         [Parameter()]
         [int] $FolderId,
 
+        [BodyProperty('company_id')]
         [Parameter()]
         [int] $CompanyId
     )
@@ -60,15 +64,9 @@ function Set-HuduArticle {
 
         $Client = Get-HuduClientInternal
 
-        $body = @{}
+        $body = ConvertTo-RequestBody -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters
 
-        if ($PSBoundParameters.ContainsKey('Name') -and (Test-HasValue $Name)) { $body['name'] = $Name }
-        if ($PSBoundParameters.ContainsKey('Content') -and (Test-HasValue $Content)) { $body['content'] = $Content }
-        if ($PSBoundParameters.ContainsKey('EnableSharing')) { $body['enable_sharing'] = $EnableSharing }
-        if ($PSBoundParameters.ContainsKey('FolderId') -and (Test-HasValue $FolderId)) { $body['folder_id'] = $FolderId }
-        if ($PSBoundParameters.ContainsKey('CompanyId') -and (Test-HasValue $CompanyId)) { $body['company_id'] = $CompanyId }
-
-        Write-Verbose "Body = $body"
+        Write-Verbose "Body = $($body | ConvertTo-Json)"
 
         if ($PSCmdlet.ShouldProcess($Id, 'Update the Article')) {
 

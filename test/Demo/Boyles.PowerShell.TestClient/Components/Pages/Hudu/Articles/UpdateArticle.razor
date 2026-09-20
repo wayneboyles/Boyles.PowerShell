@@ -1,0 +1,118 @@
+@page "/hudu/articles/update-article"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateArticle</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateArticle</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateArticleAsync</code> — PUT <code>/api/v1/articles/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Article Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_articleId" />
+                    </div>
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="_model.Name" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content</label>
+                            <InputTextArea class="form-control" rows="6" @bind-Value="_model.Content" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Folder Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.FolderId" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Company Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.CompanyId" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_enableSharing" />
+                                <span class="form-check-label">Enable sharing</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@(_busy || _articleId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly UpdateArticleModel _model = new();
+    private bool _enableSharing;
+    private int? _articleId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_articleId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            _model.EnableSharing = _enableSharing;
+
+            var result = await HuduConnection.Client!.UpdateArticleAsync(_articleId.Value, _model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class UpdateArticleModel
+    {
+        public string? Name { get; set; }
+        public string? Content { get; set; }
+        public bool? EnableSharing { get; set; }
+        public int? FolderId { get; set; }
+        public int? CompanyId { get; set; }
+    }
+}

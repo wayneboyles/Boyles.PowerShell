@@ -1,6 +1,6 @@
 ﻿[CmdletBinding()]
 param (
-    [Parameter(Mandatory)]
+    [Parameter()]
     [ValidateSet('Hudu')]
     [string] $Environment,
 
@@ -24,18 +24,6 @@ $ModuleNames = @(
 
 $RepoRoot = Split-Path -Path $PSScriptRoot -Parent
 $SrcRoot = Join-Path -Path $RepoRoot -ChildPath 'src'
-
-$vendorSecretMap = @{
-    Hudu = @{
-        Secrets    = @('Hudu.ApiKey', 'Hudu.BaseUrl')
-        ConnectCmd = {
-            param ($secrets)
-            Connect-Hudu -BaseUrl $secrets['Hudu.BaseUrl'] -ApiKey $secrets['Hudu.ApiKey']
-        }
-    }
-}
-
-$vendorConfig = $vendorSecretMap[$Environment]
 
 #===========================================================================
 # FUNCTIONS
@@ -78,15 +66,6 @@ function Import-DevModule {
 #===========================================================================
 
 Set-StrictMode -Version Latest
-
-# Import our helper files
-. .\SecretHelpers.ps1
-
-# Build our secrets
-$secrets = @{}
-foreach ($secretName in $vendorConfig.Secrets) {
-    $secrets[$secretName] = Get-GranadeSecret -Name $secretName
-}
 
 # Header
 Write-Host ''
@@ -165,6 +144,11 @@ Write-Host ''
 
 Write-Host 'Connecting to Hudu' -ForegroundColor Cyan
 
-Connect-Hudu -BaseUrl $secrets['Hudu.BaseUrl'] -ApiKey $secrets['Hudu.ApiKey']
+$HuduBaseUrl = Get-Secret -Name 'Hudu.BaseUrl' -Vault 'Boyles.PowerShell' | ConvertFrom-SecureString -AsPlainText
+$HuduApiKey = Get-Secret -Name 'Hudu.ApiKey' -Vault 'Boyles.PowerShell' | ConvertFrom-SecureString -AsPlainText
 
-Write-Host 'Connected to Hudu!' -ForegroundColor Green
+Connect-Hudu -BaseUrl $HuduBaseUrl -ApiKey $HuduApiKey
+
+Write-Host 'Connected to Hudu!' -ForegroundColor Cyan
+
+Write-Host ''

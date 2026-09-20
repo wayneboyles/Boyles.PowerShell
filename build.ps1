@@ -33,6 +33,9 @@ param(
     [switch] $Bootstrap,
 
     [Parameter()]
+    [switch] $SetSecrets,
+
+    [Parameter()]
     [string[]] $Task = 'Build',
 
     [Parameter()]
@@ -56,6 +59,36 @@ if ($Bootstrap) {
     Invoke-PSDepend -Path "$PSScriptRoot/requirements.psd1" -Install -Import -Force
 
     Write-Host 'Bootstrap complete.' -ForegroundColor Green
+    Write-Host ''
+
+    exit 0
+}
+
+if ($SetSecrets) {
+    Write-Host 'Creating secrets vault for testing...' -ForegroundColor Cyan
+    Write-Host ''
+
+    if (-not (Get-Module -Name 'Microsoft.PowerShell.SecretManagement' -ListAvailable) -or -not (Get-Module -Name 'Microsoft.PowerShell.SecretStore' -ListAvailable)) {
+        throw 'Run .\build.ps1 -Bootstrap to install the required dependencies.'
+    }
+
+    $VaultName = 'Boyles.PowerShell'
+
+    $Vault = Get-SecretVault -Name $VaultName -ErrorAction SilentlyContinue
+    if ($null -eq $Vault) {
+        $Vault = Register-SecretVault -Name $VaultName -ModuleName Microsoft.PowerShell.SecretStore
+    }
+
+    $huduBaseUrl = Read-Host 'Enter the Hudu Base URL'
+    $huduApiKey = Read-Host 'Enter the Hudu API Key'
+
+    Set-Secret -Name 'Hudu.BaseUrl' -Vault $VaultName -Secret $huduBaseUrl
+    Set-Secret -Name 'Hudu.ApiKey' -Vault $VaultName -Secret $huduApiKey
+
+    Write-Host 'Secrets set.' -ForegroundColor Cyan
+    Write-Host ''
+
+    exit 0
 }
 
 $ModuleSourceDirs = @()

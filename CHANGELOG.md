@@ -7,6 +7,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-09-19
+
+### Added
+
+- [**Demo**] Added demo pages for Activity Logs, Articles and API Info.
+- [**Hudu**] Added Asset Password functions.
+- [**Demo**] Added demo pages for Asset Password functions.
+- [**Core**] Added `ConvertTo-RequestBody` to automatically build a body object from parameters.
+- [**Core**] Added two new attributes, `BodyProperty` and `BodyIgnore`.
+
+### Fixed
+
+- [**Core**] Fixed Confirm-BPSClient parameter positions.
+- [**Hudu**] Fixed Get-HuduActivityLogs parameter validation.
+- [**Core**] Fixed Test-HasValue.
+
+### Changed
+
+- [**Hudu**] Changed parameter validation logic to use `ConvertTo-RequestBody`.
+- Changed the build script to include secrets management for testing easily.
+
+### Removed
+
+- [**Core**] Cleaned up left over debugging lines.
+
 ## [0.1.0] - 2026-09-18
 
 ### Added
