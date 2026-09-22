@@ -56,3 +56,7 @@ Export-ModuleMember -Function $publicFunctions.BaseName
 Register-BPSArgumentCompleter -CommandName Get-HuduCompany -ParameterName Name -CacheSeconds 300 -ValueProperty Name -ToolTipProperty Id -ValueProvider {
     (Get-HuduClientInternal).GetCompanies()
 }
+
+Register-BPSArgumentCompleter -CommandName Get-HuduAsset -ParameterName AssetLayout -CacheSeconds 300 -ValueProperty Name -ToolTipProperty Id -ValueProvider {
+    (Get-HuduClientInternal).GetAssetLayouts()
+}

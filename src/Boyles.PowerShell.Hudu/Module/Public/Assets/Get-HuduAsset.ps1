@@ -96,12 +96,17 @@ function Get-HuduAsset {
         [ValidateRange(1, [int]::MaxValue)]
         [int] $CompanyId,
 
-        [BodyProperty('primary_serial')]
         [Parameter()]
+        [BodyProperty('primary_serial')]
         [string] $PrimarySerial,
 
+        [Parameter(ParameterSetName = 'ByLayoutName')]
+        [BodyIgnore()]
+        [ValidateNotNullOrEmpty()]
+        [string] $AssetLayout,
+
+        [Parameter(ParameterSetName = 'ByLayoutId')]
         [BodyProperty('asset_layout_id')]
-        [Parameter()]
         [ValidateRange(1, [int]::MaxValue)]
         [int] $AssetLayoutId,
 
@@ -156,7 +161,15 @@ function Get-HuduAsset {
             return $assets
         }
 
+        $layoutId = 0
+
+        if ($PSCmdlet.ParameterSetName -eq 'ByLayoutName') {
+            $layoutId = (Get-HuduAssetLayout -Name $AssetLayout).Id
+        }
+
         $query = ConvertTo-RequestBody -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters
+        $query['asset_layout_id'] = $layoutId
+
         $queryDict = $query | ConvertTo-StringDictionary
 
         [Boyles.PowerShell.Hudu.Models.HuduAsset[]] $assets = $client.GetAssets($queryDict)
