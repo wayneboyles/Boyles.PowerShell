@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [**Core**] Added two new attributes, `BodyProperty` and `BodyIgnore` for body parameter building.
 - [**Core**] Added two new attributes, `QueryProperty` and `QueryIgnore` for query parameter building.
 - [**Hudu**] Added Asset functions.
+- [**Hudu**] Added argument completer to `Get-HuduAsset` for the `AssetLayout` parameter.
 
 ### Fixed
 

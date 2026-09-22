@@ -8,84 +8,13 @@ module per service - each service module pairs a thin PowerShell layer with a
 C# class library that owns HTTP/auth concerns.
 
 **This repo is under active scaffolding.** The layout below reflects what
-actually exists today; see [Known drift](#known-drift) for the gaps between
-that and the intended end state.
+actually exists today.
 
-| Module                     | Purpose                                                                                                                                                 |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Boyles.PowerShell`        | Umbrella/meta-module. No cmdlets of its own - importing it imports every module below via `RequiredModules`.                                            |
-| `Boyles.PowerShell.Core`   | Shared authentication, HTTP transport, retry/pagination/JSON pipeline, diagnostics, and the client context cache. Every service module depends on this. |
-| `Boyles.PowerShell.Hudu`   | Service module for [Hudu](https://www.hudu.com/), backed by a `HuduClient` C# library.                                                                  |
-| `Boyles.PowerShell.Common` | Shared models/helpers used across service modules. Currently scaffolded but empty (`Public`/`Private` have no cmdlets yet).                             |
-
-## Repository layout
-
-```
-Boyles.PowerShell/
-├── Boyles.PowerShell.slnx
-├── Directory.Build.props              # shared MSBuild settings for every csproj
-├── build.ps1                          # delegates to psake (see Known drift)
-├── psakefile.ps1                      # Init/Clean tasks - currently empty stubs
-├── requirements.psd1                  # PSDepend manifest (psake, Pester, PSScriptAnalyzer, ...)
-├── PSScriptAnalyzerSettings.psd1
-├── global.json
-├── NuGet.Config
-├── src/
-│   ├── Boyles.PowerShell/             # umbrella module (psd1/psm1 only, no C#)
-│   │   ├── Boyles.PowerShell.psd1
-│   │   └── Boyles.PowerShell.psm1
-│   ├── Boyles.PowerShell.Core/
-│   │   ├── Boyles.PowerShell.Core.csproj
-│   │   ├── Boyles/PowerShell/         # namespace mirrored as literal folders (RootNamespace = '')
-│   │   │   ├── Authentication/        # IAuthenticationProvider + implementations
-│   │   │   ├── Context/               # ContextCache (process-wide client store)
-│   │   │   ├── Diagnostics/           # IHttpDiagnosticsSink, HttpCallRecord(Builder)
-│   │   │   ├── Exceptions/            # ApiException
-│   │   │   ├── Http/                  # HttpTransport (shared SocketsHttpHandler)
-│   │   │   └── HttpClients/           # HttpClientBase (retry/pagination/JSON pipeline)
-│   │   ├── System/                    # ObjectExtensions
-│   │   └── Module/                    # the PowerShell module half
-│   │       ├── Boyles.PowerShell.Core.psd1
-│   │       ├── Boyles.PowerShell.Core.psm1
-│   │       ├── Public/
-│   │       │   ├── Banner/            # Show-ScriptBanner
-│   │       │   ├── Context/           # Add/Get/Test/Remove-BPSClient, Get-BPSClientKey
-│   │       │   └── Logging/           # Write-Log, Write-Header, Write-Step, Write-Done, Write-Skip, Write-Err
-│   │       ├── Private/
-│   │       ├── en-US/                 # about_* help
-│   │       └── bin/                   # compiled DLLs land here (build output, gitignored)
-│   ├── Boyles.PowerShell.Hudu/        # same shape as Core
-│   │   ├── Boyles.PowerShell.Hudu.csproj
-│   │   ├── Services/                  # HuduClient
-│   │   └── Module/
-│   │       ├── Boyles.PowerShell.Hudu.psd1
-│   │       ├── Boyles.PowerShell.Hudu.psm1
-│   │       ├── Public/                # Connect-Hudu
-│   │       ├── Private/
-│   │       ├── en-US/
-│   │       └── bin/
-│   └── Boyles.PowerShell.Common/      # same shape as Hudu; C# side and cmdlets not yet written
-│       ├── Boyles.PowerShell.Common.csproj
-│       ├── Models/
-│       └── Module/
-│           ├── Boyles.PowerShell.Common.psd1
-│           ├── Boyles.PowerShell.Common.psm1
-│           ├── Public/
-│           ├── Private/
-│           ├── en-US/
-│           └── bin/
-├── test/
-│   ├── Boyles.PowerShell.Core.Tests/Boyles.PowerShell.Core.Tests/   # xUnit tests for Core (doubly-nested path)
-│   ├── Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests/   # xUnit tests for Hudu (doubly-nested path)
-│   └── Pester/                        # Core.Tests.ps1, Hudu.Tests.ps1 - run against a staged ./out
-├── tools/
-│   └── New-Submodule.ps1              # scaffolds a new Boyles.PowerShell.<Service>
-└── docs/                              # currently empty
-```
-
-Each service module pairs a `Module/` folder (the thing PowerShell imports)
-with a sibling C# project (`Services/`, `Models/`, etc.) - the same
-"library + module" split used throughout `azure-powershell`.
+| Module                   | Purpose                                                                                                                                                 |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Boyles.PowerShell`      | Umbrella/meta-module. No cmdlets of its own - importing it imports every module below via `RequiredModules`.                                            |
+| `Boyles.PowerShell.Core` | Shared authentication, HTTP transport, retry/pagination/JSON pipeline, diagnostics, and the client context cache. Every service module depends on this. |
+| `Boyles.PowerShell.Hudu` | Service module for [Hudu](https://www.hudu.com/), backed by a `HuduClient` C# library.                                                                  |
 
 ## How the pieces connect
 

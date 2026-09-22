@@ -11,20 +11,21 @@ PowerShell layer with a C# class library that owns HTTP/auth concerns.
 
 **This repo is under active scaffolding — the docs, tests, and tooling describe the intended end
 state, not always the current one.** Before relying on anything below as fact, check the actual
-files; several pieces described in `README.md` and `test/Pester/*.Tests.ps1` do not exist yet (see
-"Known drift" below).
+files; several pieces described in `README.md` do not exist yet (see "Known drift" below).
 
 ## Commands
 
 ```powershell
-./build.ps1                      # dotnet-builds Core+Hudu and stages Module/ folders into ./out (via psake)
+./build.ps1                      # dotnet-builds Core+Hudu, stages Module/ folders into ./out, runs Pester (via psake)
 ./build.ps1 -Bootstrap           # installs PSDepend + the modules in requirements.psd1, then Invoke-PSDepend
-./build.ps1 -Task <TaskName>     # run a specific psake task from psakefile.ps1 (Init, Clean, BuildCSharp, BuildPowerShell, Build)
+./build.ps1 -SetSecrets          # registers a SecretManagement vault and prompts for Hudu.BaseUrl/Hudu.ApiKey (manual/demo testing)
+./build.ps1 -Task <TaskName>     # run specific psake task(s) from psakefile.ps1: Init, Clean, BuildCSharp,
+                                  # BuildPowerShell, TestPowerShell, Test (=TestPowerShell), Full (=Build+Test), Package
 ./build.ps1 -Configuration Release
 
 dotnet build Boyles.PowerShell.slnx     # compiles the C# projects directly (Core, Hudu) without staging ./out
 dotnet test                             # run the xUnit test suites under test/*.Tests/
-Invoke-Pester ./test/Pester             # run the Pester suites — requires a populated ./out first (see Known drift)
+Invoke-Pester ./src                     # run the co-located Pester specs directly, no build required (see below)
 ```
 
 To add a new service module (scaffolds the C# project + Module folder + an xUnit3 test project,
@@ -33,9 +34,12 @@ adds both to the .slnx, wires in the `Boyles.PowerShell.Core` reference):
 ```powershell
 ./tools/New-Submodule.ps1 -ServiceName ITGlue
 ```
-(`README.md` calls this `New-BoylesSubmodule.ps1` — the actual file is `tools/New-Submodule.ps1`.)
+
 It does **not** add the module to the umbrella — once it's ready to ship, add it by hand to
-`RequiredModules` in `src/Boyles.PowerShell/Boyles.PowerShell.psd1`.
+`RequiredModules` in `src/Boyles.PowerShell/Boyles.PowerShell.psd1`. `tools/` also has
+`New-HttpClient.ps1` (scaffolds a new `HttpClientBase`-derived client + partial-class resource file
+for an existing service), and `Test-Module.ps1` / `Test-Functions.ps1` / `Invoke-TestModuleWindow.ps1`
+for interactively importing `./out` and poking at cmdlets in a scratch console.
 
 Linting follows `PSScriptAnalyzerSettings.psd1` (kept in lock-step with `.vscode/settings.json`'s
 PowerShell formatter settings — OTBS brace style, 4-space indent, no cmdlet aliases, 120-char
@@ -45,32 +49,39 @@ lines):
 Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
 ```
 
+### Pester tests live next to the cmdlets they test
+
+Unlike `dotnet test` (which targets the doubly-nested `test/*.Tests/` xUnit projects), the _working_
+Pester suite is co-located as `<Verb-Noun>.Tests.ps1` right beside each cmdlet under
+`src/<Module>/Module/Public/**/` (e.g. `Module/Public/Context/Add-BPSClient.Tests.ps1`,
+`Module/Public/Settings/Get-BPSSetting.Tests.ps1`). The psake `TestPowerShell` task (`Test`/`Full`)
+runs `Invoke-Pester` with `Run.Path = src`, so it discovers these automatically — no `./out` build is
+required first, unlike what `Known drift` used to say about `test/Pester`. Add new cmdlet tests here,
+next to the cmdlet, not under `test/Pester` (see Known drift below for why that folder is legacy).
+
 ## Known drift (read before trusting docs/tests)
 
-- **`build.ps1` now actually builds.** It delegates to `Invoke-Psake` against `psakefile.ps1`,
-  whose `Init`/`Clean`/`BuildCSharp`/`BuildPowerShell` tasks are fully implemented — running it
-  `dotnet build`s each module's `.csproj` and stages its `Module/` folder into `./out/<ModuleName>`.
-  There is still a large block of dead legacy code in `build.ps1` after the real
-  `exit ([int](-not $psake.build_success))` near the top of the file — it never runs and can be
-  ignored (or deleted) rather than mistaken for what actually executes.
-- **`test/Pester/*.Tests.ps1` expect cmdlets that still don't exist.** `Core.Tests.ps1` calls
-  `Connect-Boyles`, `Disconnect-Boyles`, and `Get-BoylesContext` — a *connection*-level API (base
+- **`build.ps1` now actually builds.** It delegates to `Invoke-Psake` against `psakefile.ps1`, whose
+  `Init`/`Clean`/`BuildCSharp`/`BuildPowerShell`/`TestPowerShell`/`Package` tasks are fully
+  implemented — running it `dotnet build`s each module's `.csproj`, stages its `Module/` folder into
+  `./out/<ModuleName>`, and (by default) runs the co-located Pester suite described above.
+- **`test/Pester/*.Tests.ps1` are stale and expect cmdlets that don't exist.** `Core.Tests.ps1` calls
+  `Connect-Boyles`, `Disconnect-Boyles`, and `Get-BoylesContext` — a _connection_-level API (base
   URI + API key + service name) distinct from the generic client store that now exists
   (`ContextCache` / `Add-BPSClient` / `Get-BPSClient`, see Architecture below). `Hudu.Tests.ps1`
   similarly expects `Connect-BoylesHudu` and `Get-BoylesHuduAsset`, but the actual cmdlets are named
-  `Connect-Hudu`/`Disconnect-Hudu` and there is no `Get-HuduAsset` yet (only the `*-HuduCompany`
-  family exists). None of these Pester expectations match current naming; they'll keep failing
-  until either the tests or the connection-level layer/naming are reconciled.
+  `Connect-Hudu`/`Disconnect-Hudu` and `Get-HuduAsset`. These have been superseded by the co-located
+  `*.Tests.ps1` files under `src/` (see Commands above) — treat `test/Pester/` as dead until either
+  it's deleted or reconciled with current naming, whichever comes first.
 - **`Boyles.PowerShell.Common` has been removed.** `README.md` still describes a
   `Boyles.PowerShell.Common` module; it no longer exists in `src/` or in `Boyles.PowerShell.slnx`.
   Only `Boyles.PowerShell` (umbrella), `Boyles.PowerShell.Core`, and `Boyles.PowerShell.Hudu` exist
   today.
-- **Every module's `.psm1` was silently exporting almost nothing** because its `Get-ChildItem` over
-  `Public`/`Private` had no `-Recurse`, so any cmdlet grouped into a subfolder (`Public/Banner/`,
-  `Public/Logging/`, `Public/Context/`, ...) never got dot-sourced or exported — only files directly
-  in `Public/`'s root loaded. Fixed (added `-Recurse`) in `Boyles.PowerShell.Core.psm1`,
-  `Boyles.PowerShell.Hudu.psm1`, and the `tools/New-Submodule.ps1` template. If you ever add a
-  cmdlet and `Get-Command` doesn't see it, check this first.
+- **Every module's `.psm1` must `Get-ChildItem -Recurse`** over `Public`/`Private`, or any cmdlet
+  grouped into a subfolder (`Public/Banner/`, `Public/Settings/`, `Public/Context/`, ...) never gets
+  dot-sourced or exported — only files directly in `Public/`'s root would load. This is already fixed
+  in `Boyles.PowerShell.Core.psm1`, `Boyles.PowerShell.Hudu.psm1`, and the `tools/New-Submodule.ps1`
+  template. If you ever add a cmdlet and `Get-Command` doesn't see it, check this first.
 - **C# source layout mirrors the target namespace as literal folders**, e.g.
   `src/Boyles.PowerShell.Core/Boyles/PowerShell/Authentication/*.cs` for namespace
   `Boyles.PowerShell.Authentication`. `Boyles.PowerShell.Core.csproj` sets `RootNamespace` to empty
@@ -81,8 +92,9 @@ Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
   `test/Boyles.PowerShell.Hudu.Tests/Boyles.PowerShell.Hudu.Tests/*.csproj`), not the single level
   the README's tree diagram shows.
 - **`test/Demo/Boyles.PowerShell.TestClient`** is a standalone Blazor Server app used for manual,
-  interactive smoke-testing against a real Hudu instance. It is not part of `Boyles.PowerShell.slnx`
-  and is not touched by `build.ps1`/psake or `dotnet test`.
+  interactive smoke-testing against a real Hudu instance (`./build.ps1 -SetSecrets` provisions the
+  `Hudu.BaseUrl`/`Hudu.ApiKey` secrets it reads). It is not part of `Boyles.PowerShell.slnx` and is
+  not touched by `build.ps1`/psake or `dotnet test`.
 
 ## Architecture
 
@@ -96,11 +108,40 @@ Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
   `SocketsHttpHandler`/`HttpClientHandler` shared across all client instances so sockets pool),
   the retry/pagination/JSON pipeline (`HttpClients/HttpClientBase.cs`), diagnostics (`Diagnostics/`
   — `IHttpDiagnosticsSink` + `HttpCallRecordBuilder` build redacted request/response records per
-  HTTP attempt), exceptions (`Exceptions/ApiException.cs`), and the client state store
-  (`Context/ContextCache.cs`, namespace `Boyles.PowerShell.Context`). It also carries small
-  cross-cutting PowerShell utility cmdlets not tied to any one service: `Module/Public/Validation/`
-  (`Test-HasValue`, `Test-RequiredValue`) and `Module/Public/Collections/`
-  (`ConvertTo-StringDictionary`, `ConvertFrom-JToken`).
+  HTTP attempt), exceptions (`Exceptions/ApiException.cs`), the client state store
+  (`Context/ContextCache.cs`, namespace `Boyles.PowerShell.Context`), request-shaping attributes
+  (`Attributes/` — `BodyPropertyAttribute`/`BodyIgnoreAttribute`/`QueryPropertyAttribute`/
+  `QueryIgnoreAttribute`, all `namespace Boyles.PowerShell.Attributes`), and a process-wide settings
+  store (`Settings/SettingsStore.cs`, backed by `ISettingsPersistence` — a JSON file on disk by
+  default via `JsonFileSettingsPersistence`). It also carries small cross-cutting PowerShell utility
+  cmdlets not tied to any one service: `Module/Public/Validation/` (`Test-HasValue`,
+  `Test-RequiredValue`), `Module/Public/Collections/` (`ConvertTo-StringDictionary`,
+  `ConvertFrom-JToken`, `ConvertTo-RequestBody`, `ConvertTo-RequestQuery`),
+  `Module/Public/Completion/` (`Register-BPSArgumentCompleter`), and `Module/Public/Settings/`
+  (`Get-BPSSetting`, `Set-BPSSetting`, `Remove-BPSSetting`, `Reset-BPSSetting`,
+  `Get-BPSSettingPath`).
+- **Request-shaping attributes + `ConvertTo-RequestBody`/`ConvertTo-RequestQuery`**: rather than each
+  cmdlet hand-assembling a body/query hashtable, a parameter is decorated with
+  `[BodyProperty('json_name')]` (or `[QueryProperty('json_name')]`; `[BodyIgnore]`/`[QueryIgnore]` to
+  opt a parameter out), and the cmdlet calls
+  `ConvertTo-RequestBody -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters`
+  to get back a hashtable of just the bound, attributed parameters keyed by their JSON name — so
+  route/path parameters (e.g. `-CompanyId`) can sit alongside body parameters without special-casing.
+  See any cmdlet under `Boyles.PowerShell.Hudu/Module/Public/Articles/` or `AssetLayouts/` for the
+  pattern; this is the newer, preferred approach over hand-building envelopes in C# (see
+  `HuduRequestBuilder` below, still used by `Assets`/`AssetLayouts` for Hudu's nested
+  `custom_fields`/`fields` envelope shape).
+- **`Register-BPSArgumentCompleter`**: a generic, cached wrapper around
+  `Register-ArgumentCompleter` every module uses for tab-completion, so a service only supplies a
+  `ValueProvider` scriptblock (e.g. `HuduClient.GetCompanies()`) and gets caching (default 300s,
+  per `CacheKey`), typed-so-far filtering, and safe fallback-to-stale-cache-on-error for free. See
+  `Get-HuduAsset`'s `-AssetLayout` completer for a working example.
+- **Settings store** (`Settings/SettingsStore.cs`): a process-wide singleton
+  (`SettingsStore.Instance`) that HTTP clients and cmdlets read/write through for cross-cutting flags
+  — currently just `DebugEnabled` — persisted to a JSON file so a value set via `Set-BPSSetting` in
+  one session is visible next session too. Wrapped for PowerShell by `Get-BPSSetting`,
+  `Set-BPSSetting`, `Remove-BPSSetting`, `Reset-BPSSetting`, and `Get-BPSSettingPath`
+  (`Module/Public/Settings/`).
 - **Client state store** (`Context/ContextCache.cs`): a static, thread-safe
   `ConcurrentDictionary<string, object>` mapping a caller-chosen key to a connected service client
   (e.g. a `HuduClient`). A service module's `Connect-*` cmdlet builds its client and calls
@@ -122,20 +163,24 @@ Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
 - **`Boyles.PowerShell.Hudu` internal layout** — the pattern to follow when adding another Hudu
   resource area (or scaffolding a new service): `HuduClient` is split into `partial class` files per
   resource under `Services/` (`HuduClient.cs` for the core/shared plumbing, plus
-  `HuduClient.Companies.cs`, `HuduClient.Assets.cs`, `HuduClient.AssetLayouts.cs`), `Models/` holds
-  the plain POCOs returned/sent for each resource (`HuduCompany`, `HuduAsset`, `HuduAssetLayout`,
-  `HuduAssetField`, ...), and `Builders/HuduRequestBuilder.cs` is an internal static class that
-  assembles the nested request JSON Hudu's API expects (e.g. wrapping a body in an `"asset"` or
-  `"asset_layout"` envelope alongside a `custom_fields`/`fields` array) — keeping that shaping logic
-  out of the client methods and cmdlets. `Module/Public/Companies/` currently holds the
-  `*-HuduCompany` cmdlet family (Get/New/Set/Remove/Enable/Disable) as the reference example of a
-  full CRUD cmdlet set built on this client.
+  `HuduClient.ActivityLogs.cs`, `HuduClient.ApiInfo.cs`, `HuduClient.Articles.cs`,
+  `HuduClient.AssetLayouts.cs`, `HuduClient.AssetPasswords.cs`, `HuduClient.Assets.cs`,
+  `HuduClient.Companies.cs`), `Models/` holds the plain POCOs returned/sent for each resource
+  (`HuduCompany`, `HuduAsset`, `HuduAssetLayout`, `HuduAssetField`, ...), and
+  `Builders/HuduRequestBuilder.cs` is an internal static class that assembles the nested request JSON
+  Hudu's API expects for `Assets`/`AssetLayouts` (wrapping a body in an `"asset"`/`"asset_layout"`
+  envelope alongside a `custom_fields`/`fields` array) — keeping that shaping logic out of the client
+  methods and cmdlets; newer resources prefer `ConvertTo-RequestBody` (above) over adding to this
+  builder. `Module/Public/` has one folder per resource — `ActivityLogs/`, `ApiInfo/`, `Articles/`,
+  `AssetLayouts/`, `AssetPasswords/`, `Assets/`, `Companies/`, `Connectivity/` — each following the
+  full CRUD cmdlet-family pattern (`*-HuduCompany`'s Get/New/Set/Remove/Enable/Disable is the
+  original reference example).
 - **Module loading pattern** (every module's `.psm1`): before `Add-Type`-ing its own compiled
   assembly, each `.psm1` registers an `AssemblyResolve` handler pointed at its own `Module\bin`
   folder, so dependency DLLs (e.g. `Newtonsoft.Json.dll`) resolve correctly under both Windows
-  PowerShell 5.1 and PowerShell 7+. It then dot-sources every `.ps1` found *recursively* under
-  `Public/` and `Private/` (subfolders like `Public/Context/`, `Public/Logging/` are expected — see
-  the `-Recurse` fix noted above) and exports only the `Public` function names. `tools/New-Submodule.ps1`
+  PowerShell 5.1 and PowerShell 7+. It then dot-sources every `.ps1` found _recursively_ under
+  `Public/` and `Private/` (subfolders like `Public/Context/`, `Public/Settings/` are expected — see
+  the `-Recurse` note above) and exports only the `Public` function names. `tools/New-Submodule.ps1`
   generates this same `.psm1` boilerplate for new modules — copy that pattern rather than
   reinventing it.
 - **Build wiring per C# project**: every module's `.csproj` sets `TargetFramework=netstandard2.0`
