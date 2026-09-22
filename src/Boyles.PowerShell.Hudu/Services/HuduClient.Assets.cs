@@ -1,4 +1,3 @@
-using System.ComponentModel.Design;
 using System.Globalization;
 
 using Boyles.PowerShell.Hudu.Builders;
@@ -6,284 +5,191 @@ using Boyles.PowerShell.Hudu.Models;
 
 namespace Boyles.PowerShell.Hudu.Services
 {
+    /// <summary>
+    /// Partial class containing Hudu asset-related API operations.
+    /// </summary>
     public partial class HuduClient
     {
-        public HuduAsset GetAssetsForCompany(int companyId, Dictionary<string, string>? query = null) => Sync(GetAssetsForCompanyAsync(companyId, query));
-
-        public async Task<HuduAsset> GetAssetsForCompanyAsync(int companyId, Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
-        {
-            return new HuduAsset();
-        }
-
+        /// <summary>
+        /// Retrieves all assets from the Hudu API synchronously.
+        /// </summary>
+        /// <param name="query">Optional query string parameters used to filter the results.</param>
+        /// <returns>A list of all matching <see cref="HuduAsset"/> records.</returns>
         public List<HuduAsset> GetAssets(Dictionary<string, string>? query = null) => Sync(GetAssetsAsync(query));
 
+        /// <summary>
+        /// Retrieves all assets from the Hudu API asynchronously.
+        /// </summary>
+        /// <param name="query">Optional query string parameters used to filter the results.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to a list of all matching <see cref="HuduAsset"/> records.</returns>
         public async Task<List<HuduAsset>> GetAssetsAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/assets", ApiRoot);
             return await GetAllPagesAsync<HuduAsset>(path, query, itemsProperty: "assets", offsetParam: "page", limitParam: "page_size");
         }
 
-        public HuduArticle ArchiveAsset(int id, int companyId) => Sync(ArchiveAssetAsync(id, companyId));
+        /// <summary>
+        /// Retrieves all assets belonging to a specific company synchronously, using the
+        /// lighter company-scoped list endpoint.
+        /// </summary>
+        /// <param name="companyId">The unique identifier of the company whose assets should be retrieved.</param>
+        /// <param name="query">Optional query string parameters used to filter the results.</param>
+        /// <returns>A list of matching <see cref="HuduAsset"/> records for the given company.</returns>
+        public List<HuduAsset> GetAssetsForCompany(int companyId, Dictionary<string, string>? query = null) => Sync(GetAssetsForCompanyAsync(companyId, query));
 
-        public async Task<HuduArticle> ArchiveAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Retrieves all assets belonging to a specific company asynchronously, using the
+        /// lighter company-scoped list endpoint.
+        /// </summary>
+        /// <param name="companyId">The unique identifier of the company whose assets should be retrieved.</param>
+        /// <param name="query">Optional query string parameters used to filter the results.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to a list of matching <see cref="HuduAsset"/> records for the given company.</returns>
+        public async Task<List<HuduAsset>> GetAssetsForCompanyAsync(int companyId, Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
+        {
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets", ApiRoot, companyId);
+            return await GetAllPagesAsync<HuduAsset>(path, query, itemsProperty: "assets", limitParam: "page_size", offsetParam: "page", ct: cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves a single asset by its ID, scoped to its owning company, synchronously.
+        /// </summary>
+        /// <param name="id">The numeric Hudu asset ID.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <returns>The matching <see cref="HuduAsset"/>.</returns>
+        public HuduAsset GetAsset(int id, int companyId) => Sync(GetAssetAsync(id, companyId));
+
+        /// <summary>
+        /// Retrieves a single asset by its ID, scoped to its owning company, asynchronously.
+        /// </summary>
+        /// <param name="id">The numeric Hudu asset ID.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to the matching <see cref="HuduAsset"/>.</returns>
+        public async Task<HuduAsset> GetAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
+        {
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}", ApiRoot, companyId, id);
+            return await GetAsync<HuduAsset>(path, null, itemsProperty: "asset", ct: cancellationToken);
+        }
+
+        /// <summary>
+        /// Synchronously creates a new asset in Hudu.
+        /// </summary>
+        /// <param name="companyId">The unique identifier of the company to create the asset under.</param>
+        /// <param name="body">The request body representing the asset's top-level properties to create.</param>
+        /// <param name="fields">The asset's field values, keyed to the asset layout's field definitions.</param>
+        /// <returns>The newly created <see cref="HuduAsset"/>.</returns>
+        public HuduAsset NewAsset(int companyId, object body, HuduAssetField[] fields) => Sync(NewAssetAsync(companyId, body, fields));
+
+        /// <summary>
+        /// Asynchronously creates a new asset in Hudu.
+        /// </summary>
+        /// <param name="companyId">The unique identifier of the company to create the asset under.</param>
+        /// <param name="body">The request body representing the asset's top-level properties to create.</param>
+        /// <param name="fields">The asset's field values, keyed to the asset layout's field definitions.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that resolves to the newly created <see cref="HuduAsset"/>.</returns>
+        public async Task<HuduAsset> NewAssetAsync(int companyId, object body, HuduAssetField[] fields, CancellationToken cancellationToken = default)
+        {
+            var wrapper = HuduRequestBuilder.BuildAssetJson(body, fields);
+
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets", ApiRoot, companyId);
+
+            return await PostAsync<HuduAsset>(path, wrapper, "asset", cancellationToken);
+        }
+
+        /// <summary>
+        /// Synchronously updates an existing asset in Hudu.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to update.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="body">The request body representing the asset's top-level properties to update.</param>
+        /// <param name="fields">The asset's field values to write, keyed to the asset layout's field definitions.</param>
+        /// <returns>The updated <see cref="HuduAsset"/>.</returns>
+        public HuduAsset UpdateAsset(int id, int companyId, object body, HuduAssetField[]? fields = null) => Sync(UpdateAssetAsync(id, companyId, body, fields));
+
+        /// <summary>
+        /// Asynchronously updates an existing asset in Hudu.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to update.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="body">The request body representing the asset's top-level properties to update.</param>
+        /// <param name="fields">The asset's field values to write, keyed to the asset layout's field definitions.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that resolves to the updated <see cref="HuduAsset"/>.</returns>
+        public async Task<HuduAsset> UpdateAssetAsync(int id, int companyId, object body, HuduAssetField[]? fields = null, CancellationToken cancellationToken = default)
+        {
+            var wrapper = HuduRequestBuilder.BuildAssetJson(body, fields);
+
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}", ApiRoot, companyId, id);
+
+            return await PutAsync<HuduAsset>(path, wrapper, "asset", cancellationToken);
+        }
+
+        /// <summary>
+        /// Synchronously deletes an asset.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to delete.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        public void DeleteAsset(int id, int companyId) => Sync(DeleteAssetAsync(id, companyId));
+
+        /// <summary>
+        /// Asynchronously deletes an asset.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to delete.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that represents the asynchronous delete operation.</returns>
+        public async Task DeleteAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
+        {
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}", ApiRoot, companyId, id);
+            await DeleteAsync<HuduAsset>(path, ct: cancellationToken);
+        }
+
+        /// <summary>
+        /// Archives an asset record in Hudu, marking it as inactive.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to archive.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <returns>The updated <see cref="HuduAsset"/> reflecting the archived state.</returns>
+        public HuduAsset ArchiveAsset(int id, int companyId) => Sync(ArchiveAssetAsync(id, companyId));
+
+        /// <summary>
+        /// Asynchronously archives an asset record in Hudu, marking it as inactive.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to archive.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>A task that resolves to the updated <see cref="HuduAsset"/> reflecting the archived state.</returns>
+        public async Task<HuduAsset> ArchiveAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}/archive", ApiRoot, companyId, id);
-            return await PutAsync<HuduArticle>(path, null, "article", cancellationToken).ConfigureAwait(false);
+            return await PutAsync<HuduAsset>(path, null, "asset", cancellationToken).ConfigureAwait(false);
         }
 
-        public HuduArticle UnarchiveAsset(int id, int companyId) => Sync(UnarchiveAssetAsync(id, companyId));
+        /// <summary>
+        /// Synchronously unarchives an asset.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to unarchive.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <returns>The updated <see cref="HuduAsset"/> after unarchiving.</returns>
+        public HuduAsset UnarchiveAsset(int id, int companyId) => Sync(UnarchiveAssetAsync(id, companyId));
 
-        public async Task<HuduArticle> UnarchiveAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
+        /// <summary>
+        /// Asynchronously unarchives an asset.
+        /// </summary>
+        /// <param name="id">The unique identifier of the asset to unarchive.</param>
+        /// <param name="companyId">The unique identifier of the company the asset belongs to.</param>
+        /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// The task result contains the updated <see cref="HuduAsset"/> after unarchiving.
+        /// </returns>
+        public async Task<HuduAsset> UnarchiveAssetAsync(int id, int companyId, CancellationToken cancellationToken = default)
         {
-            string path = string.Format(CultureInfo.InvariantCulture, "{0}/articles/{1}/unarchive", ApiRoot, id);
-            return await PutAsync<HuduArticle>(path, null, "article", cancellationToken).ConfigureAwait(false);
+            string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}/unarchive", ApiRoot, companyId, id);
+            return await PutAsync<HuduAsset>(path, null, "asset", cancellationToken).ConfigureAwait(false);
         }
-
-        ///// <summary>
-        ///// Retrieves a single asset, including its populated custom fields.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetId">
-        ///// The identifier of the asset.
-        ///// </param>
-        ///// <param name="cancellationToken">
-        ///// A token used to cancel the request.
-        ///// </param>
-        ///// <returns>
-        ///// A task producing the asset, or <see langword="null"/> when it does not exist.
-        ///// </returns>
-        //public async Task<HuduAsset> GetAssetAsync(int assetId, CancellationToken cancellationToken = default)
-        //{
-        //    string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}", ApiRoot, companyId, assetId);
-        //    return await GetAsync<HuduAsset>(path, null, "asset", cancellationToken);
-        //}
-
-        ///// <summary>
-        ///// Retrieves every asset belonging to a company, optionally restricted to a single layout.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetLayoutId">
-        ///// An optional layout identifier used to filter the result.
-        ///// </param>
-        ///// <returns>
-        ///// The matching assets across all pages.
-        ///// </returns>
-        //public List<HuduAsset> GetAssets(Dictionary<string, string>? query) => Sync(GetAssetsAsync(query));
-
-        ///// <summary>
-        ///// Retrieves every asset belonging to a company, optionally restricted to a single layout.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetLayoutId">
-        ///// An optional layout identifier used to filter the result.
-        ///// </param>
-        ///// <param name="cancellationToken">
-        ///// A token used to cancel the request.
-        ///// </param>
-        ///// <returns>
-        ///// A task producing the matching assets across all pages.
-        ///// </returns>
-        //public async Task<List<HuduAsset>> GetAssetsAsync(Dictionary<string, string>? query, CancellationToken cancellationToken = default)
-        //{
-        //    string path = string.Format(CultureInfo.InvariantCulture, "{0}/assets", ApiRoot);
-
-        //    List<HuduAsset> assets = await GetAsync<List<HuduAsset>>(path, query, itemsProperty: "assets", ct: cancellationToken).ConfigureAwait(false);
-
-        //    return assets;
-        //}
-
-        ///// <summary>
-        ///// Creates an asset with the supplied custom field values.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="name">
-        ///// The display name of the new asset.
-        ///// </param>
-        ///// <param name="assetLayoutId">
-        ///// The identifier of the layout defining the asset's fields.
-        ///// </param>
-        ///// <param name="fields">
-        ///// The custom field values to populate. May be <see langword="null"/> for an empty custom card.
-        ///// </param>
-        ///// <returns>
-        ///// The created asset as returned by Hudu.
-        ///// </returns>
-        //public HuduAsset? NewAsset(int companyId, object body, HuduAssetField[]? fields) =>
-        //    Sync(NewAssetAsync(companyId, body, fields));
-
-        ///// <summary>
-        ///// Creates an asset with the supplied custom field values.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="name">
-        ///// The display name of the new asset.
-        ///// </param>
-        ///// <param name="assetLayoutId">
-        ///// The identifier of the layout defining the asset's fields.
-        ///// </param>
-        ///// <param name="fields">
-        ///// The custom field values to populate. May be <see langword="null"/> for an empty custom card.
-        ///// </param>
-        ///// <param name="cancellationToken">
-        ///// A token used to cancel the request.
-        ///// </param>
-        ///// <returns>
-        ///// A task producing the created asset as returned by Hudu.
-        ///// </returns>
-        //public async Task<HuduAsset?> NewAssetAsync(int companyId, object body, HuduAssetField[]? fields, CancellationToken cancellationToken = default)
-        //{
-        //    string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets", ApiRoot, companyId);
-
-        //    var wrapper = HuduRequestBuilder.BuildAssetJson(body, fields);
-
-        //    return await PostAsync<HuduAsset?>(path, wrapper, "asset", cancellationToken);
-        //}
-
-        ///// <summary>
-        ///// Populates custom fields on an existing asset.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetId">
-        ///// The identifier of the asset to update.
-        ///// </param>
-        ///// <param name="fields">
-        ///// The field values to apply.
-        ///// </param>
-        ///// <param name="replace">
-        ///// When <see langword="false"/>, the asset's current field values are read first and the supplied
-        ///// values are layered on top, so untouched fields are preserved. When <see langword="true"/>, the
-        ///// supplied set is written as-is and any field it omits is cleared.
-        ///// </param>
-        ///// <returns>
-        ///// The updated asset as returned by Hudu.
-        ///// </returns>
-        //public HuduAsset? SetAssetFields(int companyId, int assetId, HuduFieldSet fields, bool replace = false) =>
-        //    Sync(SetAssetFieldsAsync(companyId, assetId, fields, replace));
-
-        ///// <summary>
-        ///// Populates custom fields on an existing asset.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetId">
-        ///// The identifier of the asset to update.
-        ///// </param>
-        ///// <param name="fields">
-        ///// The field values to apply.
-        ///// </param>
-        ///// <param name="replace">
-        ///// When <see langword="false"/>, the asset's current field values are read first and the supplied
-        ///// values are layered on top. When <see langword="true"/>, omitted fields are cleared.
-        ///// </param>
-        ///// <param name="cancellationToken">
-        ///// A token used to cancel the request.
-        ///// </param>
-        ///// <returns>
-        ///// A task producing the updated asset as returned by Hudu.
-        ///// </returns>
-        //public async Task<HuduAsset?> SetAssetFieldsAsync(int companyId, int assetId, HuduFieldSet fields, bool replace, CancellationToken cancellationToken = default)
-        //{
-        //    if (fields == null)
-        //    {
-        //        throw new ArgumentNullException(nameof(fields));
-        //    }
-
-        //    HuduAsset? current = await GetAssetAsync(companyId, assetId, cancellationToken).ConfigureAwait(false);
-        //    if (current == null)
-        //    {
-        //        throw new InvalidOperationException(string.Format(CultureInfo.InvariantCulture, "Asset {0} was not found in company {1}.", assetId, companyId));
-        //    }
-
-        //    HuduFieldSet effective = replace ? fields.Clone() : HuduFieldSet.FromAsset(current).Merge(fields);
-
-        //    string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets/{2}", ApiRoot, companyId, assetId);
-        //    object body = BuildAssetPayload(current.Name, current.AssetLayoutId, effective);
-
-        //    return await PutAsync<HuduAsset?>(path, body, "asset", cancellationToken).ConfigureAwait(false);
-        //}
-
-        ///// <summary>
-        ///// Populates a single custom field on an existing asset, preserving all other values.
-        ///// </summary>
-        ///// <param name="companyId">
-        ///// The identifier of the owning company.
-        ///// </param>
-        ///// <param name="assetId">
-        ///// The identifier of the asset to update.
-        ///// </param>
-        ///// <param name="label">
-        ///// The field label, in either human readable or snake cased form.
-        ///// </param>
-        ///// <param name="value">
-        ///// The value to store.
-        ///// </param>
-        ///// <returns>
-        ///// The updated asset as returned by Hudu.
-        ///// </returns>
-        //public HuduAsset? SetAssetField(int companyId, int assetId, string label, object? value)
-        //{
-        //    HuduFieldSet set = HuduFieldSet
-        //        .Create()
-        //        .Set(label, value);
-
-        //    return SetAssetFields(companyId, assetId, set, false);
-        //}
-
-        ///// <summary>
-        ///// Builds the request body Hudu expects when creating or updating an asset.
-        ///// </summary>
-        ///// <param name="name">
-        ///// The asset display name.
-        ///// </param>
-        ///// <param name="assetLayoutId">
-        ///// The identifier of the asset layout.
-        ///// </param>
-        ///// <param name="fields">
-        ///// The custom field values, or <see langword="null"/> to omit the custom card entirely.
-        ///// </param>
-        ///// <returns>
-        ///// The serialisable request body.
-        ///// </returns>
-        ///// <remarks>
-        ///// The <c>custom_fields</c> property is an array containing exactly one object, keyed by snake
-        ///// cased field label. The single element wrapper is a quirk of the Hudu schema rather than a
-        ///// meaningful collection.
-        ///// </remarks>
-        //private static object BuildAssetPayload(string? name, int? assetLayoutId, HuduFieldSet? fields)
-        //{
-        //    Dictionary<string, object?> asset = new Dictionary<string, object?>(StringComparer.Ordinal);
-        //    if (!string.IsNullOrWhiteSpace(name))
-        //    {
-        //        asset["name"] = name;
-        //    }
-
-        //    if (assetLayoutId.HasValue)
-        //    {
-        //        asset["asset_layout_id"] = assetLayoutId.Value;
-        //    }
-
-        //    if (fields != null && fields.Count > 0)
-        //    {
-        //        asset["custom_fields"] = new object[] { fields.ToPayload() };
-        //    }
-
-        //    return new Dictionary<string, object?>(StringComparer.Ordinal)
-        //    {
-        //        ["asset"] = asset
-        //    };
-        //}
     }
 }

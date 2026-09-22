@@ -10,10 +10,8 @@ namespace Boyles.PowerShell.Hudu.Builders
         {
             JObject bodyObject = body.ConvertToJObject();
 
-            // Always attach a "fields" array - empty if none were supplied
             bodyObject["fields"] = JArray.FromObject(fields ?? Array.Empty<HuduAssetLayoutField>());
 
-            // Wrap the whole thing in "asset_layout"
             var wrapper = new JObject
             {
                 ["asset_layout"] = bodyObject
@@ -26,7 +24,24 @@ namespace Boyles.PowerShell.Hudu.Builders
         {
             JObject bodyObject = body.ConvertToJObject();
 
-            bodyObject["custom_fields"] = JArray.FromObject(fields ?? Array.Empty<HuduAssetField>());
+            // Hudu expects one single-key object per field, keyed by the field's snake cased
+            // label - not a serialization of HuduAssetField's own read-shape properties.
+            var customFields = new JArray();
+            foreach (HuduAssetField field in fields ?? Array.Empty<HuduAssetField>())
+            {
+                string key = field.WireKey;
+                if (key.Length == 0)
+                {
+                    continue;
+                }
+
+                customFields.Add(new JObject
+                {
+                    [key] = field.Value == null ? JValue.CreateNull() : JToken.FromObject(field.Value)
+                });
+            }
+
+            bodyObject["custom_fields"] = customFields;
 
             var wrapper = new JObject
             {

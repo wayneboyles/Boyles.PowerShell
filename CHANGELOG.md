@@ -15,7 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [**Hudu**] Added Asset Password functions.
 - [**Demo**] Added demo pages for Asset Password functions.
 - [**Core**] Added `ConvertTo-RequestBody` to automatically build a body object from parameters.
-- [**Core**] Added two new attributes, `BodyProperty` and `BodyIgnore`.
+- [**Core**] Added two new attributes, `BodyProperty` and `BodyIgnore` for body parameter building.
+- [**Core**] Added two new attributes, `QueryProperty` and `QueryIgnore` for query parameter building.
+- [**Hudu**] Added Asset functions.
 
 ### Fixed
 
@@ -27,6 +29,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [**Hudu**] Changed parameter validation logic to use `ConvertTo-RequestBody`.
 - Changed the build script to include secrets management for testing easily.
+- [**Core**] Updated `ConvertTo-StringDictionary`.
 
 ### Removed
 

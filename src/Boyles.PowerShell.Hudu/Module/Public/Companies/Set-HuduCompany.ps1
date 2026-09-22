@@ -69,6 +69,7 @@ function Set-HuduCompany {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id,
 
         [Parameter()]
@@ -119,6 +120,7 @@ function Set-HuduCompany {
 
         [BodyProperty('parent_company_id')]
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $ParentCompanyId,
 
         [Parameter()]

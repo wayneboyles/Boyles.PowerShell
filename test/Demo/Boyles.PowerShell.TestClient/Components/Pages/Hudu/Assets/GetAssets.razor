@@ -1,0 +1,113 @@
+@page "/hudu/assets/get-assets"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetAssets</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetAssets</h2>
+    <div class="text-secondary">
+        <code>HuduClient.GetAssetsAsync</code> / <code>GetAssetsForCompanyAsync</code> — paginated GET
+        <code>/api/v1/assets</code> or <code>/api/v1/companies/{company_id}/assets</code>
+    </div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Company Id (optional)</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Name filter (optional)</label>
+                    <input class="form-control" @bind="_nameFilter" placeholder="e.g. DC01" />
+                </div>
+                <div class="col-auto form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="archivedFilter" @bind="_archived" />
+                    <label class="form-check-label" for="archivedFilter">Archived only</label>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+            <div class="text-secondary small mt-2">
+                Company Id alone (no name filter) uses the lighter company-scoped list endpoint; a name filter always uses the global endpoint.
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private int? _companyId;
+    private string? _nameFilter;
+    private bool _archived;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = new Dictionary<string, string>();
+            if (!string.IsNullOrWhiteSpace(_nameFilter))
+            {
+                query["name"] = _nameFilter;
+            }
+            if (_archived)
+            {
+                query["archived"] = "true";
+            }
+
+            List<HuduAsset> result;
+            if (_companyId is not null && string.IsNullOrWhiteSpace(_nameFilter))
+            {
+                result = await HuduConnection.Client!.GetAssetsForCompanyAsync(_companyId.Value, query.Count == 0 ? null : query);
+            }
+            else
+            {
+                if (_companyId is not null)
+                {
+                    query["company_id"] = _companyId.Value.ToString();
+                }
+
+                result = await HuduConnection.Client!.GetAssetsAsync(query.Count == 0 ? null : query);
+            }
+
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

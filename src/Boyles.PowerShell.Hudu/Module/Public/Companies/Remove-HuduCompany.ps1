@@ -19,6 +19,7 @@ function Remove-HuduCompany {
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id
     )
     process {

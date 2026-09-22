@@ -112,6 +112,7 @@ function New-HuduCompany {
 
         [BodyProperty('parent_company_id')]
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $ParentCompanyId,
 
         [Parameter()]

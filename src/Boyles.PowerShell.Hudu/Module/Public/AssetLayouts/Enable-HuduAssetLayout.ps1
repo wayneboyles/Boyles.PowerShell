@@ -23,6 +23,7 @@ function Enable-HuduAssetLayout {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetLayout])]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id
     )
     process {

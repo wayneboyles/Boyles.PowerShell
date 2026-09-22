@@ -50,6 +50,7 @@ function New-HuduArticle {
 
         [BodyProperty('company_id')]
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $CompanyId
     )
 

@@ -1,0 +1,185 @@
+@page "/hudu/assets/update-asset"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateAsset</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateAsset</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateAssetAsync</code> — PUT <code>/api/v1/companies/{company_id}/assets/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-2 align-items-end mb-3">
+                        <div class="col-auto">
+                            <label class="form-label">Company Id</label>
+                            <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                        </div>
+                        <div class="col-auto">
+                            <label class="form-label">Asset Id</label>
+                            <input type="number" class="form-control" style="width: 160px;" @bind="_assetId" />
+                        </div>
+                        <div class="col-auto">
+                            <button type="button" class="btn btn-outline-secondary" @onclick="LoadAsync" disabled="@(_loading || _companyId is null || _assetId is null)">
+                                @if (_loading)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                }
+                                Load current
+                            </button>
+                        </div>
+                    </div>
+
+                    @if (_loadError is not null)
+                    {
+                        <div class="alert alert-danger">@_loadError</div>
+                    }
+
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="_model.Name" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary serial</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimarySerial" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary mail</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryMail" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary model</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryModel" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary manufacturer</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryManufacturer" />
+                            </div>
+                        </div>
+
+                        <AssetFieldsEditor Fields="_fields" />
+
+                        <button type="submit" class="btn btn-primary mt-2" disabled="@(_busy || _companyId is null || _assetId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly AssetModel _model = new();
+    private readonly List<AssetFieldRow> _fields = new();
+    private int? _companyId;
+    private int? _assetId;
+    private bool _busy;
+    private bool _loading;
+    private string? _error;
+    private string? _loadError;
+    private string? _resultJson;
+
+    private async Task LoadAsync()
+    {
+        if (_companyId is null || _assetId is null)
+        {
+            return;
+        }
+
+        _loading = true;
+        _loadError = null;
+        try
+        {
+            var asset = await HuduConnection.Client!.GetAssetAsync(_assetId.Value, _companyId.Value);
+            if (asset is null)
+            {
+                _loadError = $"Asset {_assetId} was not found in company {_companyId}.";
+                return;
+            }
+
+            _model.Name = asset.Name;
+            _model.PrimarySerial = asset.PrimarySerial;
+            _model.PrimaryModel = asset.PrimaryModel;
+            _model.PrimaryManufacturer = asset.PrimaryManufacturer;
+
+            _fields.Clear();
+            _fields.AddRange(asset.Fields.Select(AssetFieldRow.FromField));
+        }
+        catch (ApiException ex)
+        {
+            _loadError = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _loadError = ex.Message;
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        if (_companyId is null || _assetId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var fields = _fields.Select(f => f.ToField()).ToArray();
+            var result = await HuduConnection.Client!.UpdateAssetAsync(_assetId.Value, _companyId.Value, _model, fields);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class AssetModel
+    {
+        public string? Name { get; set; }
+        public string? PrimarySerial { get; set; }
+        public string? PrimaryMail { get; set; }
+        public string? PrimaryModel { get; set; }
+        public string? PrimaryManufacturer { get; set; }
+    }
+}

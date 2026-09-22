@@ -24,6 +24,7 @@ function Get-HuduAssetLayoutFields {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName, Position = 0)]
+        [ValidateRange(1, [int]::MaxValue)]
         [Alias('Id')]
         [int] $AssetLayoutId
     )

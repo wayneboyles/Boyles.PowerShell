@@ -57,6 +57,8 @@
         'Disable-HuduAsset'
         'Enable-HuduAsset'
         'Get-HuduAsset'
+        'New-HuduAsset'
+        'Remove-HuduAsset'
 
         # Connectivity
         'Connect-Hudu'

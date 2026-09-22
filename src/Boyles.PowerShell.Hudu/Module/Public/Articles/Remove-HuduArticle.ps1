@@ -25,6 +25,7 @@ function Remove-HuduArticle {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id
     )
     process {

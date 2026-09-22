@@ -18,7 +18,7 @@
 #>
 function ConvertTo-StringDictionary {
     param(
-        [Parameter(Mandatory, Position = 0)]
+        [Parameter(Mandatory, Position = 0, ValueFromPipeline)]
         [hashtable] $Table
     )
 

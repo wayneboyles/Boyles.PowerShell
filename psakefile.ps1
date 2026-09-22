@@ -329,4 +329,6 @@ Task Package -Depends BuildPowerShell {
     Write-Host ''
     Write-Host "Packages written to $PackagesRoot"
     Write-Host ''
+
+    Write-Host 'Creating zip file...'
 }

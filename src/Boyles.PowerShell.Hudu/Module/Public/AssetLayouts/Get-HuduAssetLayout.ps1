@@ -41,6 +41,7 @@ function Get-HuduAssetLayout {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetLayout[]])]
     param (
         [Parameter(Mandatory, ParameterSetName = 'Single')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]

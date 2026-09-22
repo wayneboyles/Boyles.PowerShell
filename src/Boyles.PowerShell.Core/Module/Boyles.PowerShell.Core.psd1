@@ -33,6 +33,8 @@
         'Test-RequiredValue'
 
         'ConvertFrom-JToken'
+        'ConvertTo-RequestBody'
+        'ConvertTo-RequestQuery'
         'ConvertTo-StringDictionary'
 
         'Register-BPSArgumentCompleter'
@@ -42,9 +44,6 @@
         'Remove-BPSSetting'
         'Reset-BPSSetting'
         'Set-BPSSetting'
-
-        'ConvertTo-RequestBody'
-        'ConvertTo-RequestQuery'
     )
 
     CmdletsToExport      = @()

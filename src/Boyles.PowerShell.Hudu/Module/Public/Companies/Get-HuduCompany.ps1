@@ -61,6 +61,7 @@ function Get-HuduCompany {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduCompany], [Boyles.PowerShell.Hudu.Models.HuduCompany[]])]
     param (
         [Parameter(Mandatory, ParameterSetName = 'Single')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]

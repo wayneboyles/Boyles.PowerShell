@@ -1,0 +1,145 @@
+@page "/hudu/assets/new-asset"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewAsset</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewAsset</h2>
+    <div class="text-secondary"><code>HuduClient.NewAssetAsync</code> — POST <code>/api/v1/companies/{company_id}/assets</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Company Id</label>
+                            <input type="number" class="form-control" @bind="_companyId" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Asset Layout Id</label>
+                            <input type="number" class="form-control" @bind="_model.AssetLayoutId" />
+                        </div>
+                    </div>
+
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="_model.Name" />
+                            <ValidationMessage For="() => _model.Name" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary serial</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimarySerial" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary mail</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryMail" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary model</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryModel" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Primary manufacturer</label>
+                                <InputText class="form-control" @bind-Value="_model.PrimaryManufacturer" />
+                            </div>
+                        </div>
+
+                        <AssetFieldsEditor Fields="_fields" />
+
+                        <button type="submit" class="btn btn-primary mt-2" disabled="@(_busy || _companyId is null || _model.AssetLayoutId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly AssetModel _model = new();
+    private readonly List<AssetFieldRow> _fields = new();
+    private int? _companyId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_companyId is null || _model.AssetLayoutId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var fields = _fields.Select(f => f.ToField()).ToArray();
+            var result = await HuduConnection.Client!.NewAssetAsync(_companyId.Value, _model, fields);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    // Passed directly as the asset body - HttpClientBase's JsonOptions map these PascalCase
+    // properties to snake_case and drop nulls, so unset fields are simply omitted.
+    private sealed class AssetModel
+    {
+        [Required]
+        [JsonProperty("name")]
+        public string? Name { get; set; }
+
+        [Required]
+        [JsonProperty("asset_layout_id")]
+        public int? AssetLayoutId { get; set; }
+
+        [JsonProperty("primary_serial")]
+        public string? PrimarySerial { get; set; }
+
+        [JsonProperty("primary_mail")]
+        public string? PrimaryMail { get; set; }
+
+        [JsonProperty("primary_model")]
+        public string? PrimaryModel { get; set; }
+
+        [JsonProperty("primary_manufacturer")]
+        public string? PrimaryManufacturer { get; set; }
+    }
+}

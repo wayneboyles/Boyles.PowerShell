@@ -67,12 +67,14 @@ function Get-HuduArticle {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduArticle[]])]
     param (
         [Parameter(Mandatory, ParameterSetName = 'Single')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All', ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $CompanyId,
 
         [Parameter(ParameterSetName = 'All')]

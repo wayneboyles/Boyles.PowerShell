@@ -28,6 +28,7 @@ function Disable-HuduArticle {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduArticle])]
     param (
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id
     )
     process {

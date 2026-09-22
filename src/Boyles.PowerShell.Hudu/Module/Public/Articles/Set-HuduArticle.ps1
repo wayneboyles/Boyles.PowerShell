@@ -40,6 +40,7 @@ function Set-HuduArticle {
     param (
         [BodyIgnore()]
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id,
 
         [Parameter()]
@@ -58,6 +59,7 @@ function Set-HuduArticle {
 
         [BodyProperty('company_id')]
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $CompanyId
     )
     process {

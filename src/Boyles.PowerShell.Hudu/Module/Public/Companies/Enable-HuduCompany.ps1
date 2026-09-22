@@ -23,6 +23,7 @@ function Enable-HuduCompany {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduCompany])]
     param (
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Id
     )
     process {
