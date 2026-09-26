@@ -58,7 +58,8 @@ jobs:
       - name: Extract changelog section
         shell: pwsh
         run: |
-          $version = $env:GITHUB_REF_NAME -replace '^v', ''
+          $tag = if ('${{ github.event_name }}' -eq 'workflow_dispatch') { '${{ github.event.inputs.test_tag }}' } else { $env:GITHUB_REF_NAME }
+          $version = $tag -replace '^v', ''
           $content = Get-Content CHANGELOG.md -Raw
 
           if ($content -match "(?ms)^## \[$([regex]::Escape($version))\].*?\r?\n(.*?)(?=^## \[)") {
