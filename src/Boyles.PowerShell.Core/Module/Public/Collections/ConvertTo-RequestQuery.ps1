@@ -78,7 +78,7 @@ function ConvertTo-RequestQuery {
 
         $value = $BoundParameters[$paramName]
 
-        if (-not (Test-HasValue -Value $value)) {
+        if ($value -isnot [ValueType] -and -not (Test-HasValue -Value $value)) {
             continue
         }
 
@@ -89,7 +89,5 @@ function ConvertTo-RequestQuery {
         $query[$key] = $value
     }
 
-    $queryDict = ConvertTo-StringDictionary -Table $query
-
-    return $queryDict
+    return $query
 }

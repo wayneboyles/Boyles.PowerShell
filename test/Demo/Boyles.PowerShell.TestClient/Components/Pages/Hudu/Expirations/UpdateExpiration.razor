@@ -1,0 +1,96 @@
+@page "/hudu/expirations/update-expiration"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateExpiration</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateExpiration</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateExpirationAsync</code> — PUT <code>/api/v1/expirations/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Expiration Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_expirationId" />
+                    </div>
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <div class="mb-3">
+                            <label class="form-check">
+                                <InputCheckbox class="form-check-input" @bind-Value="_archived" />
+                                <span class="form-check-label">Archived</span>
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@(_busy || _expirationId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly UpdateExpirationModel _model = new();
+    private bool _archived;
+    private int? _expirationId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_expirationId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            _model.Archived = _archived;
+
+            var result = await HuduConnection.Client!.UpdateExpirationAsync(_expirationId.Value, _model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class UpdateExpirationModel
+    {
+        public bool? Archived { get; set; }
+    }
+}

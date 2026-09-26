@@ -78,7 +78,7 @@ function ConvertTo-RequestBody {
 
         $value = $BoundParameters[$paramName]
 
-        if (-not (Test-HasValue -Value $value)) {
+        if ($value -isnot [ValueType] -and -not (Test-HasValue -Value $value)) {
             continue
         }
 

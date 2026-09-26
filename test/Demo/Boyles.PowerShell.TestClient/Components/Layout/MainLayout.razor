@@ -147,6 +147,26 @@
 
                                 <div class="dropdown-submenu">
                                     <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
+                                        <i class="ti ti-id-badge-2 me-2"></i>Cards
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <NavLink class="dropdown-item" href="/hudu/cards/get-card-lookup">GetCardLookup</NavLink>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
+                                        <i class="ti ti-calendar-due me-2"></i>Expirations
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <NavLink class="dropdown-item" href="/hudu/expirations/get-expirations">GetExpirations</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/expirations/update-expiration">UpdateExpiration</NavLink>
+                                        <NavLink class="dropdown-item" href="/hudu/expirations/delete-expiration">DeleteExpiration</NavLink>
+                                    </div>
+                                </div>
+
+                                <div class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
                                         <i class="ti ti-info-circle me-2"></i>ApiInfo
                                     </a>
                                     <div class="dropdown-menu">

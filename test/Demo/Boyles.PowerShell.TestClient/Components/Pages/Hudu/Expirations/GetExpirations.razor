@@ -1,0 +1,127 @@
+@page "/hudu/expirations/get-expirations"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetExpirations</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetExpirations</h2>
+    <div class="text-secondary"><code>HuduClient.GetExpirationsAsync</code> — paginated GET <code>/api/v1/expirations</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Company Id (optional)</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Expiration type (optional)</label>
+                    <select class="form-select" @bind="_expirationType">
+                        <option value="">(any)</option>
+                        <option value="undeclared">undeclared</option>
+                        <option value="domain">domain</option>
+                        <option value="ssl_certificate">ssl_certificate</option>
+                        <option value="warranty">warranty</option>
+                        <option value="asset_field">asset_field</option>
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Resource type (optional)</label>
+                    <input class="form-control" @bind="_resourceType" placeholder="e.g. Asset" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Resource Id (optional)</label>
+                    <input type="number" class="form-control" style="width: 140px;" @bind="_resourceId" />
+                </div>
+                <div class="col-auto form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="archivedFilter" @bind="_archived" />
+                    <label class="form-check-label" for="archivedFilter">Archived only</label>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private int? _companyId;
+    private string? _expirationType;
+    private string? _resourceType;
+    private int? _resourceId;
+    private bool _archived;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = new Dictionary<string, string>();
+
+            if (_companyId is not null)
+            {
+                query["company_id"] = _companyId.Value.ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(_expirationType))
+            {
+                query["expiration_type"] = _expirationType;
+            }
+
+            if (!string.IsNullOrWhiteSpace(_resourceType))
+            {
+                query["resource_type"] = _resourceType;
+            }
+
+            if (_resourceId is not null)
+            {
+                query["resource_id"] = _resourceId.Value.ToString();
+            }
+
+            if (_archived)
+            {
+                query["archived"] = "true";
+            }
+
+            var result = await HuduConnection.Client!.GetExpirationsAsync(query.Count > 0 ? query : null);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}
