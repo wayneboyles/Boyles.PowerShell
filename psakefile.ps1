@@ -186,7 +186,9 @@ Task Clean -PreCondition { -not $SkipClean } {
 
     # Remove packages from the out directory
 
-    Get-ChildItem -Path "$PackagesRoot\*.nupkg" | Remove-Item -Force
+    if (Test-Path -Path $script:PackagesRoot) {
+        Get-ChildItem -Path "$PackagesRoot\*.nupkg" | Remove-Item -Force
+    }
 
     Write-Host ''
 }
