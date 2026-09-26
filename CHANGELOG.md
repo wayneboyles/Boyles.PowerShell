@@ -51,6 +51,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [**Hudu C#**] Added HuduClient.Flags.cs for Flag functions.
 
+- [**Hudu PS**] Added Folder functions
+  - Added `Get-HuduFolder`
+  - Added `New-HuduFolder`
+  - Added `Remove-HuduFolder`
+  - Added `Set-HuduFolder`
+
+- [**Hudu PS**] Added Group functions
+  - Added `Get-HuduGroup`
+
+- [**Hudu PS**] Added IP Address functions
+  - Added `Get-HuduIpAddress`
+  - Added `New-HuduIpAddress`
+  - Added `Remove-HuduIpAddress`
+  - Added `Set-HuduIpAddress`
+
 ### Fixed
 
 - [**Core PS**] Fixed `ConvertTo-RequestBody` and `ConvertTo-RequestQuery` to properly handle bool values
