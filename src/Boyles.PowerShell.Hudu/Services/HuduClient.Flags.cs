@@ -47,6 +47,8 @@ public partial class HuduClient
         return await GetAllPagesAsync<HuduFlag>(path, query, itemsProperty: "flags", ct: cancellationToken);
     }
 
+    public HuduFlag NewFlag(object body) => Sync(NewFlagAsync(body));
+    
     /// <summary>
     /// Creates a new flag in Hudu asynchronously.
     /// </summary>

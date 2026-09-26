@@ -83,6 +83,15 @@
         'New-HuduFlagType'
         'Remove-HuduFlagType'
         'Set-HuduFlagType'
+
+        # Folders
+        'Get-HuduFolder'
+        'New-HuduFolder'
+        'Remove-HuduFolder'
+        'Set-HuduFolder'
+
+        # Groups
+        'Get-HuduGroup'
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()
