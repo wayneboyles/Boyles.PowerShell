@@ -1,6 +1,6 @@
 @{
     RootModule           = 'Boyles.PowerShell.Core.psm1'
-    ModuleVersion        = '0.2.1'
+    ModuleVersion        = '0.3.0'
     GUID                 = '5b06397d-8350-4a54-8751-b7e44f80adb2'
     Author               = 'Wayne Boyles'
     CompanyName          = 'Wayne Boyles'

@@ -1,17 +1,17 @@
-name: 'Build Release on Tag'
+name: "Build Release on Tag"
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
 
   workflow_dispatch:
-      inputs:
-        test_tag:
-          description: 'v0.2.1'
-          required: true
+    inputs:
+      test_tag:
+        description: "Version (i.e. v0.2.1)"
+        required: true
 
-permissions: 
+permissions:
   contents: write
 
 jobs:
@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Verify Tag is on Main
         shell: pwsh
@@ -34,7 +36,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: "8.0.x"
 
       - name: Cache PowerShell modules
         uses: actions/cache@v4

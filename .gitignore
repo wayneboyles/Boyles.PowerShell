@@ -10,6 +10,7 @@
 *.userosscache
 *.sln.docstates
 *.env
+.idea
 
 # Custom scripts
 [Tt]ools/SecretHelpers.ps1

@@ -1,0 +1,96 @@
+@page "/hudu/cards/get-card-lookup"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetCardLookup</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetCardLookup</h2>
+    <div class="text-secondary"><code>HuduClient.GetCardLookupAsync</code> — GET <code>/api/v1/cards/lookup</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Integration slug</label>
+                    <input class="form-control" @bind="_integrationSlug" placeholder="e.g. cw_manage" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Integration Id</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_integrationId" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Integration identifier</label>
+                    <input class="form-control" @bind="_integrationIdentifier" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@(_busy || string.IsNullOrWhiteSpace(_integrationSlug))">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+            <div class="form-hint mt-2">Supply either an integration Id or an integration identifier, matching Get-HuduCard. If both are supplied, the Id wins.</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private string? _integrationSlug;
+    private int? _integrationId;
+    private string? _integrationIdentifier;
+
+    private async Task RunAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_integrationSlug))
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            if (_integrationId is null && string.IsNullOrWhiteSpace(_integrationIdentifier))
+            {
+                throw new InvalidOperationException("Supply either an integration Id or an integration identifier.");
+            }
+
+            var identifier = string.IsNullOrWhiteSpace(_integrationIdentifier) ? null : _integrationIdentifier;
+
+            var result = await HuduConnection.Client!.GetCardLookupAsync(_integrationSlug, _integrationId, identifier);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

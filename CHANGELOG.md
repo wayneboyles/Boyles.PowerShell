@@ -5,7 +5,78 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Legend
+
+| Label       | Purpose                                                             |
+| ----------- | ------------------------------------------------------------------- |
+| **General** | General changes and additions not classified by a project or module |
+| **Core PS** | Core PowerShell module                                              |
+| **Core C#** | Core C# library project (Boyles.PowerShell.Core)                    |
+| **Hudu PS** | Hudu PowerShell module                                              |
+| **Hudu C#** | Hudu C# library project (Boyles.PowerShell.Hudu)                    |
+
 ## [Unreleased]
+
+## [0.3.0] - 2026-09-23
+
+### Added
+
+- [**Hudu PS**] Added argument completer to `Get-HuduAssetLayout`
+
+- [**Hudu PS**] Added Card lookup functions.
+  - Added `Get-HuduCard`
+
+- [**Hudu PS**] Added Expiration functions.
+  - Added `Get-HuduExpiration`
+  - Added `Remove-HuduExpiration`
+  - Added `Set-HuduExpiration`
+
+- [**Hudu PS**] Added Flag Type functions
+  - Added `Get-HuduFlagType`
+  - Added `New-HuduFlagType`
+  - Added `Remove-HuduFlagType`
+  - Added `Set-HuduFlagType`
+
+- [**Hudu PS**] Added Flag functions
+  - Added `Get-HuduFlag`
+  - Added `New-HuduFlag`
+  - Added `Remove-HuduFlag`
+  - Added `Set-HuduFlag`
+
+- [**Hudu C#**] Added HuduClient.Cards.cs for Card functions.
+
+- [**Hudu C#**] Added HuduClient.Expirations.cs for Expiration functions.
+
+- [**Hudu C#**] Added HuduClient.FlagTypes.cs for Flag Type functions.
+
+- [**Hudu C#**] Added HuduClient.Flags.cs for Flag functions.
+
+- [**Hudu PS**] Added Folder functions
+  - Added `Get-HuduFolder`
+  - Added `New-HuduFolder`
+  - Added `Remove-HuduFolder`
+  - Added `Set-HuduFolder`
+
+- [**Hudu PS**] Added Group functions
+  - Added `Get-HuduGroup`
+
+- [**Hudu PS**] Added IP Address functions
+  - Added `Get-HuduIpAddress`
+  - Added `New-HuduIpAddress`
+  - Added `Remove-HuduIpAddress`
+  - Added `Set-HuduIpAddress`
+
+### Fixed
+
+- [**Core PS**] Fixed `ConvertTo-RequestBody` and `ConvertTo-RequestQuery` to properly handle bool values
+
+### Changed
+
+- [**Core PS**] `ConvertTo-RequestQuery` now returns a hashtable, not a Dictionary object
+
+### Removed
+
+- [**Hudu C#**] Removed Pester tests. These will be redone.
 
 ## [0.2.1] - 2026-09-19
 

@@ -80,7 +80,7 @@
     Retrieves every asset for every company, piping CompanyId from Get-HuduCompany.
 #>
 function Get-HuduAsset {
-    [CmdletBinding(DefaultParameterSetName = 'Filter')]
+    [CmdletBinding()]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAsset])]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAsset[]])]
     param (

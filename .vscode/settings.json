@@ -107,6 +107,7 @@
         "src/Boyles.PowerShell.*/bin": true,
         "src/Boyles.PowerShell.*/obj": true,
         ".vs": true,
+        "src/common.props": true,
         "**/Boyles.PowerShell.*/Boyles": true,
         "**/Boyles.PowerShell.*/System": true,
         "**/Boyles.PowerShell.*/Models": true,
