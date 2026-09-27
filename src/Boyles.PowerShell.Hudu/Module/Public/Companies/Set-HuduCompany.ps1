@@ -61,6 +61,11 @@
 
     Updates company 5's website, leaving its other properties unchanged.
 
+.EXAMPLE
+    Get-HuduCompany -State 'TX' | Set-HuduCompany -CountryName 'United States'
+
+    Sets the country on every company located in Texas.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduCompany
 #>

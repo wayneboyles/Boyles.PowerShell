@@ -20,6 +20,9 @@
     Get-HuduAssetPassword -CompanyId 5 -Archived $true | Remove-HuduAssetPassword -Confirm:$false
 
     Deletes every archived asset password belonging to company 5 without prompting.
+
+.OUTPUTS
+    None
 #>
 function Remove-HuduAssetPassword {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]

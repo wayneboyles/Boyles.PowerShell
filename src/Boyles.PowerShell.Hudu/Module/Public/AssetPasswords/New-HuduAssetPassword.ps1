@@ -10,16 +10,17 @@
     Name of the new asset password.
 
 .PARAMETER Password
-    The password value to store.
+    The password value to store, as plain text (Hudu's API requires it unencrypted).
 
 .PARAMETER CompanyId
     ID of the company to associate the asset password with.
 
 .PARAMETER PasswordableType
-    Type of the object this password is attached to (e.g. 'Asset').
+    Type of the record this password is attached to, e.g. 'Asset' or 'Website'. Use together
+    with -PasswordableId.
 
 .PARAMETER PasswordableId
-    ID of the object this password is attached to.
+    ID of the record this password is attached to. Use together with -PasswordableType.
 
 .PARAMETER InPortal
     Whether the password should be visible in the client portal.
@@ -46,6 +47,19 @@
     New-HuduAssetPassword -Name 'Admin Login' -Password 'S3cr3t!' -CompanyId 5
 
     Creates a new asset password named 'Admin Login' under company 5.
+
+.EXAMPLE
+    $params = @{
+        Name             = 'iDRAC'
+        Password         = $pw
+        CompanyId        = 5
+        Username         = 'root'
+        PasswordableType = 'Asset'
+        PasswordableId   = 345
+    }
+    New-HuduAssetPassword @params
+
+    Creates a password for the 'root' user and attaches it to asset 345.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetPassword

@@ -6,7 +6,8 @@
     With -Id, retrieves a single article by ID, returning $null instead of throwing if the ID
     doesn't exist (Hudu responds with an HTTP 404 in that case). Without -Id, retrieves every
     article matching the supplied filters, optionally scoped to a company via -CompanyId or a
-    piped HuduCompany object (not both), and optionally paginated via -Page/-PageSize.
+    piped HuduCompany object (not both), and optionally limited to a single page via
+    -Page/-PageSize.
 
 .PARAMETER Id
     ID of a single article to retrieve.
@@ -19,13 +20,13 @@
     property name. Mutually exclusive with a piped HuduCompany object.
 
 .PARAMETER Draft
-    Filters results to draft (or non-draft) articles.
+    Filters results to draft ($true) or non-draft ($false) articles.
 
 .PARAMETER EnableSharing
-    Filters results to articles with (or without) sharing enabled.
+    Filters results to articles with ($true) or without ($false) public sharing enabled.
 
 .PARAMETER Slug
-    Filters results to articles matching the given slug.
+    Filters results to articles matching the given URL slug.
 
 .PARAMETER Search
     Filters results to articles matching the given search text.
@@ -35,10 +36,14 @@
     -CompanyId.
 
 .PARAMETER Page
-    Page number to retrieve. Requires -PageSize or falls back to a default page size of 50.
+    Page number to retrieve. Supplying -Page and/or -PageSize returns just that one page, using
+    page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every page
+    is retrieved automatically.
 
 .PARAMETER PageSize
-    Number of results per page. Requires -Page or falls back to page 1.
+    Number of results per page. Supplying -Page and/or -PageSize returns just that one page,
+    using page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every
+    page is retrieved automatically.
 
 .EXAMPLE
     Get-HuduArticle -Id 123
@@ -54,6 +59,11 @@
     Get-HuduCompany -Name 'Acme' | Get-HuduArticle -Search 'password policy'
 
     Returns Acme's articles matching the given search text.
+
+.EXAMPLE
+    Get-HuduArticle -Page 2 -PageSize 25
+
+    Returns the second page of 25 articles.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduArticle

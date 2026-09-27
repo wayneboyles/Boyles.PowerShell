@@ -16,6 +16,9 @@
     Write-Header 'Connecting to Hudu'
 
     Writes "Connecting to Hudu" followed by a matching dashed underline, in yellow.
+
+.OUTPUTS
+    None
 #>
 function Write-Header {
     [CmdletBinding()]

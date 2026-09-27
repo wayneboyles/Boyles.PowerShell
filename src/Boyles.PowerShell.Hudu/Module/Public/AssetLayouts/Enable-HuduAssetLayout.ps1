@@ -15,6 +15,11 @@
 
     Reactivates the asset layout with ID 42.
 
+.EXAMPLE
+    Get-HuduAssetLayout -Active $false | Enable-HuduAssetLayout -WhatIf
+
+    Shows which inactive asset layouts would be reactivated without changing anything.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetLayout
 #>

@@ -4,14 +4,17 @@
 
 .DESCRIPTION
     Queries the Hudu activity log endpoint via the connected HuduClient (see Connect-Hudu),
-    applying whichever filters were supplied as query parameters. ResourceId and ResourceType
-    must be specified together - supplying only one of the pair throws.
+    applying whichever filters were supplied as query parameters. Every page of results is
+    retrieved automatically and returned as a single array. ResourceId and ResourceType must be
+    specified together - supplying only one of the pair throws.
 
 .PARAMETER Page
-    Page size / number of results to return per page.
+    Sent to Hudu as the 'page' query parameter. Currently has no effect: the client retrieves
+    every page automatically and overwrites 'page' while paging.
 
 .PARAMETER PageNumber
-    Page number to retrieve.
+    Sent to Hudu as a 'page_number' query parameter. Currently has no effect: Hudu's activity
+    log endpoint does not recognize 'page_number'.
 
 .PARAMETER UserId
     Filters results to activity performed by the given user ID.
@@ -24,16 +27,16 @@
     ResourceType.
 
 .PARAMETER ResourceType
-    Filters results to activity on the given resource type (e.g. 'Asset', 'Article'). Must be
-    specified together with ResourceId.
+    Filters results to activity on the given resource type (e.g. 'Asset', 'AssetPassword',
+    'Company', 'Article'). Must be specified together with ResourceId.
 
 .PARAMETER ActionMessage
-    Filters results to log entries whose action message matches the given text.
+    Filters results to log entries for the given action (e.g. 'viewed', 'updated').
 
 .EXAMPLE
     Get-HuduActivityLogs
 
-    Returns the most recent activity log entries with no filters applied.
+    Returns every activity log entry, with no filters applied.
 
 .EXAMPLE
     Get-HuduActivityLogs -ResourceId 123 -ResourceType 'Asset'
@@ -41,9 +44,9 @@
     Returns activity log entries for the asset with ID 123.
 
 .EXAMPLE
-    Get-HuduActivityLogs -UserEmail 'tech@example.com' -PageNumber 2
+    Get-HuduActivityLogs -UserEmail 'tech@example.com' -ActionMessage 'viewed'
 
-    Returns page 2 of activity performed by the given user.
+    Returns every 'viewed' entry recorded for the given user.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduActivityLog[]

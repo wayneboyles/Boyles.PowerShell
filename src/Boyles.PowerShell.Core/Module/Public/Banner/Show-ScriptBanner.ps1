@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Draws a bordered box using the running script's own file name (via $PSCommandPath), the
-    supplied version, and a word-wrapped description, framed with a fixed 58-character inner
+    supplied version, a word-wrapped description, and a fixed author line, framed with a fixed 58-character inner
     width. Intended to be called once near the top of a top-level script to give interactive runs
     a clear, consistent banner.
 
@@ -27,6 +27,9 @@
     Show-ScriptBanner -ScriptVersion '2.3.1' -ScriptDescription 'Nightly cleanup job.' -Color Cyan
 
     Prints the same banner in cyan instead of the default yellow.
+
+.OUTPUTS
+    None
 #>
 function Show-ScriptBanner {
     [CmdletBinding()]

@@ -8,10 +8,20 @@
     Does nothing, without throwing, if no client is registered under the given key.
 
 .PARAMETER Key
-    The key the client was registered under.
+    The key the client was registered under. Case-insensitive.
 
 .EXAMPLE
-    Remove-BPSClient -Key 'Hudu'
+    Remove-BPSClient -Key 'hudu'
+
+    Removes and disposes the client Connect-Hudu registered. Disconnect-Hudu does this for you.
+
+.EXAMPLE
+    Get-BPSClientKey | ForEach-Object { Remove-BPSClient -Key $_ }
+
+    Removes every registered client.
+
+.OUTPUTS
+    None
 #>
 function Remove-BPSClient {
     [CmdletBinding()]

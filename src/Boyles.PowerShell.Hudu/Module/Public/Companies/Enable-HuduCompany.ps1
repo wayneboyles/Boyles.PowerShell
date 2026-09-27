@@ -15,6 +15,11 @@
 
     Unarchives the company with ID 5.
 
+.EXAMPLE
+    Get-HuduCompany -Id 5 | Enable-HuduCompany -WhatIf
+
+    Shows which company would be unarchived without changing anything.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduCompany
 #>

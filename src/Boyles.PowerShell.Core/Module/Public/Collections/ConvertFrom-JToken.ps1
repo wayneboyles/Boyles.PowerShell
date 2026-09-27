@@ -32,6 +32,14 @@
     Write-Output -NoEnumerate $jObject | ConvertFrom-JToken
 
     Pipes a JObject through without PowerShell unrolling it first.
+
+.EXAMPLE
+    ConvertFrom-JToken -InputObject ([Newtonsoft.Json.Linq.JToken]::Parse('{"name":"Acme","tags":["a","b"]}'))
+
+    Returns a [pscustomobject] with name = 'Acme' and tags = @('a', 'b').
+
+.OUTPUTS
+    System.Object
 #>
 function ConvertFrom-JToken {
     [CmdletBinding()]

@@ -15,39 +15,65 @@
     New name for the asset layout.
 
 .PARAMETER Fields
-    New field definitions for the asset layout, as an array of HuduAssetLayoutField objects.
+    Field definitions for the asset layout, as an array of HuduAssetLayoutField objects. To
+    update an existing field, include its Id; fields without an Id are added as new fields.
+    Changing the list of a ListSelect field clears that field's existing values on every asset.
 
 .PARAMETER Icon
-    New icon identifier for the asset layout.
-
-.PARAMETER Color
-    New icon background color for the asset layout.
-
-.PARAMETER IconColor
-    New icon glyph color for the asset layout.
+    New Font Awesome icon class for the asset layout, e.g. 'fas fa-server'.
 
 .PARAMETER Active
-    Whether the asset layout should be active.
+    Whether the asset layout should be active. Enable-HuduAssetLayout and
+    Disable-HuduAssetLayout are shortcuts for this.
+
+.PARAMETER Color
+    New hex code for the icon's background color.
+
+.PARAMETER IconColor
+    New hex code for the icon glyph's color.
+
+.PARAMETER Inactive
+    Marks the asset layout as inactive. Prefer -Active $false (or Disable-HuduAssetLayout),
+    which sends Hudu's 'active' property directly.
 
 .PARAMETER IncludePasswords
-    Whether the passwords tab should be enabled on assets using this layout.
+    Enables the passwords section on assets using this layout. Pass -IncludePasswords:$false
+    to disable it.
 
 .PARAMETER IncludePhotos
-    Whether the photos tab should be enabled on assets using this layout.
+    Enables the photos section on assets using this layout. Pass -IncludePhotos:$false to
+    disable it.
 
 .PARAMETER IncludeComments
-    Whether the comments tab should be enabled on assets using this layout.
+    Enables the comments section on assets using this layout. Pass -IncludeComments:$false to
+    disable it.
 
 .PARAMETER IncludeFiles
-    Whether the files tab should be enabled on assets using this layout.
+    Enables the files section on assets using this layout. Pass -IncludeFiles:$false to
+    disable it.
 
 .PARAMETER IncludeProcesses
-    Whether the processes tab should be enabled on assets using this layout.
+    Enables the processes section on assets using this layout. Pass -IncludeProcesses:$false
+    to disable it.
 
 .EXAMPLE
     Set-HuduAssetLayout -Id 42 -Name 'Servers (Updated)'
 
     Renames asset layout 42, leaving its other properties unchanged.
+
+.EXAMPLE
+    $layout = Get-HuduAssetLayout -Name 'Servers'
+    $layout.Fields.Add([Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
+        Label = 'Warranty Expires'; FieldType = 'Date'; Expiration = $true; Position = 10
+    })
+    $layout | Set-HuduAssetLayout -Fields $layout.Fields
+
+    Adds a new date field to the 'Servers' asset layout, keeping its existing fields.
+
+.EXAMPLE
+    Set-HuduAssetLayout -Id 42 -IncludeComments:$false
+
+    Turns off the comments section on asset layout 42.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetLayout

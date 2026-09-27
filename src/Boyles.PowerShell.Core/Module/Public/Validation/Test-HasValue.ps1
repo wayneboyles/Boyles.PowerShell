@@ -6,15 +6,15 @@
     Unlike a plain $null or empty-string check, this inspects the value's type to decide what
     "has a value" means: strings must be non-null/non-whitespace, collections/enumerables must
     have at least one element, and value types (structs, including numbers, dates, bools, etc.)
-    must differ from their type's default. Any other non-null reference type is considered to
-    have a value.
+    must differ from their type's default - so 0 and $false return $false. Any other non-null
+    reference type is considered to have a value.
 
 .PARAMETER Value
-    The value to test. Accepts pipeline input. $null, empty strings/collections, and default value
-    types return $false.
+    The value to test. Accepts pipeline input. $null, empty/whitespace strings, empty
+    collections, and default value types return $false.
 
 .EXAMPLE
-    Test-HasValue -Value ''
+    Test-HasValue -Value '   '
 
     Returns $false.
 
@@ -24,9 +24,17 @@
     Returns $false.
 
 .EXAMPLE
+    Test-HasValue -Value 0
+
+    Returns $false, because 0 is the default value for [int].
+
+.EXAMPLE
     'Hudu' | Test-HasValue
 
     Returns $true.
+
+.OUTPUTS
+    System.Boolean
 #>
 function Test-HasValue {
     [CmdletBinding()]

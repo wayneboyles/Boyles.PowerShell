@@ -15,6 +15,11 @@
 
     Unarchives the asset password with ID 123.
 
+.EXAMPLE
+    Get-HuduAssetPassword -CompanyId 5 -Archived $true | Enable-HuduAssetPassword
+
+    Unarchives every archived asset password belonging to company 5.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetPassword
 #>

@@ -6,8 +6,8 @@
     With -Id, retrieves a single asset password by ID, returning $null instead of throwing if
     the ID doesn't exist (Hudu responds with an HTTP 404 in that case). Without -Id, retrieves
     every asset password matching the supplied filters, optionally scoped to a company via
-    -CompanyId or a piped HuduCompany object (not both), and optionally paginated via
-    -Page/-PageSize.
+    -CompanyId or a piped HuduCompany object (not both), and optionally limited to a single page
+    via -Page/-PageSize. The API key used by Connect-Hudu must have password access.
 
 .PARAMETER Id
     ID of a single asset password to retrieve.
@@ -20,10 +20,10 @@
     input by property name. Mutually exclusive with a piped HuduCompany object.
 
 .PARAMETER Archived
-    Filters results to archived (or non-archived) asset passwords.
+    Filters results to archived ($true) or non-archived ($false) asset passwords.
 
 .PARAMETER Slug
-    Filters results to asset passwords matching the given slug.
+    Filters results to asset passwords matching the given URL slug.
 
 .PARAMETER Search
     Filters results to asset passwords matching the given search text.
@@ -33,10 +33,14 @@
     -CompanyId.
 
 .PARAMETER Page
-    Page number to retrieve. Requires -PageSize or falls back to a default page size of 50.
+    Page number to retrieve. Supplying -Page and/or -PageSize returns just that one page, using
+    page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every page
+    is retrieved automatically.
 
 .PARAMETER PageSize
-    Number of results per page. Requires -Page or falls back to page 1.
+    Number of results per page. Supplying -Page and/or -PageSize returns just that one page,
+    using page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every
+    page is retrieved automatically.
 
 .EXAMPLE
     Get-HuduAssetPassword -Id 123

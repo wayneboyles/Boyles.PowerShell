@@ -5,19 +5,20 @@
 .DESCRIPTION
     With -Id, retrieves a single asset layout by ID, returning $null instead of throwing if the
     ID doesn't exist (Hudu responds with an HTTP 404 in that case). Without -Id, retrieves every
-    asset layout matching the supplied filters.
+    asset layout matching the supplied filters, across all pages.
 
 .PARAMETER Id
     ID of a single asset layout to retrieve.
 
 .PARAMETER Name
-    Filters results to asset layouts matching the given name.
+    Filters results to asset layouts matching the given name. Supports tab completion of
+    existing asset layout names once Connect-Hudu has been run.
 
 .PARAMETER Slug
-    Filters results to asset layouts matching the given slug.
+    Filters results to asset layouts matching the given URL slug.
 
 .PARAMETER Active
-    Filters results to active (or inactive) asset layouts.
+    Filters results to active ($true) or inactive ($false) asset layouts.
 
 .EXAMPLE
     Get-HuduAssetLayout -Id 42
@@ -28,6 +29,11 @@
     Get-HuduAssetLayout -Active $true
 
     Returns every active asset layout.
+
+.EXAMPLE
+    Get-HuduAssetLayout -Name 'Servers'
+
+    Returns the asset layout named 'Servers'.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetLayout

@@ -10,6 +10,14 @@
     Disconnect-Hudu
 
     Disconnects from Hudu, releasing the underlying HTTP client's resources.
+
+.EXAMPLE
+    Disconnect-Hudu -Verbose
+
+    Disconnects and reports whether a connection was actually removed.
+
+.OUTPUTS
+    None
 #>
 function Disconnect-Hudu {
     [CmdletBinding()]

@@ -15,6 +15,11 @@
 
     Deactivates the asset layout with ID 42.
 
+.EXAMPLE
+    Get-HuduAssetLayout -Name 'Legacy Printers' | Disable-HuduAssetLayout
+
+    Deactivates the 'Legacy Printers' asset layout.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetLayout
 #>

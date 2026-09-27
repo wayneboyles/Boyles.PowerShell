@@ -14,8 +14,8 @@
     for.
 
 .PARAMETER Value
-    The value as already supplied by the caller, if any. When non-empty, it is returned as-is
-    without prompting.
+    The value as already supplied by the caller, if any. When non-empty (not null, empty, or
+    whitespace), it is returned as-is without prompting.
 
 .PARAMETER Secret
     Prompts with masked input (a SecureString, converted back to plain text) instead of visible
@@ -31,6 +31,9 @@
 
     Returns $BaseUri if already provided; otherwise prompts for it with visible input, or throws
     if running non-interactively.
+
+.OUTPUTS
+    System.Object
 #>
 function Test-RequiredValue {
     [CmdletBinding()]

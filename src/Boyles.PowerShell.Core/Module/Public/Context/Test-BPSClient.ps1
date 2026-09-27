@@ -8,12 +8,22 @@
     throws, or for skipping a redundant Connect-* call.
 
 .PARAMETER Key
-    The key to check.
+    The key to check. Case-insensitive.
 
 .EXAMPLE
-    if (-not (Test-BPSClient -Key 'Hudu')) {
-        throw 'Not connected to Hudu. Run Connect-Hudu first.'
+    Test-BPSClient -Key 'hudu'
+
+    Returns $true if Connect-Hudu has been run in this session, otherwise $false.
+
+.EXAMPLE
+    if (-not (Test-BPSClient -Key 'hudu')) {
+        Connect-Hudu -BaseUrl $baseUrl -ApiKey $apiKey
     }
+
+    Connects to Hudu only if a client isn't already registered.
+
+.OUTPUTS
+    System.Boolean
 #>
 function Test-BPSClient {
     [CmdletBinding()]

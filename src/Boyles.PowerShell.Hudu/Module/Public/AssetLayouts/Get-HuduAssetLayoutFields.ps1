@@ -4,11 +4,11 @@
 
 .DESCRIPTION
     Looks up the asset layout with the given ID via Get-HuduAssetLayout and returns just its
-    'fields' property. Returns $null if the asset layout doesn't exist.
+    Fields property. Returns $null if the asset layout doesn't exist.
 
 .PARAMETER AssetLayoutId
     ID of the asset layout whose fields should be retrieved. Accepts pipeline input by property
-    name. Aliased as Id.
+    name. Aliased as Id, so HuduAssetLayout objects can be piped in directly.
 
 .EXAMPLE
     Get-HuduAssetLayoutFields -AssetLayoutId 42
@@ -16,9 +16,12 @@
     Returns the field definitions for asset layout 42.
 
 .EXAMPLE
-    Get-HuduAssetLayout -Name 'Servers' | Get-HuduAssetLayoutFields
+    Get-HuduAssetLayout -Name 'Servers' | Get-HuduAssetLayoutFields | Select-Object Label, FieldType, Required
 
-    Returns the field definitions for the 'Servers' asset layout.
+    Lists the label, type, and required flag of every field on the 'Servers' asset layout.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField
 #>
 function Get-HuduAssetLayoutFields {
     [CmdletBinding()]
