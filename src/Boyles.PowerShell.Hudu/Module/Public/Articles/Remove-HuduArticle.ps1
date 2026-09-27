@@ -20,6 +20,9 @@
     Get-HuduArticle -CompanyId 5 -Draft $true | Remove-HuduArticle -Confirm:$false
 
     Deletes every draft article belonging to company 5 without prompting.
+
+.OUTPUTS
+    None
 #>
 function Remove-HuduArticle {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]

@@ -15,10 +15,10 @@
     New name/title for the article.
 
 .PARAMETER Content
-    New body content for the article.
+    New body content for the article, as HTML.
 
 .PARAMETER EnableSharing
-    Whether to enable public sharing for the article.
+    Whether the article should have a public URL that non-authenticated users can view.
 
 .PARAMETER FolderId
     ID of the folder to move the article into.
@@ -30,6 +30,11 @@
     Set-HuduArticle -Id 123 -Name 'Updated Password Policy'
 
     Renames the article with ID 123, leaving its other properties unchanged.
+
+.EXAMPLE
+    Get-HuduArticle -CompanyId 5 | Set-HuduArticle -EnableSharing $false
+
+    Turns off public sharing on every article belonging to company 5.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduArticle

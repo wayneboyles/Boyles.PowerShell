@@ -12,14 +12,18 @@
     console output, same as passing -NoConsole - despite what "if not set" might suggest, an
     unset $Global:LogToConsole does NOT default to writing to the console.
 
+    If neither $Global:LogFile nor $Global:LogToConsole is set, Write-Log produces no output.
+
 .PARAMETER Message
     The message to log.
 
 .PARAMETER Level
-    Log severity level: INFO, WARNING, ERROR, DEBUG, or SUCCESS. Defaults to INFO.
+    Log severity level: INFO, WARNING, ERROR, DEBUG, or SUCCESS. Defaults to INFO. Controls the
+    console color and the level tag in the line. Ignored when -Section is specified.
 
 .PARAMETER Section
-    Renders the message as a visual section header with divider lines.
+    Renders the message as a visual section header with divider lines instead of a timestamped
+    entry.
 
 .PARAMETER NoConsole
     Suppresses console output; writes to the log file only. Console output is already suppressed
@@ -27,12 +31,23 @@
 
 .EXAMPLE
     $Global:LogFile = "C:\Logs\MyScript_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
+    $Global:LogToConsole = $true
 
     Write-Log 'Script started'
     Write-Log 'Phase 1: Connect' -Section
     Write-Log 'Connected to server'  -Level SUCCESS
     Write-Log 'Retrying in 5s'       -Level WARNING
     Write-Log 'Connection refused'   -Level ERROR
+
+    Writes each entry to both the console and the log file.
+
+.EXAMPLE
+    Write-Log 'Raw response body saved' -Level DEBUG -NoConsole
+
+    Writes the entry to $Global:LogFile only, even when $Global:LogToConsole is $true.
+
+.OUTPUTS
+    None
 #>
 function Write-Log {
     [CmdletBinding()]

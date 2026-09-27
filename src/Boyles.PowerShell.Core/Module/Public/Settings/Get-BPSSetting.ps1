@@ -3,13 +3,14 @@
     Retrieves one or more Boyles.PowerShell settings.
 
 .DESCRIPTION
-    Reads settings from the shared Boyles.PowerShell.Settings.BpsSettingsStore singleton — the
-    same store every Boyles.PowerShell.Core-based HTTP client reads from at runtime. Settings are
-    persisted to disk (see Get-BPSSettingPath), so a value set in one session is still there the
-    next time PowerShell starts.
+    Reads settings from the shared [Boyles.PowerShell.Settings.SettingsStore]::Instance singleton -
+    the same store every Boyles.PowerShell.Core-based HTTP client reads from at runtime. Settings
+    are persisted to disk (see Get-BPSSettingPath), so a value set in one session is still there
+    the next time PowerShell starts.
 
 .PARAMETER Name
-    Name of the setting to retrieve. Accepts pipeline input. Omit to return every stored setting.
+    Name of the setting to retrieve. Case-insensitive. Accepts pipeline input, by value or by
+    property name. Omit to return every stored setting.
 
 .EXAMPLE
     Get-BPSSetting -Name DebugEnabled
@@ -17,7 +18,7 @@
     Returns the current value of the DebugEnabled setting, or $null if it has never been set.
 
 .EXAMPLE
-    'DebugEnabled', 'RetryCount' | Get-BPSSetting
+    'DebugEnabled', 'MyCustomSetting' | Get-BPSSetting
 
     Retrieves several named settings via the pipeline.
 

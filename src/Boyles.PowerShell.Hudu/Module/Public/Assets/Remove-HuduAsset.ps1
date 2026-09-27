@@ -18,6 +18,14 @@
     Remove-HuduAsset -Id 123 -CompanyId 5
 
     Deletes the asset with ID 123 belonging to company 5, after confirmation.
+
+.EXAMPLE
+    Remove-HuduAsset -Id 123 -CompanyId 5 -WhatIf
+
+    Shows what would be deleted without changing anything.
+
+.OUTPUTS
+    None
 #>
 function Remove-HuduAsset {
     [CmdletBinding(SupportsShouldProcess, ConfirmImpact = 'High')]

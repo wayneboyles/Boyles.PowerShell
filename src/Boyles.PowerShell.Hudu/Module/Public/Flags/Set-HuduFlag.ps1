@@ -1,4 +1,36 @@
-﻿function Set-HuduFlag {
+﻿<#
+.SYNOPSIS
+    Updates an existing flag in the connected Hudu instance.
+
+.DESCRIPTION
+    Updates the flag with the given ID via the connected HuduClient (see Connect-Hudu). Only the
+    parameters actually supplied are sent in the request body, so omitted properties are left
+    unchanged. Returns $null instead of throwing when the ID doesn't exist, since Hudu responds
+    with an HTTP 404 in that case. Supports -WhatIf/-Confirm.
+
+.PARAMETER Id
+    ID of the flag to update. Accepts pipeline input by property name.
+
+.PARAMETER FlagTypeId
+    New flag type ID for the flag.
+
+.PARAMETER Description
+    New description for the flag.
+
+.EXAMPLE
+    Set-HuduFlag -Id 17 -Description 'Firmware updated, pending reboot'
+
+    Updates the description of flag 17.
+
+.EXAMPLE
+    Get-HuduFlag -FlagTypeId 1 | Set-HuduFlag -FlagTypeId 2
+
+    Moves every flag of flag type 1 to flag type 2.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduFlag
+#>
+function Set-HuduFlag {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduFlag])]
     param (

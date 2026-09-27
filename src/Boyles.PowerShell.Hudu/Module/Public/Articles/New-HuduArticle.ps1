@@ -4,16 +4,17 @@
 
 .DESCRIPTION
     Creates an article via the connected HuduClient (see Connect-Hudu). Only the parameters
-    actually supplied are sent in the request body. Supports -WhatIf/-Confirm.
+    actually supplied are sent in the request body. Omit -CompanyId to create a global
+    (non-company) knowledge base article. Supports -WhatIf/-Confirm.
 
 .PARAMETER Name
     Name/title of the new article.
 
 .PARAMETER Content
-    Body content of the article.
+    Body content of the article, as HTML.
 
 .PARAMETER EnableSharing
-    Whether to enable public sharing for the article.
+    Whether to give the article a public URL that non-authenticated users can view.
 
 .PARAMETER FolderId
     ID of the folder to create the article in.
@@ -25,6 +26,11 @@
     New-HuduArticle -Name 'Password Policy' -Content '<p>...</p>' -CompanyId 5
 
     Creates a new article named 'Password Policy' under company 5.
+
+.EXAMPLE
+    New-HuduArticle 'Onboarding Checklist' -Content $html -FolderId 12 -EnableSharing $true
+
+    Creates a global article in folder 12 with public sharing enabled.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduArticle

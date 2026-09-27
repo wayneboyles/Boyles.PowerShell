@@ -1,4 +1,49 @@
-﻿function Set-HuduFolder {
+﻿<#
+.SYNOPSIS
+    Updates an existing folder in the connected Hudu instance.
+
+.DESCRIPTION
+    Updates the folder with the given ID via the connected HuduClient (see Connect-Hudu). Only
+    the parameters actually supplied are sent in the request body, so omitted properties are
+    left unchanged. Returns $null instead of throwing when the ID doesn't exist, since Hudu
+    responds with an HTTP 404 in that case. Supports -WhatIf/-Confirm.
+
+.PARAMETER Id
+    ID of the folder to update. Accepts pipeline input by property name.
+
+.PARAMETER Name
+    New name for the folder.
+
+.PARAMETER Icon
+    New Font Awesome icon class for the folder.
+
+.PARAMETER Description
+    New description for the folder.
+
+.PARAMETER ParentFolderId
+    ID of the folder to move this folder under.
+
+.PARAMETER CompanyId
+    ID of the company to associate the folder with.
+
+.PARAMETER FolderType
+    Type of folder: 'article' or 'photo'. A folder's type cannot be changed after creation, so
+    Hudu rejects the update if this differs from the folder's current type.
+
+.EXAMPLE
+    Set-HuduFolder -Id 12 -Name 'Networking'
+
+    Renames folder 12.
+
+.EXAMPLE
+    Get-HuduFolder -CompanyId 5 -Name 'Switches' | Set-HuduFolder -ParentFolderId 20
+
+    Moves the 'Switches' folder under folder 20.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduFolder
+#>
+function Set-HuduFolder {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduFolder])]
     param (

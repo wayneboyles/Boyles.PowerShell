@@ -17,6 +17,9 @@
     Write-Done 'Company synced'
 
     Writes "[OK  ] Company synced" in green.
+
+.OUTPUTS
+    None
 #>
 function Write-Done {
     [CmdletBinding()]

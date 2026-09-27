@@ -5,16 +5,19 @@
 .DESCRIPTION
     With -Id, retrieves a single company by ID, returning $null instead of throwing if the ID
     doesn't exist (Hudu responds with an HTTP 404 in that case). Without -Id, retrieves every
-    company matching the supplied filters, optionally paginated via -Page/-PageSize.
+    company matching the supplied filters, optionally limited to a single page via
+    -Page/-PageSize.
 
 .PARAMETER Id
     ID of a single company to retrieve.
 
 .PARAMETER Name
-    Filters results to companies matching the given name.
+    Filters results to companies matching the given name. Supports tab completion of existing
+    company names once Connect-Hudu has been run.
 
 .PARAMETER IdNumber
-    Filters results to companies matching the given ID number.
+    Filters results to companies matching the given ID number (Hudu's custom company
+    identification number).
 
 .PARAMETER PhoneNumber
     Filters results to companies matching the given phone number.
@@ -29,21 +32,30 @@
     Filters results to companies matching the given state.
 
 .PARAMETER Slug
-    Filters results to companies matching the given slug.
+    Filters results to companies matching the given URL slug.
 
 .PARAMETER Search
     Filters results to companies matching the given search text.
 
 .PARAMETER Page
-    Page number to retrieve. Requires -PageSize or falls back to a default page size of 50.
+    Page number to retrieve. Supplying -Page and/or -PageSize returns just that one page, using
+    page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every page
+    is retrieved automatically.
 
 .PARAMETER PageSize
-    Number of results per page. Requires -Page or falls back to page 1.
+    Number of results per page. Supplying -Page and/or -PageSize returns just that one page,
+    using page 1 or a page size of 50 for whichever is omitted. When neither is supplied, every
+    page is retrieved automatically.
 
 .EXAMPLE
     Get-HuduCompany -Id 5
 
     Returns the company with ID 5, or $null if it doesn't exist.
+
+.EXAMPLE
+    Get-HuduCompany -Name 'Acme Corp'
+
+    Returns the company named 'Acme Corp'.
 
 .EXAMPLE
     Get-HuduCompany -State 'TX' -Page 1 -PageSize 25

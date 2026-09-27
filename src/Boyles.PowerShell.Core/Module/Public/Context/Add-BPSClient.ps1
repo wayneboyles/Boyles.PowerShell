@@ -9,7 +9,7 @@
     client to be passed to every call explicitly.
 
 .PARAMETER Key
-    Unique, case-insensitive name to register the client under (e.g. 'Hudu', 'Hudu-Prod').
+    Unique, case-insensitive name to register the client under (e.g. 'hudu', 'Hudu-Prod').
     Registering a second client under a key that is already in use replaces - and disposes, if
     the previous client implements IDisposable - the one already there.
 
@@ -17,7 +17,19 @@
     The client instance to store, e.g. a HuduClient.
 
 .EXAMPLE
-    Add-BPSClient -Key 'Hudu' -Client $huduClient
+    Add-BPSClient -Key 'hudu' -Client $huduClient
+
+    Stores $huduClient under the 'hudu' key so it can be retrieved later with
+    Get-BPSClient -Key 'hudu'.
+
+.EXAMPLE
+    $client = [Boyles.PowerShell.Hudu.Services.HuduClient]::Create($baseUrl, $apiKey)
+    Add-BPSClient 'Hudu-Prod' $client
+
+    Builds a HuduClient and registers it under a custom key using positional parameters.
+
+.OUTPUTS
+    None
 #>
 function Add-BPSClient {
     [CmdletBinding()]

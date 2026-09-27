@@ -3,48 +3,60 @@
     Creates a new asset layout in the connected Hudu instance.
 
 .DESCRIPTION
-    Creates an asset layout via the connected HuduClient (see Connect-Hudu). Optional cosmetic
-    parameters (Icon/Color/IconColor) are only sent when supplied; the Include* switches and
-    -Inactive always send an explicit true/false value, defaulting the layout to active with all
-    Include* options off. Supports -WhatIf/-Confirm.
+    Creates an asset layout via the connected HuduClient (see Connect-Hudu). Only the parameters
+    actually supplied are sent in the request body; the field definitions in -Fields are sent
+    alongside them. Hudu creates the layout as active unless -Inactive is specified. Supports
+    -WhatIf/-Confirm.
 
 .PARAMETER Name
     Name of the new asset layout.
 
 .PARAMETER Fields
-    Field definitions for the asset layout, as an array of HuduAssetLayoutField objects.
+    Field definitions for the asset layout, as an array of HuduAssetLayoutField objects. Each
+    field needs at least a Label and a FieldType (see [Boyles.PowerShell.Hudu.Models.HuduFieldType]
+    for the supported type names).
 
 .PARAMETER Icon
-    Icon identifier to display for the asset layout.
+    Font Awesome icon class to display for the asset layout, e.g. 'fas fa-server'.
 
 .PARAMETER Color
-    Color to display the asset layout's icon background in.
+    Hex code for the icon's background color, e.g. '#1E88E5'.
 
 .PARAMETER IconColor
-    Color to display the asset layout's icon glyph in.
+    Hex code for the icon glyph's color, e.g. '#FFFFFF'.
 
 .PARAMETER Inactive
     Creates the asset layout as inactive instead of active.
 
 .PARAMETER IncludePasswords
-    Enables the passwords tab on assets using this layout.
+    Enables the passwords section on assets using this layout.
 
 .PARAMETER IncludePhotos
-    Enables the photos tab on assets using this layout.
+    Enables the photos section on assets using this layout.
 
 .PARAMETER IncludeComments
-    Enables the comments tab on assets using this layout.
+    Enables the comments section on assets using this layout.
 
 .PARAMETER IncludeFiles
-    Enables the files tab on assets using this layout.
+    Enables the files section on assets using this layout.
 
 .PARAMETER IncludeProcesses
-    Enables the processes tab on assets using this layout.
+    Enables the processes section on assets using this layout.
 
 .EXAMPLE
-    New-HuduAssetLayout -Name 'Servers' -Fields $fields -IncludePasswords -IncludeFiles
+    $fields = @(
+        [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
+            Label = 'Hostname'; FieldType = 'Text'; Required = $true; ShowInList = $true; Position = 1
+        }
+        [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
+            Label = 'Notes'; FieldType = 'RichText'; Position = 2
+        }
+    )
 
-    Creates an active 'Servers' asset layout with the passwords and files tabs enabled.
+    New-HuduAssetLayout -Name 'Servers' -Fields $fields -Icon 'fas fa-server' -IncludePasswords -IncludeFiles
+
+    Creates an active 'Servers' asset layout with two fields and the passwords and files
+    sections enabled.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetLayout

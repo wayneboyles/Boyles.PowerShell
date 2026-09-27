@@ -4,8 +4,9 @@
 
 .DESCRIPTION
     Archives the company with the given ID via the connected HuduClient (see Connect-Hudu).
-    Returns $null instead of throwing when the ID doesn't exist, since Hudu responds with an
-    HTTP 404 in that case. Supports -WhatIf/-Confirm.
+    Archived companies are hidden from the regular company list. Returns $null instead of
+    throwing when the ID doesn't exist, since Hudu responds with an HTTP 404 in that case.
+    Supports -WhatIf/-Confirm.
 
 .PARAMETER Id
     ID of the company to archive. Accepts pipeline input by property name.
@@ -14,6 +15,11 @@
     Disable-HuduCompany -Id 5
 
     Archives the company with ID 5.
+
+.EXAMPLE
+    Get-HuduCompany -Name 'Former Client LLC' | Disable-HuduCompany
+
+    Archives the company named 'Former Client LLC'.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduCompany

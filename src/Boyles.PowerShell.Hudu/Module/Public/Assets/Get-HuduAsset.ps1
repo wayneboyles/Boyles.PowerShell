@@ -1,83 +1,96 @@
 ﻿<#
 .SYNOPSIS
     Retrieves Hudu assets.
+
 .DESCRIPTION
-    Wraps the Hudu Assets API. There is only one parameter set: -CompanyId, -Id, and the
-    global filters (-Name, -PrimarySerial, -AssetLayoutId, -Slug, -Search, -UpdatedAfter,
-    -UpdatedBefore, -Archived) can all be combined, so parameter sets cannot express the
-    routing rule below - it depends on which specific parameters were bound, not on which
-    parameters are structurally allowed together. That routing is therefore a runtime check
-    in the function body:
+    Wraps the Hudu Assets API. -CompanyId, -Id, and the filters (-Name, -PrimarySerial,
+    -AssetLayout/-AssetLayoutId, -Slug, -Search, -Archived) can be combined freely, so which
+    endpoint is called depends on which parameters were bound:
 
     - -CompanyId and -Id together (regardless of any other filter) -> a single, direct GET
-      against /companies/{company_id}/assets/{id}. This is the only combination that maps to
-      exactly one asset, so it always takes the cheapest, most specific call.
+      against /companies/{company_id}/assets/{id}. Returns $null instead of throwing if the
+      asset doesn't exist (Hudu responds with an HTTP 404 in that case).
     - -CompanyId alone, with no -Id and no other filter (only -Archived is compatible with
-      it) -> the lighter company-scoped list endpoint /companies/{company_id}/assets, as an
-      optimization over the equivalent global-endpoint call.
+      it) -> the company-scoped list endpoint /companies/{company_id}/assets.
     - Everything else (-Id alone, -CompanyId with another filter, or any of the other filters)
-      -> the global /assets endpoint, the only one that supports Name, PrimarySerial,
-      AssetLayoutId, Slug, Search and UpdatedAt, and which also accepts CompanyId and Id as
-      ordinary filters rather than path segments.
+      -> the global /assets endpoint, which supports every filter and accepts CompanyId and Id
+      as ordinary filters rather than path segments.
 
-    List calls are paginated internally (Hudu's `page` / `page_size` parameters) and this
-    function always returns the full, materialized result set.
-.PARAMETER CompanyId
-    Restrict results to a single company. Combine with -Id for a direct single-asset lookup;
-    alone (or with -Archived) it uses the company-scoped list endpoint; combined with another
-    filter it is sent as a filter to the global endpoint. Accepted from the pipeline by
-    property name.
+    -AssetLayout and -AssetLayoutId are in separate parameter sets, so only one of them can be
+    used per call. List calls are paginated internally (Hudu's 'page' / 'page_size' parameters)
+    and this function always returns the full, materialized result set.
+
 .PARAMETER Id
     The identifier of a specific asset. Combine with -CompanyId for a direct single-asset
     lookup; used without -CompanyId it is sent as a filter to the global assets endpoint.
-    Accepted from the pipeline by property name.
+    Accepts pipeline input by property name.
+
 .PARAMETER Name
-    Filter assets by name. Global assets endpoint only.
+    Filters assets by name.
+
+.PARAMETER CompanyId
+    Restricts results to a single company. Combine with -Id for a direct single-asset lookup;
+    alone (or with -Archived) it uses the company-scoped list endpoint; combined with another
+    filter it is sent as a filter to the global endpoint. Accepts pipeline input by property
+    name.
+
 .PARAMETER PrimarySerial
-    Filter assets by primary serial number. Global assets endpoint only.
+    Filters assets by primary serial number.
+
+.PARAMETER AssetLayout
+    Filters assets by the name of their asset layout. The name is resolved to an ID with
+    Get-HuduAssetLayout before the query is sent. Supports tab completion of existing asset
+    layout names once Connect-Hudu has been run. Cannot be combined with -AssetLayoutId.
+
 .PARAMETER AssetLayoutId
-    Filter assets by their associated asset layout's Id. Global assets endpoint only.
-.PARAMETER Slug
-    Filter assets by their URL slug. Global assets endpoint only.
-.PARAMETER Search
-    Free-text search filter. Global assets endpoint only.
-.PARAMETER UpdatedAfter
-    Only return assets updated on or after this date/time. Combine with -UpdatedBefore for a
-    bounded range, or use alone for an open-ended range. Global assets endpoint only.
-.PARAMETER UpdatedBefore
-    Only return assets updated on or before this date/time. Combine with -UpdatedAfter for a
-    bounded range, or use alone for an open-ended range. Global assets endpoint only.
+    Filters assets by the ID of their asset layout. Cannot be combined with -AssetLayout.
+
 .PARAMETER Archived
-    Only return archived assets.
+    Returns only archived assets.
+
+.PARAMETER Slug
+    Filters assets by their URL slug.
+
+.PARAMETER Search
+    Free-text search filter.
+
 .EXAMPLE
     Get-HuduAsset -CompanyId 12 -Id 345
 
     Retrieves a single asset directly, via /companies/12/assets/345.
+
 .EXAMPLE
     Get-HuduAsset -CompanyId 12
 
     Retrieves every non-archived asset for company 12, via the company-scoped endpoint.
+
 .EXAMPLE
     Get-HuduAsset -CompanyId 12 -Archived
 
     Retrieves every archived asset for company 12, via the company-scoped endpoint.
+
 .EXAMPLE
     Get-HuduAsset -CompanyId 12 -Name 'DC01'
 
-    Searches company 12 for assets named 'DC01', via the global endpoint (company_id + name
+    Searches company 12 for assets named 'DC01', via the global endpoint (company_id and name
     are both sent as filters, since the company-scoped endpoint does not support -Name).
-.EXAMPLE
-    Get-HuduAsset -Name 'DC01' -AssetLayoutId 7
 
-    Searches across every company for assets named 'DC01' on asset layout 7, via the global endpoint.
 .EXAMPLE
-    Get-HuduAsset -UpdatedAfter (Get-Date).AddDays(-7)
+    Get-HuduAsset -AssetLayout 'Servers' -Search 'Dell'
 
-    Retrieves every asset updated in the last week, across every company.
+    Searches every company for assets on the 'Servers' asset layout matching 'Dell'.
+
 .EXAMPLE
-    Get-HuduCompany | Get-HuduAsset
+    Get-HuduCompany -Name 'Acme' | ForEach-Object { Get-HuduAsset -CompanyId $_.Id }
 
-    Retrieves every asset for every company, piping CompanyId from Get-HuduCompany.
+    Retrieves every asset belonging to the Acme company. The company is passed explicitly
+    because a piped HuduCompany's Id property would otherwise bind to -Id, not -CompanyId.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAsset
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduAsset[]
 #>
 function Get-HuduAsset {
     [CmdletBinding()]

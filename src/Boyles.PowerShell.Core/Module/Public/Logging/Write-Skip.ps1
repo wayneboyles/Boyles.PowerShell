@@ -16,6 +16,9 @@
     Write-Skip 'Company already exists, skipping create'
 
     Writes "[SKIP] Company already exists, skipping create" in dark gray.
+
+.OUTPUTS
+    None
 #>
 function Write-Skip {
     [CmdletBinding()]

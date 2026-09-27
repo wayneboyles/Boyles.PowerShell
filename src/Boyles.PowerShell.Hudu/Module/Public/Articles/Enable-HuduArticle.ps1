@@ -15,6 +15,11 @@
 
     Unarchives the article with ID 123.
 
+.EXAMPLE
+    Get-HuduArticle -Id 123 | Enable-HuduArticle -WhatIf
+
+    Shows which article would be unarchived without changing anything.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduArticle
 #>

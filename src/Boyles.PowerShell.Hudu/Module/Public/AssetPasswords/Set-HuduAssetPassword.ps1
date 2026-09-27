@@ -16,16 +16,16 @@
     New name for the asset password.
 
 .PARAMETER Password
-    New password value.
+    New password value, as plain text.
 
 .PARAMETER CompanyId
     New company ID to associate the asset password with.
 
 .PARAMETER PasswordableType
-    New type of the object this password is attached to.
+    New type of the record this password is attached to, e.g. 'Asset' or 'Website'.
 
 .PARAMETER PasswordableId
-    New ID of the object this password is attached to.
+    New ID of the record this password is attached to.
 
 .PARAMETER InPortal
     Whether the password should be visible in the client portal.
@@ -52,6 +52,11 @@
     Set-HuduAssetPassword -Id 123 -Username 'newadmin'
 
     Updates the username on asset password 123, leaving its other properties unchanged.
+
+.EXAMPLE
+    Get-HuduAssetPassword -CompanyId 5 -Search 'wifi' | Set-HuduAssetPassword -InPortal $true
+
+    Makes every matching Wi-Fi password for company 5 visible in the client portal.
 
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduAssetPassword

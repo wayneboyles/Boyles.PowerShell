@@ -56,6 +56,11 @@
 
     Creates a new company named 'Acme Corp'.
 
+.EXAMPLE
+    New-HuduCompany -Name 'Acme Corp - Dallas' -ParentCompanyId 5 -City 'Dallas' -State 'TX'
+
+    Creates a child company under company 5.
+
 .OUTPUTS
     Boyles.PowerShell.Hudu.Models.HuduCompany
 #>

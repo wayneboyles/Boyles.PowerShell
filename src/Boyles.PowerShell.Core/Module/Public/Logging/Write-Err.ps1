@@ -24,6 +24,9 @@
     Write-Err 'Missing required setting' -Terminate -ExitCode 2
 
     Writes the message, then exits the process with code 2.
+
+.OUTPUTS
+    None
 #>
 function Write-Err {
     [CmdletBinding()]

@@ -24,6 +24,9 @@
     Write-Step 'Uploading results' -Prefix 'STEP' -Color White
 
     Writes "[STEP] Uploading results" in white.
+
+.OUTPUTS
+    None
 #>
 function Write-Step {
     [CmdletBinding()]
