@@ -32,12 +32,8 @@ Supports
 ### EXAMPLE 1
 ```
 $fields = @(
-    [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
-        Label = 'Hostname'; FieldType = 'Text'; Required = $true; ShowInList = $true; Position = 1
-    }
-    [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
-        Label = 'Notes'; FieldType = 'RichText'; Position = 2
-    }
+    @{ Label = 'Hostname'; FieldType = 'Text'; Required = $true; ShowInList = $true; Position = 1 }
+    @{ Label = 'Notes'; FieldType = 'RichText'; Position = 2 }
 )
 ```
 

@@ -1,163 +1,125 @@
----
-Module Name: Boyles.PowerShell.Hudu
-Module Guid: e79d0665-d4dd-47e6-85de-a12d0f3c028c
-Download Help Link: N/A
-Help Version: 0.3.0
-Locale: en-US
----
+# Boyles.PowerShell.Hudu
 
-# Boyles.PowerShell.Hudu Module
-## Description
 Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
 
-## Boyles.PowerShell.Hudu Cmdlets
-### [Connect-Hudu](Connect-Hudu.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+**Version:** 0.3.0
 
-### [Disable-HuduArticle](Disable-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Activity Logs
 
-### [Disable-HuduAsset](Disable-HuduAsset.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduActivityLogs](Get-HuduActivityLogs.md) | Retrieves activity logs from the connected Hudu instance. |
 
-### [Disable-HuduAssetLayout](Disable-HuduAssetLayout.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## API Info
 
-### [Disable-HuduAssetPassword](Disable-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduApiInfo](Get-HuduApiInfo.md) | Retrieves version and status information about the connected Hudu instance. |
 
-### [Disable-HuduCompany](Disable-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Articles
 
-### [Disconnect-Hudu](Disconnect-Hudu.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Disable-HuduArticle](Disable-HuduArticle.md) | Archives a Hudu article. |
+| [Enable-HuduArticle](Enable-HuduArticle.md) | Unarchives a Hudu article. |
+| [Get-HuduArticle](Get-HuduArticle.md) | Retrieves one or more articles from the connected Hudu instance. |
+| [New-HuduArticle](New-HuduArticle.md) | Creates a new article in the connected Hudu instance. |
+| [Remove-HuduArticle](Remove-HuduArticle.md) | Deletes an article from the connected Hudu instance. |
+| [Set-HuduArticle](Set-HuduArticle.md) | Updates an existing article in the connected Hudu instance. |
 
-### [Enable-HuduArticle](Enable-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Asset Layouts
 
-### [Enable-HuduAsset](Enable-HuduAsset.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Disable-HuduAssetLayout](Disable-HuduAssetLayout.md) | Deactivates a Hudu asset layout. |
+| [Enable-HuduAssetLayout](Enable-HuduAssetLayout.md) | Reactivates a Hudu asset layout. |
+| [Get-HuduAssetLayout](Get-HuduAssetLayout.md) | Retrieves one or more asset layouts from the connected Hudu instance. |
+| [New-HuduAssetLayout](New-HuduAssetLayout.md) | Creates a new asset layout in the connected Hudu instance. |
+| [Set-HuduAssetLayout](Set-HuduAssetLayout.md) | Updates an existing asset layout in the connected Hudu instance. |
+| [Get-HuduAssetLayoutFields](Get-HuduAssetLayoutFields.md) | Retrieves the field definitions of a Hudu asset layout. |
 
-### [Enable-HuduAssetLayout](Enable-HuduAssetLayout.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Asset Passwords
 
-### [Enable-HuduAssetPassword](Enable-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Disable-HuduAssetPassword](Disable-HuduAssetPassword.md) | Archives a Hudu asset password. |
+| [Enable-HuduAssetPassword](Enable-HuduAssetPassword.md) | Unarchives a Hudu asset password. |
+| [Get-HuduAssetPassword](Get-HuduAssetPassword.md) | Retrieves one or more asset passwords from the connected Hudu instance. |
+| [New-HuduAssetPassword](New-HuduAssetPassword.md) | Creates a new asset password in the connected Hudu instance. |
+| [Remove-HuduAssetPassword](Remove-HuduAssetPassword.md) | Deletes an asset password from the connected Hudu instance. |
+| [Set-HuduAssetPassword](Set-HuduAssetPassword.md) | Updates an existing asset password in the connected Hudu instance. |
 
-### [Enable-HuduCompany](Enable-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Assets
 
-### [Get-HuduActivityLogs](Get-HuduActivityLogs.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Disable-HuduAsset](Disable-HuduAsset.md) | Archives a Hudu asset. |
+| [Enable-HuduAsset](Enable-HuduAsset.md) | Unarchives a Hudu asset. |
+| [Get-HuduAsset](Get-HuduAsset.md) | Retrieves Hudu assets. |
+| [New-HuduAsset](New-HuduAsset.md) | Creates a new asset in the connected Hudu instance. |
+| [Remove-HuduAsset](Remove-HuduAsset.md) | Deletes an asset from the connected Hudu instance. |
 
-### [Get-HuduApiInfo](Get-HuduApiInfo.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Cards
 
-### [Get-HuduArticle](Get-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduCard](Get-HuduCard.md) | Looks up the Hudu integration card for a record in an external integration. |
 
-### [Get-HuduAsset](Get-HuduAsset.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Companies
 
-### [Get-HuduAssetLayout](Get-HuduAssetLayout.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Disable-HuduCompany](Disable-HuduCompany.md) | Archives a Hudu company. |
+| [Enable-HuduCompany](Enable-HuduCompany.md) | Unarchives a Hudu company. |
+| [Get-HuduCompany](Get-HuduCompany.md) | Retrieves one or more companies from the connected Hudu instance. |
+| [New-HuduCompany](New-HuduCompany.md) | Creates a new company in the connected Hudu instance. |
+| [Remove-HuduCompany](Remove-HuduCompany.md) | Deletes a company from the connected Hudu instance. |
+| [Set-HuduCompany](Set-HuduCompany.md) | Updates an existing company in the connected Hudu instance. |
 
-### [Get-HuduAssetLayoutFields](Get-HuduAssetLayoutFields.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Connectivity
 
-### [Get-HuduAssetPassword](Get-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Connect-Hudu](Connect-Hudu.md) | Connects to a Hudu instance and registers the resulting client for use by other Hudu cmdlets. |
+| [Disconnect-Hudu](Disconnect-Hudu.md) | Disconnects from Hudu, removing the registered client from the process-wide client store. |
 
-### [Get-HuduCard](Get-HuduCard.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Expirations
 
-### [Get-HuduCompany](Get-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduExpiration](Get-HuduExpiration.md) | Retrieves expirations from the connected Hudu instance. |
+| [Remove-HuduExpiration](Remove-HuduExpiration.md) | Deletes an expiration from the connected Hudu instance. |
+| [Set-HuduExpiration](Set-HuduExpiration.md) | Updates an expiration in the connected Hudu instance. |
 
-### [Get-HuduExpiration](Get-HuduExpiration.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Flags
 
-### [Get-HuduFlag](Get-HuduFlag.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduFlag](Get-HuduFlag.md) | Retrieves one or more flags from the connected Hudu instance. |
+| [New-HuduFlag](New-HuduFlag.md) | Creates a new flag on a record in the connected Hudu instance. |
+| [Remove-HuduFlag](Remove-HuduFlag.md) | Deletes a flag from the connected Hudu instance. |
+| [Set-HuduFlag](Set-HuduFlag.md) | Updates an existing flag in the connected Hudu instance. |
 
-### [Get-HuduFlagType](Get-HuduFlagType.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Flag Types
 
-### [Get-HuduFolder](Get-HuduFolder.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduFlagType](Get-HuduFlagType.md) | Retrieves one or more flag types from the connected Hudu instance. |
+| [New-HuduFlagType](New-HuduFlagType.md) | Creates a new flag type in the connected Hudu instance. |
+| [Remove-HuduFlagType](Remove-HuduFlagType.md) | Deletes a flag type from the connected Hudu instance. |
+| [Set-HuduFlagType](Set-HuduFlagType.md) | Updates an existing flag type in the connected Hudu instance. |
 
-### [Get-HuduGroup](Get-HuduGroup.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Folders
 
-### [New-HuduArticle](New-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduFolder](Get-HuduFolder.md) | Retrieves one or more folders from the connected Hudu instance. |
+| [New-HuduFolder](New-HuduFolder.md) | Creates a new folder in the connected Hudu instance. |
+| [Remove-HuduFolder](Remove-HuduFolder.md) | Deletes a folder from the connected Hudu instance. |
+| [Set-HuduFolder](Set-HuduFolder.md) | Updates an existing folder in the connected Hudu instance. |
 
-### [New-HuduAsset](New-HuduAsset.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
+## Groups
 
-### [New-HuduAssetLayout](New-HuduAssetLayout.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [New-HuduAssetPassword](New-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [New-HuduCompany](New-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [New-HuduFlag](New-HuduFlag.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [New-HuduFlagType](New-HuduFlagType.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [New-HuduFolder](New-HuduFolder.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduArticle](Remove-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduAsset](Remove-HuduAsset.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduAssetPassword](Remove-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduCompany](Remove-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduExpiration](Remove-HuduExpiration.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduFlag](Remove-HuduFlag.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduFlagType](Remove-HuduFlagType.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Remove-HuduFolder](Remove-HuduFolder.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduArticle](Set-HuduArticle.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduAssetLayout](Set-HuduAssetLayout.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduAssetPassword](Set-HuduAssetPassword.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduCompany](Set-HuduCompany.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduExpiration](Set-HuduExpiration.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduFlag](Set-HuduFlag.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduFlagType](Set-HuduFlagType.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
-### [Set-HuduFolder](Set-HuduFolder.md)
-Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
-
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduGroup](Get-HuduGroup.md) | Retrieves one or more user groups from the connected Hudu instance. |

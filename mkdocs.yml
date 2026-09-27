@@ -1,4 +1,4 @@
-﻿site_name: Boyles.PowerShell
+site_name: Boyles.PowerShell
 site_description: PowerShell modules for MSP automation
 repo_url: https://github.com/wayneboyles/Boyles.PowerShell
 docs_dir: docs
@@ -9,6 +9,8 @@ theme:
   features:
     - navigation.indexes # module README.md becomes the section landing page
     - navigation.sections
+    - navigation.tabs
+    - navigation.path
     - search.suggest
     - content.code.copy
   palette:
@@ -26,3 +28,108 @@ markdown_extensions:
   - tables
   - toc:
       permalink: true
+
+# --- BEGIN GENERATED NAV (build.ps1 -Task Docs) ---
+nav:
+  - Home: README.md
+  - 'Core':
+      - 'Boyles.PowerShell.Core/README.md'
+      - 'Banner':
+          - 'Show-ScriptBanner': 'Boyles.PowerShell.Core/Show-ScriptBanner.md'
+      - 'Collections':
+          - 'ConvertFrom-JToken': 'Boyles.PowerShell.Core/ConvertFrom-JToken.md'
+          - 'ConvertTo-RequestBody': 'Boyles.PowerShell.Core/ConvertTo-RequestBody.md'
+          - 'ConvertTo-RequestQuery': 'Boyles.PowerShell.Core/ConvertTo-RequestQuery.md'
+          - 'ConvertTo-StringDictionary': 'Boyles.PowerShell.Core/ConvertTo-StringDictionary.md'
+      - 'Completion':
+          - 'Register-BPSArgumentCompleter': 'Boyles.PowerShell.Core/Register-BPSArgumentCompleter.md'
+      - 'Context':
+          - 'Add-BPSClient': 'Boyles.PowerShell.Core/Add-BPSClient.md'
+          - 'Confirm-BPSClient': 'Boyles.PowerShell.Core/Confirm-BPSClient.md'
+          - 'Get-BPSClient': 'Boyles.PowerShell.Core/Get-BPSClient.md'
+          - 'Remove-BPSClient': 'Boyles.PowerShell.Core/Remove-BPSClient.md'
+          - 'Test-BPSClient': 'Boyles.PowerShell.Core/Test-BPSClient.md'
+          - 'Get-BPSClientKey': 'Boyles.PowerShell.Core/Get-BPSClientKey.md'
+      - 'Logging':
+          - 'Write-Done': 'Boyles.PowerShell.Core/Write-Done.md'
+          - 'Write-Err': 'Boyles.PowerShell.Core/Write-Err.md'
+          - 'Write-Header': 'Boyles.PowerShell.Core/Write-Header.md'
+          - 'Write-Log': 'Boyles.PowerShell.Core/Write-Log.md'
+          - 'Write-Skip': 'Boyles.PowerShell.Core/Write-Skip.md'
+          - 'Write-Step': 'Boyles.PowerShell.Core/Write-Step.md'
+      - 'Settings':
+          - 'Get-BPSSetting': 'Boyles.PowerShell.Core/Get-BPSSetting.md'
+          - 'Remove-BPSSetting': 'Boyles.PowerShell.Core/Remove-BPSSetting.md'
+          - 'Reset-BPSSetting': 'Boyles.PowerShell.Core/Reset-BPSSetting.md'
+          - 'Set-BPSSetting': 'Boyles.PowerShell.Core/Set-BPSSetting.md'
+          - 'Get-BPSSettingPath': 'Boyles.PowerShell.Core/Get-BPSSettingPath.md'
+      - 'Validation':
+          - 'Test-HasValue': 'Boyles.PowerShell.Core/Test-HasValue.md'
+          - 'Test-RequiredValue': 'Boyles.PowerShell.Core/Test-RequiredValue.md'
+  - 'Hudu':
+      - 'Boyles.PowerShell.Hudu/README.md'
+      - 'Activity Logs':
+          - 'Get-HuduActivityLogs': 'Boyles.PowerShell.Hudu/Get-HuduActivityLogs.md'
+      - 'API Info':
+          - 'Get-HuduApiInfo': 'Boyles.PowerShell.Hudu/Get-HuduApiInfo.md'
+      - 'Articles':
+          - 'Disable-HuduArticle': 'Boyles.PowerShell.Hudu/Disable-HuduArticle.md'
+          - 'Enable-HuduArticle': 'Boyles.PowerShell.Hudu/Enable-HuduArticle.md'
+          - 'Get-HuduArticle': 'Boyles.PowerShell.Hudu/Get-HuduArticle.md'
+          - 'New-HuduArticle': 'Boyles.PowerShell.Hudu/New-HuduArticle.md'
+          - 'Remove-HuduArticle': 'Boyles.PowerShell.Hudu/Remove-HuduArticle.md'
+          - 'Set-HuduArticle': 'Boyles.PowerShell.Hudu/Set-HuduArticle.md'
+      - 'Asset Layouts':
+          - 'Disable-HuduAssetLayout': 'Boyles.PowerShell.Hudu/Disable-HuduAssetLayout.md'
+          - 'Enable-HuduAssetLayout': 'Boyles.PowerShell.Hudu/Enable-HuduAssetLayout.md'
+          - 'Get-HuduAssetLayout': 'Boyles.PowerShell.Hudu/Get-HuduAssetLayout.md'
+          - 'New-HuduAssetLayout': 'Boyles.PowerShell.Hudu/New-HuduAssetLayout.md'
+          - 'Set-HuduAssetLayout': 'Boyles.PowerShell.Hudu/Set-HuduAssetLayout.md'
+          - 'Get-HuduAssetLayoutFields': 'Boyles.PowerShell.Hudu/Get-HuduAssetLayoutFields.md'
+      - 'Asset Passwords':
+          - 'Disable-HuduAssetPassword': 'Boyles.PowerShell.Hudu/Disable-HuduAssetPassword.md'
+          - 'Enable-HuduAssetPassword': 'Boyles.PowerShell.Hudu/Enable-HuduAssetPassword.md'
+          - 'Get-HuduAssetPassword': 'Boyles.PowerShell.Hudu/Get-HuduAssetPassword.md'
+          - 'New-HuduAssetPassword': 'Boyles.PowerShell.Hudu/New-HuduAssetPassword.md'
+          - 'Remove-HuduAssetPassword': 'Boyles.PowerShell.Hudu/Remove-HuduAssetPassword.md'
+          - 'Set-HuduAssetPassword': 'Boyles.PowerShell.Hudu/Set-HuduAssetPassword.md'
+      - 'Assets':
+          - 'Disable-HuduAsset': 'Boyles.PowerShell.Hudu/Disable-HuduAsset.md'
+          - 'Enable-HuduAsset': 'Boyles.PowerShell.Hudu/Enable-HuduAsset.md'
+          - 'Get-HuduAsset': 'Boyles.PowerShell.Hudu/Get-HuduAsset.md'
+          - 'New-HuduAsset': 'Boyles.PowerShell.Hudu/New-HuduAsset.md'
+          - 'Remove-HuduAsset': 'Boyles.PowerShell.Hudu/Remove-HuduAsset.md'
+      - 'Cards':
+          - 'Get-HuduCard': 'Boyles.PowerShell.Hudu/Get-HuduCard.md'
+      - 'Companies':
+          - 'Disable-HuduCompany': 'Boyles.PowerShell.Hudu/Disable-HuduCompany.md'
+          - 'Enable-HuduCompany': 'Boyles.PowerShell.Hudu/Enable-HuduCompany.md'
+          - 'Get-HuduCompany': 'Boyles.PowerShell.Hudu/Get-HuduCompany.md'
+          - 'New-HuduCompany': 'Boyles.PowerShell.Hudu/New-HuduCompany.md'
+          - 'Remove-HuduCompany': 'Boyles.PowerShell.Hudu/Remove-HuduCompany.md'
+          - 'Set-HuduCompany': 'Boyles.PowerShell.Hudu/Set-HuduCompany.md'
+      - 'Connectivity':
+          - 'Connect-Hudu': 'Boyles.PowerShell.Hudu/Connect-Hudu.md'
+          - 'Disconnect-Hudu': 'Boyles.PowerShell.Hudu/Disconnect-Hudu.md'
+      - 'Expirations':
+          - 'Get-HuduExpiration': 'Boyles.PowerShell.Hudu/Get-HuduExpiration.md'
+          - 'Remove-HuduExpiration': 'Boyles.PowerShell.Hudu/Remove-HuduExpiration.md'
+          - 'Set-HuduExpiration': 'Boyles.PowerShell.Hudu/Set-HuduExpiration.md'
+      - 'Flags':
+          - 'Get-HuduFlag': 'Boyles.PowerShell.Hudu/Get-HuduFlag.md'
+          - 'New-HuduFlag': 'Boyles.PowerShell.Hudu/New-HuduFlag.md'
+          - 'Remove-HuduFlag': 'Boyles.PowerShell.Hudu/Remove-HuduFlag.md'
+          - 'Set-HuduFlag': 'Boyles.PowerShell.Hudu/Set-HuduFlag.md'
+      - 'Flag Types':
+          - 'Get-HuduFlagType': 'Boyles.PowerShell.Hudu/Get-HuduFlagType.md'
+          - 'New-HuduFlagType': 'Boyles.PowerShell.Hudu/New-HuduFlagType.md'
+          - 'Remove-HuduFlagType': 'Boyles.PowerShell.Hudu/Remove-HuduFlagType.md'
+          - 'Set-HuduFlagType': 'Boyles.PowerShell.Hudu/Set-HuduFlagType.md'
+      - 'Folders':
+          - 'Get-HuduFolder': 'Boyles.PowerShell.Hudu/Get-HuduFolder.md'
+          - 'New-HuduFolder': 'Boyles.PowerShell.Hudu/New-HuduFolder.md'
+          - 'Remove-HuduFolder': 'Boyles.PowerShell.Hudu/Remove-HuduFolder.md'
+          - 'Set-HuduFolder': 'Boyles.PowerShell.Hudu/Set-HuduFolder.md'
+      - 'Groups':
+          - 'Get-HuduGroup': 'Boyles.PowerShell.Hudu/Get-HuduGroup.md'
+# --- END GENERATED NAV ---

@@ -117,7 +117,7 @@ Task Build -Depends BuildPowerShell
 
 Task Test -Depends TestPowerShell
 
-Task Docs -Depends BuildPowerShellDocs
+Task Docs -Depends DocsBuild
 
 Task Full -Depends Build, Test
 
@@ -337,6 +337,54 @@ Task Package -Depends BuildPowerShell {
     Write-Host 'Creating zip file...'
 }
 
+Task DocsEnv {
+
+    $script:VenvRoot = Join-Path -Path $RepoRoot -ChildPath '.venv'
+    $script:Zensical = Join-Path -Path $VenvRoot -ChildPath 'Scripts\zensical.exe'
+    $venvPython = Join-Path -Path $VenvRoot -ChildPath 'Scripts\python.exe'
+
+    if (-not (Test-Path $venvPython)) {
+        Write-Host 'Creating Python virtual environment...'
+        Invoke-ExternalCommand -Executable 'py' -Arguments @('-3', '-m', 'venv', $VenvRoot)
+    }
+
+    Write-Host 'Installing docs dependencies...'
+    Invoke-ExternalCommand -Executable $venvPython -Arguments @(
+        '-m', 'pip', 'install', '--quiet', '--upgrade', '-r', (Join-Path $RepoRoot 'requirements-docs.txt')
+    )
+
+    Write-Host ''
+
+}
+
+Task DocsServe -Depends Docs, DocsEnv {
+
+    Write-Host 'Starting local docs server (Ctrl+C to stop)...'
+    Write-Host ''
+
+    Push-Location $RepoRoot
+    try {
+        & $Zensical serve
+    } finally {
+        Pop-Location
+    }
+}
+
+Task DocsBuild -Depends BuildPowerShellDocs, DocsEnv {
+
+    Write-Host 'Building static docs site...'
+
+    Push-Location $RepoRoot
+    try {
+        Invoke-ExternalCommand -Executable $Zensical -Arguments @('build')
+    } finally {
+        Pop-Location
+    }
+
+    Write-Host "Site written to $(Join-Path $RepoRoot 'site')"
+    Write-Host ''
+}
+
 Task BuildPowerShellDocs -Depends BuildPowerShell {
 
     Write-Host 'Building PowerShell Docs...'
@@ -349,6 +397,7 @@ Task BuildPowerShellDocs -Depends BuildPowerShell {
     & pwsh -NoProfile -NonInteractive -File $docsScript `
         -ArtifactsRoot $script:ArtifactsRoot `
         -DocsRoot $script:DocsRoot `
-        -ModuleName ($script:ModuleNames -join ',')
+        -ModuleName ($script:ModuleNames -join ',') `
+        -MkDocsConfig (Join-Path -Path $script:RepoRoot -ChildPath 'mkdocs.yml')
 
 }

@@ -45,12 +45,8 @@
 
 .EXAMPLE
     $fields = @(
-        [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
-            Label = 'Hostname'; FieldType = 'Text'; Required = $true; ShowInList = $true; Position = 1
-        }
-        [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
-            Label = 'Notes'; FieldType = 'RichText'; Position = 2
-        }
+        @{ Label = 'Hostname'; FieldType = 'Text'; Required = $true; ShowInList = $true; Position = 1 }
+        @{ Label = 'Notes'; FieldType = 'RichText'; Position = 2 }
     )
 
     New-HuduAssetLayout -Name 'Servers' -Fields $fields -Icon 'fas fa-server' -IncludePasswords -IncludeFiles

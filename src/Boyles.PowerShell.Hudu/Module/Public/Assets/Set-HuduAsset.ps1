@@ -45,7 +45,8 @@
     Pipes an asset in (its Id and CompanyId bind by property name) and updates its serial number.
 
 .EXAMPLE
-    $os = [Boyles.PowerShell.Hudu.Models.HuduAssetField]@{ Label = 'Operating System'; Value = 'Windows Server 2025' }
+    $os = @{ Label = 'Operating System'; Value = 'Windows Server 2025' }
+
     Set-HuduAsset -Id 345 -CompanyId 12 -Fields $os
 
     Updates the 'Operating System' custom field on asset 345.

@@ -37,8 +37,8 @@ Creates an asset named 'DC01' on asset layout 7 for company 12.
 ### EXAMPLE 2
 ```
 $fields = @(
-    [Boyles.PowerShell.Hudu.Models.HuduAssetField]@{ Label = 'Hostname'; Value = 'dc01.acme.local' }
-    [Boyles.PowerShell.Hudu.Models.HuduAssetField]@{ Label = 'Operating System'; Value = 'Windows Server 2022' }
+    @{ Label = 'Hostname'; Value = 'dc01.acme.local' }
+    @{ Label = 'Operating System'; Value = 'Windows Server 2022' }
 )
 ```
 

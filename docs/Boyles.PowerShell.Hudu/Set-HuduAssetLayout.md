@@ -39,11 +39,13 @@ Renames asset layout 42, leaving its other properties unchanged.
 ### EXAMPLE 2
 ```
 $layout = Get-HuduAssetLayout -Name 'Servers'
-$layout.Fields.Add([Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField]@{
+```
+
+$layout.Fields.Add(@{
     Label = 'Warranty Expires'; FieldType = 'Date'; Expiration = $true; Position = 10
 })
+
 $layout | Set-HuduAssetLayout -Fields $layout.Fields
-```
 
 Adds a new date field to the 'Servers' asset layout, keeping its existing fields.
 
