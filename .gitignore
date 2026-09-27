@@ -12,6 +12,10 @@
 *.env
 .idea
 
+# Docs
+.venv
+site/
+
 # Custom scripts
 [Tt]ools/SecretHelpers.ps1
 

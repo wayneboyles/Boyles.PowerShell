@@ -117,6 +117,8 @@ Task Build -Depends BuildPowerShell
 
 Task Test -Depends TestPowerShell
 
+Task Docs -Depends BuildPowerShellDocs
+
 Task Full -Depends Build, Test
 
 Task Init -Depends Clean {
@@ -333,4 +335,20 @@ Task Package -Depends BuildPowerShell {
     Write-Host ''
 
     Write-Host 'Creating zip file...'
+}
+
+Task BuildPowerShellDocs -Depends BuildPowerShell {
+
+    Write-Host 'Building PowerShell Docs...'
+
+    Confirm-Directory $script:DocsRoot
+
+    $docsScript = Join-Path -Path $script:RepoRoot -ChildPath 'tools/New-ModuleDocs.ps1'
+
+    # Run out-of-process so the module assemblies aren't loaded (and locked) in the build session.
+    & pwsh -NoProfile -NonInteractive -File $docsScript `
+        -ArtifactsRoot $script:ArtifactsRoot `
+        -DocsRoot $script:DocsRoot `
+        -ModuleName ($script:ModuleNames -join ',')
+
 }
