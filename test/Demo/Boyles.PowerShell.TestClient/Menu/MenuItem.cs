@@ -13,7 +13,24 @@ public sealed class MenuItem
     public string? Icon { get; set; }
 
     public List<MenuItem> Children { get; set; } = new();
-    
+
+    /// <summary>
+    /// True when this item is a container (dropdown or submenu) rather than a link.
+    /// </summary>
+    public bool HasChildren => Children.Count > 0;
+
+    /// <summary>
+    /// Children in display order: by <see cref="Order"/>, then alphabetically by
+    /// <see cref="DisplayName"/>, so items left at <see cref="DefaultOrder"/> sort alphabetically.
+    /// </summary>
+    public IEnumerable<MenuItem> SortedChildren => Sort(Children);
+
+    /// <summary>
+    /// Sorts menu items into display order; see <see cref="SortedChildren"/>.
+    /// </summary>
+    public static IEnumerable<MenuItem> Sort(IEnumerable<MenuItem> items) =>
+        items.OrderBy(i => i.Order).ThenBy(i => i.DisplayName, StringComparer.OrdinalIgnoreCase);
+
     public MenuItem()
     {
         

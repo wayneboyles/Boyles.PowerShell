@@ -1,0 +1,82 @@
+@page "/hudu/assets/get-assets-for-company"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetAssetsForCompany</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetAssetsForCompany</h2>
+    <div class="text-secondary"><code>HuduClient.GetAssetsForCompanyAsync</code> — paginated GET <code>/api/v1/companies/{company_id}/assets</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Company Id</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                </div>
+                <div class="col-auto form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="archivedFilter" @bind="_archived" />
+                    <label class="form-check-label" for="archivedFilter">Archived only</label>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@(_busy || _companyId is null)">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private int? _companyId;
+    private bool _archived;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = _archived
+                ? new Dictionary<string, string> { ["archived"] = "true" }
+                : null;
+
+            var result = await HuduConnection.Client!.GetAssetsForCompanyAsync(_companyId!.Value, query);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

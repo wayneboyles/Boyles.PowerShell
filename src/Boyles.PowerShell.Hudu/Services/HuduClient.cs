@@ -24,7 +24,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// Page size requested from Hudu list endpoints. Must not exceed the API's maximum, or every
         /// page comes back short and paging stops after the first one.
         /// </summary>
-        private const int PageSize = 100;
+        private const int PageSize = 25;
 
         /// <summary>
         /// Initializes a new <see cref="HuduClient"/>. Most callers should use <see cref="Create"/>,

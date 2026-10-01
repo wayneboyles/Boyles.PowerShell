@@ -1,0 +1,87 @@
+@page "/hudu/companies/get-companies-page"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetCompaniesPage</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetCompaniesPage</h2>
+    <div class="text-secondary"><code>HuduClient.GetCompaniesPageAsync</code> — single-page GET <code>/api/v1/companies?page=&amp;page_size=</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Page</label>
+                    <input type="number" min="1" class="form-control" style="width: 120px;" @bind="_page" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Page size</label>
+                    <input type="number" min="1" class="form-control" style="width: 120px;" @bind="_pageSize" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Name filter (optional)</label>
+                    <input class="form-control" @bind="_nameFilter" placeholder="e.g. Acme" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private int _page = 1;
+    private int _pageSize = 25;
+    private string? _nameFilter;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = string.IsNullOrWhiteSpace(_nameFilter)
+                ? null
+                : new Dictionary<string, string> { ["name"] = _nameFilter };
+
+            var result = await HuduConnection.Client!.GetCompaniesPageAsync(query, _page, _pageSize);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}
