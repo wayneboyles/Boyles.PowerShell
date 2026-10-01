@@ -1,0 +1,142 @@
+@page "/hudu/ip-addresses/new-ip-address"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewIpAddress</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewIpAddress</h2>
+    <div class="text-secondary"><code>HuduClient.NewIpAddressAsync</code> — POST <code>/api/v1/ip_addresses</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address</label>
+                                <InputText class="form-control" @bind-Value="_model.Address" placeholder="e.g. 10.0.0.10" />
+                                <ValidationMessage For="() => _model.Address" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Status</label>
+                                <InputSelect class="form-select" @bind-Value="_model.Status">
+                                    <option value="">(unset)</option>
+                                    <option value="Unassigned">Unassigned</option>
+                                    <option value="Assigned">Assigned</option>
+                                    <option value="Reserved">Reserved</option>
+                                    <option value="Deprecated">Deprecated</option>
+                                    <option value="DHCP">DHCP</option>
+                                    <option value="SLAAC">SLAAC</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fqdn</label>
+                                <InputText class="form-control" @bind-Value="_model.Fqdn" />
+                            </div>
+                            <div class="col-md-6 mb-3 form-check pt-4">
+                                <InputCheckbox class="form-check-input" @bind-Value="_skipDnsValidation" />
+                                <label class="form-check-label">Skip DNS validation</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Asset Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.AssetId" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Network Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.NetworkId" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Company Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.CompanyId" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputText class="form-control" @bind-Value="_model.Description" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Notes" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewIpAddressModel _model = new();
+    private bool _skipDnsValidation;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            _model.SkipDnsValidation = _skipDnsValidation;
+
+            var result = await HuduConnection.Client!.NewIpAddressAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class NewIpAddressModel
+    {
+        [Required]
+        public string? Address { get; set; }
+
+        public string? Status { get; set; }
+        public string? Fqdn { get; set; }
+        public string? Description { get; set; }
+        public string? Notes { get; set; }
+        public int? AssetId { get; set; }
+        public int? NetworkId { get; set; }
+        public int? CompanyId { get; set; }
+        public bool? SkipDnsValidation { get; set; }
+    }
+}

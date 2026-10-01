@@ -9,7 +9,8 @@ namespace Boyles.PowerShell.Hudu.Models
     /// This type is used for both reads and writes. Use <see cref="HuduLayoutFieldSet"/> to compose a
     /// collection of these fluently when creating or amending a layout.
     /// </remarks>
-    public sealed class HuduAssetLayoutField {
+    public sealed class HuduAssetLayoutField 
+    {
         /// <summary>
         /// The unique identifier of the field. Omitted when creating a new field.
         /// </summary>
@@ -17,7 +18,7 @@ namespace Boyles.PowerShell.Hudu.Models
         public int? Id { get; set; }
 
         /// <summary>
-        /// The human readable label displayed in the Hudu interface.
+        /// The human-readable label displayed in the Hudu interface.
         /// </summary>
         [JsonProperty("label")]
         public string? Label { get; set; }

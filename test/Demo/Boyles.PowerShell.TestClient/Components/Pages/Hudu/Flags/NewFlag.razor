@@ -1,0 +1,123 @@
+@page "/hudu/flags/new-flag"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewFlag</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewFlag</h2>
+    <div class="text-secondary"><code>HuduClient.NewFlagAsync</code> — POST <code>/api/v1/flags</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Flag type Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.FlagTypeId" />
+                                <ValidationMessage For="() => _model.FlagTypeId" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Flagable type</label>
+                                <InputSelect class="form-select" @bind-Value="_model.FlagableType">
+                                    <option value="">(choose)</option>
+                                    <option value="Asset">Asset</option>
+                                    <option value="Website">Website</option>
+                                    <option value="Article">Article</option>
+                                    <option value="AssetPassword">AssetPassword</option>
+                                    <option value="Company">Company</option>
+                                    <option value="Procedure">Procedure</option>
+                                    <option value="RackStorage">RackStorage</option>
+                                    <option value="Network">Network</option>
+                                    <option value="IpAddress">IpAddress</option>
+                                    <option value="Vlan">Vlan</option>
+                                    <option value="VlanZone">VlanZone</option>
+                                </InputSelect>
+                                <ValidationMessage For="() => _model.FlagableType" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Flagable Id</label>
+                            <InputNumber class="form-control" style="width: 160px;" @bind-Value="_model.FlagableId" />
+                            <ValidationMessage For="() => _model.FlagableId" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Description" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewFlagModel _model = new();
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.NewFlagAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    // Passed directly as the request body - HttpClientBase's JsonOptions map these PascalCase
+    // properties to snake_case and drop nulls, so unset fields are simply omitted.
+    private sealed class NewFlagModel
+    {
+        [Required]
+        public int? FlagTypeId { get; set; }
+
+        [Required]
+        public string? FlagableType { get; set; }
+
+        [Required]
+        public int? FlagableId { get; set; }
+
+        public string? Description { get; set; }
+    }
+}

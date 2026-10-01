@@ -1,0 +1,114 @@
+@page "/hudu/flag-types/update-flag-type"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateFlagType</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateFlagType</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateFlagTypeAsync</code> — PUT <code>/api/v1/flag_types/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Flag type Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_flagTypeId" />
+                    </div>
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="_model.Name" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Color</label>
+                                <InputSelect class="form-select" @bind-Value="_model.Color">
+                                    <option value="">(unchanged)</option>
+                                    <option value="Red">Red</option>
+                                    <option value="Blue">Blue</option>
+                                    <option value="Green">Green</option>
+                                    <option value="Yellow">Yellow</option>
+                                    <option value="Purple">Purple</option>
+                                    <option value="Orange">Orange</option>
+                                    <option value="Light Pink">Light Pink</option>
+                                    <option value="Light Blue">Light Blue</option>
+                                    <option value="Light Green">Light Green</option>
+                                    <option value="Light Purple">Light Purple</option>
+                                    <option value="Light Orange">Light Orange</option>
+                                    <option value="Light Yellow">Light Yellow</option>
+                                    <option value="White">White</option>
+                                    <option value="Grey">Grey</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@(_busy || _flagTypeId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly UpdateFlagTypeModel _model = new();
+    private int? _flagTypeId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_flagTypeId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.UpdateFlagTypeAsync(_flagTypeId.Value, _model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class UpdateFlagTypeModel
+    {
+        public string? Name { get; set; }
+        public string? Color { get; set; }
+    }
+}

@@ -44,9 +44,16 @@ public partial class HuduClient
     public async Task<List<HuduFlag>> GetFlagsAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
     {
         var path = string.Format(CultureInfo.InvariantCulture, "{0}/flags", ApiRoot);
-        return await GetAllPagesAsync<HuduFlag>(path, query, itemsProperty: "flags", ct: cancellationToken);
+        return await GetAllHuduPagesAsync<HuduFlag>(path, query, "flags", cancellationToken);
     }
 
+    /// <summary>
+    /// Creates a new flag in Hudu synchronously.
+    /// </summary>
+    /// <param name="body">
+    /// The request body representing the flag to create. Wrapped in a <c>flag</c> envelope before sending.
+    /// </param>
+    /// <returns>The newly created <see cref="HuduFlag"/>.</returns>
     public HuduFlag NewFlag(object body) => Sync(NewFlagAsync(body));
     
     /// <summary>

@@ -26,7 +26,7 @@ namespace Boyles.PowerShell.Hudu.Services
         public async Task<List<HuduAsset>> GetAssetsAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/assets", ApiRoot);
-            return await GetAllPagesAsync<HuduAsset>(path, query, itemsProperty: "assets", offsetParam: "page", limitParam: "page_size");
+            return await GetAllHuduPagesAsync<HuduAsset>(path, query, "assets", cancellationToken);
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace Boyles.PowerShell.Hudu.Services
         public async Task<List<HuduAsset>> GetAssetsForCompanyAsync(int companyId, Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies/{1}/assets", ApiRoot, companyId);
-            return await GetAllPagesAsync<HuduAsset>(path, query, itemsProperty: "assets", limitParam: "page_size", offsetParam: "page", ct: cancellationToken);
+            return await GetAllHuduPagesAsync<HuduAsset>(path, query, "assets", cancellationToken);
         }
 
         /// <summary>

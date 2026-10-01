@@ -30,6 +30,8 @@ namespace Boyles.PowerShell.Context
         /// </summary>
         /// <param name="key">Unique, case-insensitive name to register the client under.</param>
         /// <param name="client">The client instance to store, e.g. a HuduClient.</param>
+        /// <exception cref="ArgumentException"><paramref name="key"/> is null, empty, or whitespace.</exception>
+        /// <exception cref="ArgumentNullException"><paramref name="client"/> is null.</exception>
         public static void Set(string key, object client)
         {
             if (string.IsNullOrWhiteSpace(key))
@@ -56,6 +58,8 @@ namespace Boyles.PowerShell.Context
         /// <summary>
         /// Retrieves the client registered under the given key.
         /// </summary>
+        /// <param name="key">Case-insensitive name the client was registered under.</param>
+        /// <returns>The registered client.</returns>
         /// <exception cref="KeyNotFoundException">No client is registered under <paramref name="key"/>.</exception>
         public static object Get(string key)
         {
@@ -70,6 +74,9 @@ namespace Boyles.PowerShell.Context
         /// <summary>
         /// Retrieves the client registered under the given key, cast to <typeparamref name="T"/>.
         /// </summary>
+        /// <typeparam name="T">The expected client type, e.g. HuduClient.</typeparam>
+        /// <param name="key">Case-insensitive name the client was registered under.</param>
+        /// <returns>The registered client as a <typeparamref name="T"/>.</returns>
         /// <exception cref="KeyNotFoundException">No client is registered under <paramref name="key"/>.</exception>
         /// <exception cref="InvalidOperationException">
         /// A client is registered under <paramref name="key"/> but is not a <typeparamref name="T"/>.
@@ -91,6 +98,10 @@ namespace Boyles.PowerShell.Context
         /// Attempts to retrieve the client registered under the given key. Returns false, without
         /// throwing, when no client is registered under that key or it is not a <typeparamref name="T"/>.
         /// </summary>
+        /// <typeparam name="T">The expected client type, e.g. HuduClient.</typeparam>
+        /// <param name="key">Case-insensitive name the client was registered under.</param>
+        /// <param name="client">The registered client when found; otherwise null.</param>
+        /// <returns>True if a <typeparamref name="T"/> is registered under <paramref name="key"/>.</returns>
         public static bool TryGet<T>(string key, out T? client) where T : class
         {
             if (_clients.TryGetValue(key, out var found) && found is T typed)
@@ -106,6 +117,8 @@ namespace Boyles.PowerShell.Context
         /// <summary>
         /// Returns true when a client is currently registered under the given key.
         /// </summary>
+        /// <param name="key">Case-insensitive name to check.</param>
+        /// <returns>True if a client is registered under <paramref name="key"/>.</returns>
         public static bool Contains(string key) => _clients.ContainsKey(key);
 
         /// <summary>
@@ -117,6 +130,8 @@ namespace Boyles.PowerShell.Context
         /// Removes the client registered under the given key, disposing it first if it implements
         /// IDisposable. Returns false, without throwing, when no client was registered under that key.
         /// </summary>
+        /// <param name="key">Case-insensitive name of the client to remove.</param>
+        /// <returns>True if a client was removed; otherwise false.</returns>
         public static bool Remove(string key)
         {
             if (_clients.TryRemove(key, out var client))

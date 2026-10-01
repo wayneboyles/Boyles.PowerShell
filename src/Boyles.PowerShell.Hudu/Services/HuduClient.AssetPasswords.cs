@@ -27,7 +27,7 @@ namespace Boyles.PowerShell.Hudu.Services
         public async Task<List<HuduAssetPassword>> GetAssetPasswordsAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/asset_passwords", ApiRoot);
-            return await GetAllPagesAsync<HuduAssetPassword>(path, query, offsetParam: "page", limitParam: "page_size", itemsProperty: "asset_passwords", ct: cancellationToken).ConfigureAwait(false);
+            return await GetAllHuduPagesAsync<HuduAssetPassword>(path, query, "asset_passwords", cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -149,16 +149,39 @@ namespace Boyles.PowerShell.Hudu.Services
             return await GetAsync<List<HuduAssetPassword>>(path, q, itemsProperty: "asset_passwords", ct: cancellationToken);
         }
 
+        /// <summary>
+        /// Archives an AssetPassword synchronously. Archived passwords are hidden from normal views
+        /// but not deleted, and can be restored with <see cref="UnarchiveAssetPassword"/>.
+        /// </summary>
+        /// <param name="id">The numeric Hudu AssetPassword ID.</param>
+        /// <returns>The archived <see cref="HuduAssetPassword"/>.</returns>
         public HuduAssetPassword ArchiveAssetPassword(int id) => Sync(ArchiveAssetPasswordAsync(id));
 
+        /// <summary>
+        /// Archives an AssetPassword asynchronously.
+        /// </summary>
+        /// <param name="id">The numeric Hudu AssetPassword ID.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to the archived <see cref="HuduAssetPassword"/>.</returns>
         public async Task<HuduAssetPassword> ArchiveAssetPasswordAsync(int id, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/asset_passwords/{1}/archive", ApiRoot, id);
             return await PutAsync<HuduAssetPassword>(path, null, "asset_password", cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Restores a previously archived AssetPassword synchronously.
+        /// </summary>
+        /// <param name="id">The numeric Hudu AssetPassword ID.</param>
+        /// <returns>The restored <see cref="HuduAssetPassword"/>.</returns>
         public HuduAssetPassword UnarchiveAssetPassword(int id) => Sync(UnarchiveAssetPasswordAsync(id));
 
+        /// <summary>
+        /// Restores a previously archived AssetPassword asynchronously.
+        /// </summary>
+        /// <param name="id">The numeric Hudu AssetPassword ID.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to the restored <see cref="HuduAssetPassword"/>.</returns>
         public async Task<HuduAssetPassword> UnarchiveAssetPasswordAsync(int id, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/asset_passwords/{1}/unarchive", ApiRoot, id);

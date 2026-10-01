@@ -1,0 +1,85 @@
+@page "/hudu/flags/delete-flag"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · DeleteFlag</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">DeleteFlag</h2>
+    <div class="text-secondary"><code>HuduClient.DeleteFlagAsync</code> — DELETE <code>/api/v1/flags/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Flag Id</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_flagId" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-danger" @onclick="RunAsync" disabled="@(_busy || _flagId is null)">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (_busy)
+    {
+        <div class="text-secondary">Running…</div>
+    }
+    else if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+    else if (_deleted)
+    {
+        <div class="alert alert-success">Flag @_flagId deleted.</div>
+    }
+}
+
+@code {
+    private bool _busy;
+    private bool _deleted;
+    private string? _error;
+    private int? _flagId;
+
+    private async Task RunAsync()
+    {
+        if (_flagId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _deleted = false;
+        try
+        {
+            await HuduConnection.Client!.DeleteFlagAsync(_flagId.Value);
+            _deleted = true;
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

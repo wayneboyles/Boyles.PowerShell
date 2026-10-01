@@ -30,7 +30,7 @@ namespace Boyles.PowerShell.Diagnostics
         public int? AttemptNumber { get; set; }
 
         /// <summary>
-        /// Name of the client method that setiated the call, e.g. <c>HuduClient.GetCompanyAsync</c>.
+        /// Name of the client method that initiated the call, e.g. <c>HuduClient.GetCompanyAsync</c>.
         /// Populate this from the calling method so the log can be filtered/grouped by operation.
         /// </summary>
         public string? SourceMethod { get; set; }

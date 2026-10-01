@@ -115,3 +115,27 @@ pre {
     transform: rotate(-90deg);
     margin-left: auto;
 }
+
+/* The Hudu dropdown now lists 16+ module groups (50+ leaf commands), which no longer fits as
+   a single tall column. .mega-menu lays the top-level entries (Connect, the dividers, and each
+   .dropdown-submenu) out in two CSS columns instead. Nested flyout submenus opt back out of
+   columns (column-count: 1) so they aren't split themselves, and every direct child avoids
+   breaking mid-item across a column boundary. Add a third column here (column-count: 3, and
+   widen .mega-menu accordingly) if the list grows enough to need it. */
+.mega-menu {
+    column-count: 2;
+    column-gap: 0;
+    width: 30rem;
+    padding: 0.5rem 0;
+}
+
+.mega-menu > .dropdown-submenu,
+.mega-menu > .dropdown-item,
+.mega-menu > .dropdown-divider {
+    break-inside: avoid-column;
+}
+
+.mega-menu .dropdown-submenu > .dropdown-menu {
+    column-count: 1;
+    width: 14rem;
+}

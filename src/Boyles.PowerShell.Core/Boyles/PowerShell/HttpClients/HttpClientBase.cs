@@ -19,14 +19,21 @@ namespace Boyles.PowerShell.HttpClients
 {
     /// <summary>
     /// Abstract base class for all Boyles.PowerShell service API HTTP clients. Provides a unified pipeline
-    /// for authentication, JSON serialization, automatic retry with back-off, cursor-based pagination,
+    /// for authentication, JSON serialization, automatic retry with back-off, offset/limit pagination,
     /// and raw JToken access. Concrete clients inherit this class and call the protected verb helpers
     /// (GetAsync, PostAsync, etc.) rather than constructing HttpRequestMessage instances directly.
     /// </summary>
     public abstract class HttpClientBase : IDisposable
     {
+        /// <summary>
+        /// Set once <see cref="Dispose(bool)"/> has run, so repeated Dispose calls are no-ops.
+        /// </summary>
         private bool _disposed;
 
+        /// <summary>
+        /// User-Agent sent on every request, e.g. <c>Boyles.PowerShell/1.0.0.0</c>, so API owners
+        /// can identify traffic from this module and which version sent it.
+        /// </summary>
         private static readonly string UserAgent = $"Boyles.PowerShell/{Assembly.GetExecutingAssembly().GetName().Version}";
 
         /// <summary>
@@ -127,6 +134,10 @@ namespace Boyles.PowerShell.HttpClients
         /// Optional custom JSON serializer settings to use in place of DefaultJson. When null, the
         /// static DefaultJson settings are used, providing snake_case mapping and null-value suppression.
         /// </param>
+        /// <param name="diagnosticsSink">
+        /// Optional sink that receives an HttpCallRecord for every HTTP attempt. When null,
+        /// NullHttpDiagnosticsSink is used and no diagnostics are recorded.
+        /// </param>
         /// <exception cref="ArgumentException">
         /// Thrown when baseUrl is null, empty, or consists entirely of whitespace characters.
         /// </exception>
@@ -161,9 +172,10 @@ namespace Boyles.PowerShell.HttpClients
 
         /// <summary>
         /// Issues an authenticated HTTP GET request to the specified path and deserializes the
-        /// response body to TResult. Passes through the full retry and 401 re-authentication
+        /// response body to T. Passes through the full retry and 401 re-authentication
         /// pipeline defined in SendWithRetryAsync before returning the deserialized value.
         /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="query">Optional key-value pairs appended to the URL as a query string.</param>
         /// <param name="itemsProperty">
@@ -171,62 +183,83 @@ namespace Boyles.PowerShell.HttpClients
         /// of this named property is deserialized rather than the root document.
         /// </param>
         /// <param name="ct">Cancellation token forwarded to the underlying HTTP call.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>The deserialized response, or default when the body (or envelope property) is empty.</returns>
+        /// <exception cref="ApiException">The final response after all retries was not a 2xx status.</exception>
         protected async Task<T> GetAsync<T>(string path, IReadOnlyDictionary<string, string>? query = null, string? itemsProperty = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
             => await RequestAsync<T>(HttpMethod.Get, path, query, null, itemsProperty, ct, sourceMethod);
 
         /// <summary>
         /// Issues an authenticated HTTP POST request with a JSON-serialized body and deserializes
-        /// the response to TResult. The body object is serialized using JsonOptions; pass null to
+        /// the response to T. The body object is serialized using JsonOptions; pass null to
         /// send a request with no body content.
         /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="body">Object serialized as the JSON request body, or null for an empty body.</param>
         /// <param name="itemsProperty">Optional envelope property name; see GetAsync for details.</param>
         /// <param name="ct">Cancellation token forwarded to the underlying HTTP call.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>The deserialized response, or default when the body (or envelope property) is empty.</returns>
+        /// <exception cref="ApiException">The final response after all retries was not a 2xx status.</exception>
         protected async Task<T> PostAsync<T>(string path, object? body, string? itemsProperty = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
             => await RequestAsync<T>(HttpMethod.Post, path, null, body, itemsProperty, ct, sourceMethod);
 
         /// <summary>
         /// Issues an authenticated HTTP PUT request with a JSON-serialized body and deserializes
-        /// the response to TResult. Intended for full-resource replacement operations where the
+        /// the response to T. Intended for full-resource replacement operations where the
         /// entire resource representation is supplied in the request body.
         /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="body">Object serialized as the JSON request body.</param>
         /// <param name="itemsProperty">Optional envelope property name; see GetAsync for details.</param>
         /// <param name="ct">Cancellation token forwarded to the underlying HTTP call.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>The deserialized response, or default when the body (or envelope property) is empty.</returns>
+        /// <exception cref="ApiException">The final response after all retries was not a 2xx status.</exception>
         protected async Task<T> PutAsync<T>(string path, object? body, string? itemsProperty = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
             => await RequestAsync<T>(HttpMethod.Put, path, null, body, itemsProperty, ct, sourceMethod);
 
         /// <summary>
         /// Issues an authenticated HTTP PATCH request with a JSON-serialized body and deserializes
-        /// the response to TResult. HttpMethod.Patch is constructed manually because the static
+        /// the response to T. HttpMethod.Patch is constructed manually because the static
         /// property is not available on all target framework versions.
         /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="body">Object serialized as the JSON request body.</param>
         /// <param name="itemsProperty">Optional envelope property name; see GetAsync for details.</param>
         /// <param name="ct">Cancellation token forwarded to the underlying HTTP call.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>The deserialized response, or default when the body (or envelope property) is empty.</returns>
+        /// <exception cref="ApiException">The final response after all retries was not a 2xx status.</exception>
         protected async Task<T> PatchAsync<T>(string path, object? body, string? itemsProperty = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
             => await RequestAsync<T>(new HttpMethod("PATCH"), path, null, body, itemsProperty, ct, sourceMethod);
 
         /// <summary>
-        /// Issues an authenticated HTTP DELETE request and deserializes the response to TResult.
+        /// Issues an authenticated HTTP DELETE request and deserializes the response to T.
         /// No request body is sent. Use the return type parameter to capture a confirmation payload
         /// from APIs that return a body on deletion, or discard it when none is expected.
         /// </summary>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="itemsProperty">Optional envelope property name; see GetAsync for details.</param>
         /// <param name="ct">Cancellation token forwarded to the underlying HTTP call.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>The deserialized response, or default when the body (or envelope property) is empty.</returns>
+        /// <exception cref="ApiException">The final response after all retries was not a 2xx status.</exception>
         protected async Task<T> DeleteAsync<T>(string path, string? itemsProperty = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
             => await RequestAsync<T>(HttpMethod.Delete, path, null, null, itemsProperty, ct, sourceMethod);
 
         /// <summary>
         /// Retrieves all pages of a paginated GET endpoint, accumulating the results into a single
-        /// flat list. Pagination is driven by offset/limit query parameters; the loop exits when a
-        /// page shorter than pageSize is returned, indicating no further records remain. Each page
-        /// is parsed by extracting the array at itemsProperty from the response envelope.
+        /// flat list. Pagination is driven by a page-size parameter plus either a record offset or a
+        /// page number (see <paramref name="mode"/>); the loop exits when a page shorter than pageSize
+        /// is returned, indicating no further records remain. Each page may be a bare JSON array or
+        /// an envelope object with the array at itemsProperty.
         /// </summary>
+        /// <typeparam name="T">The type of each item in the paged array.</typeparam>
         /// <param name="path">API path relative to BaseAddress (or baseOverride when supplied).</param>
         /// <param name="baseQuery">
         /// Fixed query parameters merged into every paged request before the limit and offset
@@ -236,7 +269,18 @@ namespace Boyles.PowerShell.HttpClients
         /// <param name="pageSize">Number of items requested per page; defaults to 100.</param>
         /// <param name="itemsProperty">Name of the JSON array property inside the response envelope; defaults to "items".</param>
         /// <param name="limitParam">Query parameter name used to specify the page size; defaults to "limit".</param>
-        /// <param name="offsetParam">Query parameter name used to specify the page offset; defaults to "offset".</param>
+        /// <param name="offsetParam">
+        /// Query parameter name used to specify the position: a record offset in
+        /// <see cref="PaginationMode.Offset"/> mode, or a page number in
+        /// <see cref="PaginationMode.PageNumber"/> mode. Defaults to "offset".
+        /// </param>
+        /// <param name="mode">
+        /// How the position advances between requests. Defaults to <see cref="PaginationMode.Offset"/>.
+        /// </param>
+        /// <param name="firstPage">
+        /// The number of the first page in <see cref="PaginationMode.PageNumber"/> mode; ignored in
+        /// <see cref="PaginationMode.Offset"/> mode. Defaults to 1.
+        /// </param>
         /// <param name="authOverride">
         /// When non-null, this Authorization header value is used in place of the configured
         /// authentication provider, bypassing automatic token refresh on 401 responses.
@@ -246,14 +290,16 @@ namespace Boyles.PowerShell.HttpClients
         /// paged requests to be directed at a different host or path prefix.
         /// </param>
         /// <param name="ct">Cancellation token forwarded to each page request.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics; supplied automatically by the compiler.</param>
+        /// <returns>Every item from every page, in the order returned.</returns>
         /// <exception cref="ApiException">
         /// Thrown when any individual page request returns a non-2xx HTTP status code after
         /// all retry attempts have been exhausted.
         /// </exception>
-        protected async Task<List<T>> GetAllPagesAsync<T>(string path, IReadOnlyDictionary<string, string>? baseQuery = null, int pageSize = 100, string itemsProperty = "items", string limitParam = "limit", string offsetParam = "offset", AuthenticationHeaderValue? authOverride = null, Uri? baseOverride = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
+        protected async Task<List<T>> GetAllPagesAsync<T>(string path, IReadOnlyDictionary<string, string>? baseQuery = null, int pageSize = 100, string itemsProperty = "items", string limitParam = "limit", string offsetParam = "offset", PaginationMode mode = PaginationMode.Offset, int firstPage = 1, AuthenticationHeaderValue? authOverride = null, Uri? baseOverride = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
         {
             var all = new List<T>();
-            int offset = 0;
+            int position = mode == PaginationMode.PageNumber ? firstPage : 0;
 
             while (true)
             {
@@ -266,8 +312,8 @@ namespace Boyles.PowerShell.HttpClients
                     }
                 }
 
-                q[limitParam] = pageSize.ToString();
-                q[offsetParam] = offset.ToString();
+                q[limitParam] = pageSize.ToString(CultureInfo.InvariantCulture);
+                q[offsetParam] = position.ToString(CultureInfo.InvariantCulture);
 
                 var uri = BuildUri(path, q, baseOverride);
 
@@ -305,7 +351,8 @@ namespace Boyles.PowerShell.HttpClients
                     }
                 }
 
-                offset += pageCount;
+                // Offset mode skips past the records just read; page-number mode moves to the next page.
+                position += mode == PaginationMode.PageNumber ? 1 : pageCount;
 
                 if (pageCount < pageSize)
                 {
@@ -314,58 +361,6 @@ namespace Boyles.PowerShell.HttpClients
             }
 
             return all;
-            //var all = new List<T>();
-            //int offset = 0;
-
-            //while (true)
-            //{
-            //    var q = new Dictionary<string, string>(StringComparer.Ordinal);
-            //    if (baseQuery != null)
-            //    {
-            //        foreach (var kv in baseQuery)
-            //        {
-            //            q[kv.Key] = kv.Value;
-            //        }
-            //    }
-
-            //    q[limitParam] = pageSize.ToString();
-            //    q[offsetParam] = offset.ToString();
-
-            //    var uri = BuildUri(path, q, baseOverride);
-
-            //    var result = await SendWithRetryAsync(HttpMethod.Get, uri, () => null, authOverride, allowReauth: authOverride == null, ct, sourceMethod).ConfigureAwait(false);
-
-            //    if (!result.IsSuccess)
-            //    {
-            //        throw new ApiException((HttpStatusCode)result.StatusCode, result.Body, $"Paged GET {uri} failed: HTTP {result.StatusCode}");
-            //    }
-
-            //    int pageCount = 0;
-            //    var root = JsonConvert.DeserializeObject<JObject>(string.IsNullOrWhiteSpace(result.Body) ? "{}" : result.Body);
-
-            //    if (root != null && root[itemsProperty] is JArray items)
-            //    {
-            //        foreach (var el in items)
-            //        {
-            //            var item = el.ToObject<T>(_serializer);
-            //            if (item != null)
-            //            {
-            //                all.Add(item);
-            //            }
-
-            //            pageCount++;
-            //        }
-            //    }
-
-            //    offset += pageCount;
-
-            //    if (pageCount < pageSize)
-            //    {
-            //        break;
-            //    }
-            //}
-
-            //return all;
         }
 
         /// <summary>
@@ -378,8 +373,11 @@ namespace Boyles.PowerShell.HttpClients
         /// <param name="path">API path relative to BaseAddress.</param>
         /// <param name="query">Optional query parameters appended to the URI.</param>
         /// <param name="body">Optional object serialized as the JSON request body.</param>
+        /// <typeparam name="T">The type to deserialize the response body (or envelope property) into.</typeparam>
         /// <param name="itemsProperty">Optional envelope property name forwarded to DeserializeBody.</param>
         /// <param name="ct">Cancellation token forwarded to the retry loop.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics.</param>
+        /// <returns>The deserialized response.</returns>
         /// <exception cref="ApiException">
         /// Thrown when the final response after all retries carries a non-2xx HTTP status code.
         /// </exception>
@@ -422,6 +420,11 @@ namespace Boyles.PowerShell.HttpClients
         /// the request to be retried immediately without counting against MaxRetries.
         /// </param>
         /// <param name="ct">Cancellation token. TaskCanceledException due to timeout is treated as a retryable transport error.</param>
+        /// <param name="sourceMethod">Calling method name recorded in diagnostics.</param>
+        /// <returns>
+        /// The result of the last attempt: a success, a non-retryable failure, or the failure that
+        /// remained after MaxRetries was exhausted. Never throws for HTTP error statuses.
+        /// </returns>
         private async Task<HttpResult> SendWithRetryAsync(HttpMethod method, Uri uri, Func<HttpContent?> contentFactory, AuthenticationHeaderValue? authOverride, bool allowReauth, CancellationToken ct, string sourceMethod = "")
         {
             // One correlation ID per logical call - shared by every attempt below, including
@@ -548,7 +551,7 @@ namespace Boyles.PowerShell.HttpClients
 
         /// <summary>
         /// Deserializes a raw JSON response body string into the requested CLR type. When
-        /// dataProperty is null or empty the entire body is deserialized as TResult. When a
+        /// dataProperty is null or empty the entire body is deserialized as T. When a
         /// property name is provided the body is parsed as a JObject and only the value of
         /// that named property is extracted and converted, allowing envelope-wrapped responses
         /// to be unwrapped transparently without burdening callers with wrapper types.
@@ -558,6 +561,8 @@ namespace Boyles.PowerShell.HttpClients
         /// Name of the envelope property to unwrap, or null to deserialize the root document directly.
         /// Returns default when the property is absent from the response or its value is JSON null.
         /// </param>
+        /// <typeparam name="T">The type to deserialize into.</typeparam>
+        /// <returns>The deserialized value, or default.</returns>
         private T DeserializeBody<T>(string body, string? dataProperty)
         {
             if (string.IsNullOrWhiteSpace(body))
@@ -594,6 +599,7 @@ namespace Boyles.PowerShell.HttpClients
         /// JObject with a non-null value, that child token is converted rather than the root token.
         /// Defaults to "data" to match the most common API envelope convention.
         /// </param>
+        /// <returns>An instance of <paramref name="targetType"/>, or null when <paramref name="token"/> is null.</returns>
         protected object? DeserializeToken(JToken token, Type targetType, string? dataProperty = "data")
         {
             if (token == null)
@@ -619,6 +625,7 @@ namespace Boyles.PowerShell.HttpClients
         /// </summary>
         /// <param name="r">The HttpResult whose response headers are inspected for Retry-After.</param>
         /// <param name="attempt">The current attempt number, used as the exponent for back-off calculation.</param>
+        /// <returns>How long to wait before the next attempt.</returns>
         private TimeSpan ComputeDelay(HttpResult r, int attempt)
         {
             var ra = r.Headers?.RetryAfter;
@@ -659,6 +666,7 @@ namespace Boyles.PowerShell.HttpClients
         /// When non-null, URI resolution uses this address instead of BaseAddress, allowing
         /// individual requests to target a different host or root path.
         /// </param>
+        /// <returns>The absolute request URI.</returns>
         protected Uri BuildUri(string path, IReadOnlyDictionary<string, string>? query, Uri? baseOverride = null)
         {
             var uri = new Uri(baseOverride ?? BaseAddress, path.TrimStart('/'));
@@ -692,6 +700,7 @@ namespace Boyles.PowerShell.HttpClients
         /// to JSON using JsonOptions before being written to the request content.
         /// </param>
         /// <param name="ct">Cancellation token forwarded to the retry loop.</param>
+        /// <returns>The parsed response body, or null when the body is empty.</returns>
         /// <exception cref="ApiException">
         /// Thrown when the final response after all retries carries a non-2xx HTTP status code.
         /// </exception>
@@ -722,6 +731,7 @@ namespace Boyles.PowerShell.HttpClients
         /// </summary>
         /// <param name="primary">The primary header collection, e.g. request or response headers.</param>
         /// <param name="secondary">The secondary header collection, e.g. content headers.</param>
+        /// <returns>Every header from both collections, primary first.</returns>
         private static IEnumerable<KeyValuePair<string, IEnumerable<string>>> CombineHeaders(HttpHeaders? primary, HttpHeaders? secondary)
         {
             if (primary != null)
@@ -752,6 +762,7 @@ namespace Boyles.PowerShell.HttpClients
         /// HTTP verb string to parse (e.g. "GET", "post", "Patch"). Returns HttpMethod.Get
         /// when null or whitespace.
         /// </param>
+        /// <returns>The matching HttpMethod.</returns>
         public static HttpMethod ParseHttpMethod(string? method)
         {
             if (string.IsNullOrWhiteSpace(method))
@@ -785,6 +796,7 @@ namespace Boyles.PowerShell.HttpClients
         /// a script; the ordinal key comparer used in the result preserves API-significant casing
         /// because PowerShell hashtables are already case-insensitive at the source.
         /// </param>
+        /// <returns>The flattened query map, or null when there are no usable entries.</returns>
         public static IReadOnlyDictionary<string, string>? ToQueryDictionary(IDictionary? source)
         {
             if (source == null || source.Count == 0)
@@ -818,7 +830,9 @@ namespace Boyles.PowerShell.HttpClients
         /// async/await cannot be used. Should not be called from within an async context as it
         /// risks deadlocking on single-threaded synchronization contexts.
         /// </summary>
+        /// <typeparam name="T">The task's result type.</typeparam>
         /// <param name="task">The asynchronous task to block on.</param>
+        /// <returns>The task's result.</returns>
         protected static T Sync<T>(Task<T> task) => task.GetAwaiter().GetResult();
 
         /// <summary>

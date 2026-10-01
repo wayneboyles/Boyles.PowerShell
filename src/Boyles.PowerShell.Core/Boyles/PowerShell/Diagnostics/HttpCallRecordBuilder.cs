@@ -3,6 +3,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Boyles.PowerShell.Diagnostics
 {
+    /// <summary>
+    /// Builds <see cref="HttpCallRecord"/> instances from the raw request/response data captured by
+    /// <c>HttpClientBase</c>, redacting sensitive headers (see <see cref="RedactedHeaderNames"/>)
+    /// and pretty-printing JSON bodies so records are safe and readable to display.
+    /// </summary>
     public sealed class HttpCallRecordBuilder
     {
         /// <summary>

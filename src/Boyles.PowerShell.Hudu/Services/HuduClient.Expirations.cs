@@ -29,7 +29,7 @@ namespace Boyles.PowerShell.Hudu.Services
             
             var queryParams = new ReadOnlyDictionary<string, string>(query ?? new Dictionary<string, string>());
             
-            return await GetAllPagesAsync<HuduExpiration>(path, queryParams, itemsProperty: "expirations", offsetParam: "page", limitParam: "page_size", ct: cancellationToken);
+            return await GetAllHuduPagesAsync<HuduExpiration>(path, queryParams, "expirations", cancellationToken);
         }
 
         /// <summary>

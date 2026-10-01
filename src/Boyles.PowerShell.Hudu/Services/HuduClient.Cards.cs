@@ -66,7 +66,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// Thrown when Hudu returns a non-success status code, such as 401 Unauthorized or 404 Not Found.
         /// </exception>
         /// <exception cref="OperationCanceledException">
-        /// Thrown when <paramref name="cancellationToken"/> is cancelled.
+        /// Thrown when <paramref name="cancellationToken"/> is canceled.
         /// </exception>
         public async Task<HuduCard> GetCardLookupAsync(string integrationSlug, int? integrationId = null, string? integrationIdentifier = null, CancellationToken cancellationToken = default)
         {

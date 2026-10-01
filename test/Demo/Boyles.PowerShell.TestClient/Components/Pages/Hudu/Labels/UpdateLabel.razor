@@ -1,0 +1,110 @@
+@page "/hudu/labels/update-label"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateLabel</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateLabel</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateLabelAsync</code> — PUT <code>/api/v1/labels/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Label Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_labelId" />
+                    </div>
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Labelable type</label>
+                                <InputSelect class="form-select" @bind-Value="_model.LabelableType">
+                                    <option value="">(unchanged)</option>
+                                    <option value="Article">Article</option>
+                                    <option value="Asset">Asset</option>
+                                    <option value="AssetPassword">AssetPassword</option>
+                                    <option value="Website">Website</option>
+                                    <option value="IpAddress">IpAddress</option>
+                                    <option value="Vlan">Vlan</option>
+                                    <option value="VlanZone">VlanZone</option>
+                                    <option value="Procedure">Procedure</option>
+                                    <option value="Network">Network</option>
+                                    <option value="RackStorage">RackStorage</option>
+                                </InputSelect>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Labelable Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.LabelableId" />
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@(_busy || _labelId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly UpdateLabelModel _model = new();
+    private int? _labelId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_labelId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.UpdateLabelAsync(_labelId.Value, _model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class UpdateLabelModel
+    {
+        public string? LabelableType { get; set; }
+        public int? LabelableId { get; set; }
+    }
+}

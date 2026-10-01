@@ -429,8 +429,7 @@ namespace Boyles.PowerShell.Hudu.Models
         /// A dictionary keyed by snake cased field label.
         /// </returns>
         /// <remarks>
-        /// The caller is responsible for wrapping the result in a single element array; that wrapping is
-        /// performed by <see cref="HttpClients.HuduClient"/>.
+        /// The caller is responsible for wrapping the result in a single element array before sending it.
         /// </remarks>
         public IDictionary<string, object?> ToPayload() {
             return new Dictionary<string, object?>(_values, StringComparer.Ordinal);

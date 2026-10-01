@@ -39,6 +39,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// <summary>
         /// Retrieves every asset layout defined on the instance.
         /// </summary>
+        /// <param name="query">Optional query-string filters (keyed by Hudu's JSON parameter names).</param>
         /// <returns>
         /// The layouts across all pages.
         /// </returns>
@@ -47,6 +48,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// <summary>
         /// Retrieves every asset layout defined on the instance.
         /// </summary>
+        /// <param name="query">Optional query-string filters (keyed by Hudu's JSON parameter names).</param>
         /// <param name="cancellationToken">
         /// A token used to cancel the request.
         /// </param>
@@ -56,21 +58,17 @@ namespace Boyles.PowerShell.Hudu.Services
         public async Task<List<HuduAssetLayout>> GetAssetLayoutsAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/asset_layouts", ApiRoot);
-            List<HuduAssetLayout> layouts = await GetAllPagesAsync<HuduAssetLayout>(path, query, limitParam: "page_size", offsetParam: "page", itemsProperty: "asset_layouts", ct: cancellationToken).ConfigureAwait(false);
-            return layouts;
+            return await GetAllHuduPagesAsync<HuduAssetLayout>(path, query, "asset_layouts", cancellationToken).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Creates an asset layout from a set of field definitions.
         /// </summary>
-        /// <param name="name">
-        /// The display name of the layout.
+        /// <param name="body">
+        /// The layout properties (e.g. <c>name</c>, <c>icon</c>) to submit alongside the fields.
         /// </param>
         /// <param name="fields">
         /// The field definitions, ordinarily produced by <see cref="HuduLayoutFieldSet.Build"/>.
-        /// </param>
-        /// <param name="icon">
-        /// The optional icon name shown alongside assets of this layout.
         /// </param>
         /// <returns>
         /// The created layout as returned by Hudu.
@@ -104,9 +102,46 @@ namespace Boyles.PowerShell.Hudu.Services
             return await PostAsync<HuduAssetLayout?>(path, wrapper, "asset_layout", cancellationToken);
         }
 
+        /// <summary>
+        /// Updates an existing asset layout's properties and, optionally, its field definitions.
+        /// </summary>
+        /// <param name="id">
+        /// The identifier of the layout to update.
+        /// </param>
+        /// <param name="body">
+        /// The layout properties (e.g. <c>name</c>, <c>icon</c>) to change.
+        /// </param>
+        /// <param name="fields">
+        /// The layout's complete field list, or <see langword="null"/> to leave the existing fields
+        /// untouched. When supplied, Hudu replaces the field collection wholesale, so omitted fields
+        /// are removed; use <see cref="AddAssetLayoutFieldsAsync"/> to append instead.
+        /// </param>
+        /// <returns>
+        /// The updated layout as returned by Hudu.
+        /// </returns>
         public HuduAssetLayout? UpdateAssetLayout(int id, object body, HuduAssetLayoutField[]? fields) =>
             Sync(UpdateAssetLayoutAsync(id, body, fields));
 
+        /// <summary>
+        /// Updates an existing asset layout's properties and, optionally, its field definitions.
+        /// </summary>
+        /// <param name="id">
+        /// The identifier of the layout to update.
+        /// </param>
+        /// <param name="body">
+        /// The layout properties (e.g. <c>name</c>, <c>icon</c>) to change.
+        /// </param>
+        /// <param name="fields">
+        /// The layout's complete field list, or <see langword="null"/> to leave the existing fields
+        /// untouched. When supplied, Hudu replaces the field collection wholesale, so omitted fields
+        /// are removed; use <see cref="AddAssetLayoutFieldsAsync"/> to append instead.
+        /// </param>
+        /// <param name="ct">
+        /// A token used to cancel the request.
+        /// </param>
+        /// <returns>
+        /// A task producing the updated layout as returned by Hudu.
+        /// </returns>
         public async Task<HuduAssetLayout?> UpdateAssetLayoutAsync(int id, object body, HuduAssetLayoutField[]? fields = null, CancellationToken ct = default)
         {
             //var combinedFields = await AddAssetLayoutFieldsAsync(id, fields, ct);

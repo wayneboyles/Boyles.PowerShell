@@ -29,8 +29,8 @@ namespace Boyles.PowerShell.Hudu.Services
         /// <returns>A task resolving to a list of matching <see cref="HuduArticle"/> records.</returns>
         public async Task<List<HuduArticle>> GetArticlesAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
-            string path = string.Format(CultureInfo.InvariantCulture, "{0}/articles", ApiRoot);
-            return await GetAllPagesAsync<HuduArticle>(path, query, itemsProperty: "articles", offsetParam: "page", limitParam: "page_size", ct: cancellationToken);
+            var path = string.Format(CultureInfo.InvariantCulture, "{0}/articles", ApiRoot);
+            return await GetAllHuduPagesAsync<HuduArticle>(path, query, "articles", cancellationToken);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace Boyles.PowerShell.Hudu.Services
                 ["page_size"] = pageSize.ToString(CultureInfo.InvariantCulture)
             };
 
-            string path = string.Format(CultureInfo.InvariantCulture, "{0}/articles", ApiRoot);
+            var path = string.Format(CultureInfo.InvariantCulture, "{0}/articles", ApiRoot);
             return await GetAsync<List<HuduArticle>>(path, q, itemsProperty: "articles", ct: cancellationToken);
         }
 
@@ -79,7 +79,7 @@ namespace Boyles.PowerShell.Hudu.Services
         /// <returns>A task resolving to the matching <see cref="HuduArticle"/>.</returns>
         public async Task<HuduArticle> GetArticleAsync(int id, CancellationToken cancellationToken = default)
         {
-            string path = string.Format(CultureInfo.InvariantCulture, "{0}/articles/{1}", ApiRoot, id);
+            var path = string.Format(CultureInfo.InvariantCulture, "{0}/articles/{1}", ApiRoot, id);
             return await GetAsync<HuduArticle>(path, itemsProperty: "article", ct: cancellationToken);
         }
 

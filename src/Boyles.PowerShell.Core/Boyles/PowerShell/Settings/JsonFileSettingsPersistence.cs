@@ -42,6 +42,7 @@ namespace Boyles.PowerShell.Settings
         /// parse (e.g. hand-edited into invalid JSON), rather than throwing and breaking every client
         /// that reads settings at startup.
         /// </summary>
+        /// <returns>A case-insensitive dictionary of every persisted setting.</returns>
         public IDictionary<string, JToken?> Load()
         {
             if (!File.Exists(FilePath))
@@ -75,6 +76,7 @@ namespace Boyles.PowerShell.Settings
         /// Serializes and writes the full settings dictionary to disk as a single JSON object,
         /// creating the containing directory first when it does not already exist.
         /// </summary>
+        /// <param name="values">Every setting to persist; null values are written as JSON nulls.</param>
         public void Save(IDictionary<string, JToken?> values)
         {
             var directory = Path.GetDirectoryName(FilePath);
@@ -97,6 +99,7 @@ namespace Boyles.PowerShell.Settings
         /// Windows, or ~/.config/Boyles.PowerShell/settings.json on Linux/macOS, matching the
         /// cross-platform PS 5.1/7+ compatibility the rest of the module targets.
         /// </summary>
+        /// <returns>The default settings file path.</returns>
         private static string ResolveDefaultPath()
         {
             var appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData, Environment.SpecialFolderOption.Create);

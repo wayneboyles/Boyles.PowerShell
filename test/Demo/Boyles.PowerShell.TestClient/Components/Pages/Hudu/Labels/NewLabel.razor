@@ -1,0 +1,114 @@
+@page "/hudu/labels/new-label"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewLabel</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewLabel</h2>
+    <div class="text-secondary"><code>HuduClient.NewLabelAsync</code> — POST <code>/api/v1/labels</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Label type Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.LabelTypeId" />
+                                <ValidationMessage For="() => _model.LabelTypeId" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Labelable type</label>
+                                <InputSelect class="form-select" @bind-Value="_model.LabelableType">
+                                    <option value="">(choose)</option>
+                                    <option value="Article">Article</option>
+                                    <option value="Asset">Asset</option>
+                                    <option value="AssetPassword">AssetPassword</option>
+                                    <option value="Website">Website</option>
+                                    <option value="IpAddress">IpAddress</option>
+                                    <option value="Vlan">Vlan</option>
+                                    <option value="VlanZone">VlanZone</option>
+                                    <option value="Procedure">Procedure</option>
+                                    <option value="Network">Network</option>
+                                    <option value="RackStorage">RackStorage</option>
+                                </InputSelect>
+                                <ValidationMessage For="() => _model.LabelableType" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Labelable Id</label>
+                            <InputNumber class="form-control" style="width: 160px;" @bind-Value="_model.LabelableId" />
+                            <ValidationMessage For="() => _model.LabelableId" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewLabelModel _model = new();
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.NewLabelAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class NewLabelModel
+    {
+        [Required]
+        public int? LabelTypeId { get; set; }
+
+        [Required]
+        public string? LabelableType { get; set; }
+
+        [Required]
+        public int? LabelableId { get; set; }
+    }
+}

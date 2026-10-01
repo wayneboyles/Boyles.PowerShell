@@ -1,0 +1,96 @@
+@page "/hudu/flags/update-flag"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · UpdateFlag</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">UpdateFlag</h2>
+    <div class="text-secondary"><code>HuduClient.UpdateFlagAsync</code> — PUT <code>/api/v1/flags/{id}</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Flag Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_flagId" />
+                    </div>
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <div class="mb-3">
+                            <label class="form-label">Flag type Id</label>
+                            <InputNumber class="form-control" @bind-Value="_model.FlagTypeId" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Description" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@(_busy || _flagId is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly UpdateFlagModel _model = new();
+    private int? _flagId;
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        if (_flagId is null)
+        {
+            return;
+        }
+
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.UpdateFlagAsync(_flagId.Value, _model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class UpdateFlagModel
+    {
+        public int? FlagTypeId { get; set; }
+        public string? Description { get; set; }
+    }
+}

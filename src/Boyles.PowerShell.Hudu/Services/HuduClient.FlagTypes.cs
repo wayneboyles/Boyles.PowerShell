@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Globalization;
 
 using Boyles.PowerShell.Hudu.Models;
@@ -46,9 +45,7 @@ namespace Boyles.PowerShell.Hudu.Services
         {
             var path = string.Format(CultureInfo.InvariantCulture, "{0}/flag_types", ApiRoot);
 
-            var queryParams = new ReadOnlyDictionary<string, string>(query ?? new Dictionary<string, string>());
-
-            return await GetAllPagesAsync<HuduFlagType>(path, queryParams, itemsProperty: "flag_types", offsetParam: "page", limitParam: "page_size", ct: cancellationToken);
+            return await GetAllHuduPagesAsync<HuduFlagType>(path, query, "flag_types", cancellationToken);
         }
 
         /// <summary>

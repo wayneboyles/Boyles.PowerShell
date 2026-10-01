@@ -20,7 +20,7 @@ namespace Boyles.PowerShell.Settings
         /// <summary>
         /// Process-wide singleton, backed by the default JSON-file persistence. This is the
         /// instance every PowerShell cmdlet and HTTP client in Boyles.PowerShell.Core reads from
-        /// and writes to; construct a private <see cref="BpsSettingsStore"/> directly only for
+        /// and writes to; construct a private <see cref="SettingsStore"/> directly only for
         /// tests that need isolation from the real on-disk file.
         /// </summary>
         public static SettingsStore Instance { get; } = new SettingsStore(new JsonFileSettingsPersistence());
@@ -81,7 +81,10 @@ namespace Boyles.PowerShell.Settings
         /// setting has never been set or fails to convert.
         /// </summary>
         /// <param name="name">Name of the setting to retrieve.</param>
+        /// <typeparam name="T">The type to convert the stored value to.</typeparam>
         /// <param name="defaultValue">Value returned when the setting is absent or unconvertible.</param>
+        /// <returns>The converted setting value, or <paramref name="defaultValue"/>.</returns>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null, empty, or whitespace.</exception>
         public T GetValue<T>(string name, T defaultValue = default!)
         {
             ValidateName(name);
@@ -110,6 +113,8 @@ namespace Boyles.PowerShell.Settings
         /// expected type should prefer <see cref="GetValue{T}"/>.
         /// </summary>
         /// <param name="name">Name of the setting to retrieve.</param>
+        /// <returns>The unwrapped stored value, or null when unset.</returns>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null, empty, or whitespace.</exception>
         public object? GetRaw(string name)
         {
             ValidateName(name);
@@ -130,6 +135,7 @@ namespace Boyles.PowerShell.Settings
         /// </summary>
         /// <param name="name">Name of the setting to set.</param>
         /// <param name="value">Value to store.</param>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null, empty, or whitespace.</exception>
         public void SetValue(string name, object? value)
         {
             ValidateName(name);
@@ -150,6 +156,8 @@ namespace Boyles.PowerShell.Settings
         /// setting was not present, in which case no save is performed.
         /// </summary>
         /// <param name="name">Name of the setting to remove.</param>
+        /// <returns>True if the setting existed and was removed; otherwise false.</returns>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null, empty, or whitespace.</exception>
         public bool RemoveValue(string name)
         {
             ValidateName(name);
@@ -178,6 +186,7 @@ namespace Boyles.PowerShell.Settings
         /// <see cref="GetRaw"/> (scalars to their plain CLR type, objects/arrays as JToken). The
         /// returned dictionary is a copy; mutating it has no effect on the store.
         /// </summary>
+        /// <returns>A case-insensitive snapshot of every stored setting.</returns>
         public IReadOnlyDictionary<string, object?> GetAll()
         {
             var result = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);

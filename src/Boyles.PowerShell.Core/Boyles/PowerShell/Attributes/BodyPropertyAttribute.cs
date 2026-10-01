@@ -18,6 +18,7 @@
         /// Initializes a new instance of the BodyPropertyAttribute class.
         /// </summary>
         /// <param name="name">The JSON property name to use in place of the parameter's PowerShell name.</param>
+        /// <exception cref="ArgumentException"><paramref name="name"/> is null, empty, or whitespace.</exception>
         public BodyPropertyAttribute(string name)
         {
             if (string.IsNullOrWhiteSpace(name))

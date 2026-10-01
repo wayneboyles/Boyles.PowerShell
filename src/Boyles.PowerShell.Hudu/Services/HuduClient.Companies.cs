@@ -10,24 +10,43 @@ namespace Boyles.PowerShell.Hudu.Services
     public partial class HuduClient
     {
         /// <summary>
-        /// Retrieves all companies from the Hudu API synchronously.
+        /// Retrieves all companies from the Hudu API synchronously, following pagination.
         /// </summary>
+        /// <param name="query">Optional query-string filters (keyed by Hudu's JSON parameter names).</param>
         /// <returns>A list of all <see cref="HuduCompany"/> records.</returns>
         public List<HuduCompany> GetCompanies(Dictionary<string, string>? query = null) => Sync(GetCompaniesAsync(query));
 
         /// <summary>
-        /// Retrieves all companies from the Hudu API asynchronously.
+        /// Retrieves all companies from the Hudu API asynchronously, following pagination.
         /// </summary>
+        /// <param name="query">Optional query-string filters (keyed by Hudu's JSON parameter names).</param>
         /// <param name="cancellationToken">Token to cancel the request.</param>
         /// <returns>A task resolving to a list of all <see cref="HuduCompany"/> records.</returns>
         public async Task<List<HuduCompany>> GetCompaniesAsync(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)
         {
             string path = string.Format(CultureInfo.InvariantCulture, "{0}/companies", ApiRoot);
-            return await GetAllPagesAsync<HuduCompany>(path, query, offsetParam: "page", limitParam: "page_size", itemsProperty: "companies", ct: cancellationToken).ConfigureAwait(false);
+            return await GetAllHuduPagesAsync<HuduCompany>(path, query, "companies", cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// Retrieves a single specific page of companies synchronously, without paging further.
+        /// </summary>
+        /// <param name="query">Optional filter parameters merged into the request alongside page and page_size.</param>
+        /// <param name="page">The 1-based page number to retrieve.</param>
+        /// <param name="pageSize">The number of items requested per page.</param>
+        /// <returns>The single page of matching <see cref="HuduCompany"/> records, as returned by the API.</returns>
         public List<HuduCompany> GetCompaniesPage(Dictionary<string, string>? query, int page, int pageSize) => Sync(GetCompaniesPageAsync(query, page, pageSize));
 
+        /// <summary>
+        /// Retrieves a single specific page of companies asynchronously, without paging further.
+        /// Use this instead of <see cref="GetCompaniesAsync"/> when the caller has explicitly
+        /// requested a page and page size rather than the full result set.
+        /// </summary>
+        /// <param name="query">Optional filter parameters merged into the request alongside page and page_size.</param>
+        /// <param name="page">The 1-based page number to retrieve.</param>
+        /// <param name="pageSize">The number of items requested per page.</param>
+        /// <param name="cancellationToken">Token to cancel the request.</param>
+        /// <returns>A task resolving to the single page of matching <see cref="HuduCompany"/> records, as returned by the API.</returns>
         public async Task<List<HuduCompany>> GetCompaniesPageAsync(Dictionary<string, string>? query, int page, int pageSize, CancellationToken cancellationToken = default)
         {
             var q = new Dictionary<string, string>(query ?? new Dictionary<string, string>(), StringComparer.Ordinal)

@@ -92,6 +92,18 @@
 
         # Groups
         'Get-HuduGroup'
+
+        # Labels
+        'Get-HuduLabel'
+        'New-HuduLabel'
+        'Remove-HuduLabel'
+        'Set-HuduLabel'
+
+        # Label Types
+        'Get-HuduLabelType'
+        'New-HuduLabelType'
+        'Remove-HuduLabelType'
+        'Set-HuduLabelType'
     )
     CmdletsToExport      = @()
     VariablesToExport    = @()

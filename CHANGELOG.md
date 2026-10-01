@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 | **Core C#** | Core C# library project (Boyles.PowerShell.Core)                    |
 | **Hudu PS** | Hudu PowerShell module                                              |
 | **Hudu C#** | Hudu C# library project (Boyles.PowerShell.Hudu)                    |
+| **Demo C#** | Blazor Server project for testing the HttpClient objects            |
 
 ## [Unreleased]
 
@@ -66,9 +67,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `Remove-HuduIpAddress`
   - Added `Set-HuduIpAddress`
 
+- [**Core C#**] `HttpClientBase.GetAllPagesAsync` can now page by page number as well as by record
+  offset. Two optional parameters control this: `mode` (`PaginationMode.Offset` or `PaginationMode.PageNumber`) and
+  `firstPage` (default `1`). The default is still offset paging, so existing callers behave the same.
+
 ### Fixed
 
 - [**Core PS**] Fixed `ConvertTo-RequestBody` and `ConvertTo-RequestQuery` to properly handle bool values
+
+- [**Hudu C#**] Updating an asset layout without a field list no longer deletes all of the layout's fields.
+
+  Previously, the request always included `"fields": []` even when no fields were given. Hudu replaces a layout's
+  whole field list whenever `fields` is present, so any such update wiped the layout. This affected:
+  - `Enable-HuduAssetLayout` and `Disable-HuduAssetLayout`, which removed every field from the layout on each call.
+  - `Set-HuduAssetLayout` when called without `-Fields` (for example, to change only `-Name` or `-Icon`).
+  - `HuduClient.UpdateAssetLayout` / `UpdateAssetLayoutAsync` when called with `fields: null`.
+
+- [**Hudu C#**] List commands no longer silently return only the first page of results. Hudu pages by
+  1-based `page` number, but the client advanced `page` by the number of items returned. It requested `page=0`, then `page=100`, and stopped there, dropping everything after the first 100 records. The Flags, Labels, IP Addresses, Groups and Folders lists sent `limit`/`offset` instead of `page`/`page_size`, which Hudu doesn't use for paging.
+
+  Every Hudu list method now goes through one shared helper that requests `page=1, 2, 3, …` with `page_size`.
+  Affected: Activity Logs, Articles, Asset Layouts, Asset Passwords, Assets, Companies, Expirations, Flags, Flag
+  Types, Folders, Groups, IP Addresses, Labels and Label Types.
+
+- [**Hudu C#**] `GetAssetsAsync` now honours its `CancellationToken`
+
+- [**Demo C#**] Fixed the main menu. It now breaks into columns instead of one long menu list.
 
 ### Changed
 

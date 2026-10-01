@@ -1,0 +1,114 @@
+@page "/hudu/folders/get-folders"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetFolders</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetFolders</h2>
+    <div class="text-secondary"><code>HuduClient.GetFoldersAsync</code> — paginated GET <code>/api/v1/folders</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Name (optional)</label>
+                    <input class="form-control" @bind="_name" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Company Id (optional)</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Folder type (optional)</label>
+                    <select class="form-select" @bind="_folderType">
+                        <option value="">(any)</option>
+                        <option value="article">article</option>
+                        <option value="photo">photo</option>
+                    </select>
+                </div>
+                <div class="col-auto form-check pt-4">
+                    <input class="form-check-input" type="checkbox" id="inCompanyFilter" @bind="_inCompany" />
+                    <label class="form-check-label" for="inCompanyFilter">Company folders only</label>
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private string? _name;
+    private int? _companyId;
+    private string? _folderType;
+    private bool _inCompany;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = new Dictionary<string, string>();
+
+            if (!string.IsNullOrWhiteSpace(_name))
+            {
+                query["name"] = _name;
+            }
+
+            if (_companyId is not null)
+            {
+                query["company_id"] = _companyId.Value.ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(_folderType))
+            {
+                query["folder_type"] = _folderType;
+            }
+
+            if (_inCompany)
+            {
+                query["in_company"] = "true";
+            }
+
+            var result = await HuduConnection.Client!.GetFoldersAsync(query.Count > 0 ? query : null);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

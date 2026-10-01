@@ -257,28 +257,26 @@ $lines = @(
     "    public partial class $clientName"
     '    {'
     '        /// <summary>'
-    "        /// Retrieves all $Name matching the given filters synchronously, automatically"
-    '        /// paging through the full result set.'
+    "        /// Retrieves a single $Model by its ID synchronously."
     '        /// </summary>'
-    '        /// <param name="query">Optional query parameters to filter or scope the request.</param>'
-    "        /// <returns>A list of all <see cref=""$Model""/> records.</returns>"
-    "        public List<$Model> Get$Name(Dictionary<string, string>? query = null) => Sync(Get${Name}Async(query));"
+    "        /// <param name=""id"">The numeric Hudu $Model ID.</param>"
+    "        /// <returns>The matching <see cref=""$Model""/>."
+    "        public $Model Get$Name(int id) => Sync(Get${Name}Async(id));"
     ''
     '        /// <summary>'
-    "        /// Retrieves all $Name matching the given filters asynchronously, automatically"
-    '        /// paging through the full result set.'
+    "        /// Retrieves a single $Model by its ID asynchronously."
     '        /// </summary>'
-    '        /// <param name="query">Optional query parameters to filter or scope the request.</param>'
+    "        /// <param name=""id"">The numeric Hudu $Model ID.</param>"
     '        /// <param name="cancellationToken">Token to cancel the request.</param>'
-    "        /// <returns>A task resolving to a list of all <see cref=""$Model""/> records.</returns>"
+    "        /// <returns>A task resolving to the matching <see cref=""$Model""/></returns>"
     "        public async Task<List<$Model>> Get${Name}Async(Dictionary<string, string>? query = null, CancellationToken cancellationToken = default)"
     '        {'
     "            string path = string.Format(CultureInfo.InvariantCulture, ""{0}/$Route"", ApiRoot);"
-    "            return await GetAllPagesAsync<$Model>(path, query, offsetParam: ""page"", limitParam: ""page_size"", itemsProperty: ""$Route"", ct: cancellationToken).ConfigureAwait(false);"
+    "            return await GetAllPagesAsync<$Model>(path, query, offsetParam: ""page"", limitParam: ""page_size"", itemsProperty: ""$Route"", ct: cancellationToken);"
     '        }'
     ''
     '        /// <summary>'
-    "        /// Retrieves a single $singularName by its ID synchronously."
+    "        /// Retrieves a single $Model by its ID synchronously."
     '        /// </summary>'
     "        /// <param name=""$IdParameterName"">The unique identifier of the $singularName to retrieve.</param>"
     "        /// <returns>The matching <see cref=""$Model""/>, or <c>null</c> if not found.</returns>"

@@ -41,150 +41,7 @@
         </div>
     </header>
 
-    <div class="navbar-expand-md">
-        <div class="collapse navbar-collapse" id="navbar-menu">
-            <div class="navbar navbar-light">
-                <div class="container-xl">
-                    <ul class="navbar-nav">
-                        <li class="nav-item">
-                            <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="ti ti-home"></i></span>
-                                <span class="nav-link-title">Home</span>
-                            </NavLink>
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" role="button">
-                                <span class="nav-link-icon d-md-none d-lg-inline-block"><i class="ti ti-building"></i></span>
-                                <span class="nav-link-title">Hudu</span>
-                            </a>
-                            <div class="dropdown-menu">
-                                <NavLink class="dropdown-item" href="/hudu/connect">
-                                    <i class="ti ti-plug-connected me-2"></i>Connect
-                                </NavLink>
-                                <div class="dropdown-divider"></div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-building me-2"></i>Companies
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/companies/get-companies">GetCompanies</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/get-company">GetCompany</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/new-company">NewCompany</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/update-company">UpdateCompany</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/archive-company">ArchiveCompany</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/unarchive-company">UnarchiveCompany</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/companies/delete-company">DeleteCompany</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-package me-2"></i>Assets
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/assets/get-assets">GetAssets</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/get-asset">GetAsset</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/new-asset">NewAsset</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/update-asset">UpdateAsset</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/archive-asset">ArchiveAsset</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/unarchive-asset">UnarchiveAsset</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/assets/delete-asset">DeleteAsset</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-layout-list me-2"></i>AssetLayouts
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/get-asset-layouts">GetAssetLayouts</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/get-asset-layout">GetAssetLayout</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/new-asset-layout">NewAssetLayout</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/update-asset-layout">UpdateAssetLayout</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-layouts/add-asset-layout-fields">AddAssetLayoutFields</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-article me-2"></i>Articles
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/articles/get-articles">GetArticles</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/get-article">GetArticle</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/new-article">NewArticle</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/update-article">UpdateArticle</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/archive-article">ArchiveArticle</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/unarchive-article">UnarchiveArticle</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/articles/delete-article">DeleteArticle</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-key me-2"></i>AssetPasswords
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/get-asset-passwords">GetAssetPasswords</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/get-asset-password">GetAssetPassword</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/new-asset-password">NewAssetPassword</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/update-asset-password">UpdateAssetPassword</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/archive-asset-password">ArchiveAssetPassword</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/unarchive-asset-password">UnarchiveAssetPassword</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/asset-passwords/delete-asset-password">DeleteAssetPassword</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-activity me-2"></i>ActivityLogs
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/activity-logs/get-activity-logs">GetActivityLogs</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-id-badge-2 me-2"></i>Cards
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/cards/get-card-lookup">GetCardLookup</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-calendar-due me-2"></i>Expirations
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/expirations/get-expirations">GetExpirations</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/expirations/update-expiration">UpdateExpiration</NavLink>
-                                        <NavLink class="dropdown-item" href="/hudu/expirations/delete-expiration">DeleteExpiration</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#" @onclick:preventDefault>
-                                        <i class="ti ti-info-circle me-2"></i>ApiInfo
-                                    </a>
-                                    <div class="dropdown-menu">
-                                        <NavLink class="dropdown-item" href="/hudu/api-info/get-api-info">GetApiInfo</NavLink>
-                                    </div>
-                                </div>
-
-                                <div class="dropdown-divider"></div>
-                                <NavLink class="dropdown-item" href="/hudu/invoke">
-                                    <i class="ti ti-terminal-2 me-2"></i>Invoke (raw)
-                                </NavLink>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
+    <MainMenu />
 
     <div class="page-wrapper">
         <div class="page-body">
@@ -204,6 +61,7 @@
 </div>
 
 @code {
+
     protected override void OnInitialized()
     {
         HuduConnection.Changed += OnStateChanged;
