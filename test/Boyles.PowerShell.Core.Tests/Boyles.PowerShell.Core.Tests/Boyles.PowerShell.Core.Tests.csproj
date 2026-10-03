@@ -25,4 +25,8 @@
 		<ProjectReference Include="..\..\..\src\Boyles.PowerShell.Core\Boyles.PowerShell.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Attributes\" />
+	</ItemGroup>
+
 </Project>

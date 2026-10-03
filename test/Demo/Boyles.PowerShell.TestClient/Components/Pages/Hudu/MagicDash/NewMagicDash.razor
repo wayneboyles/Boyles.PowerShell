@@ -1,0 +1,137 @@
+@page "/hudu/magic-dash/new-magic-dash"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewMagicDash</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewMagicDash</h2>
+    <div class="text-secondary"><code>HuduClient.NewMagicDashAsync</code> — POST <code>/api/v1/magic_dash</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Title</label>
+                                <InputText class="form-control" @bind-Value="_model.Title" />
+                                <ValidationMessage For="() => _model.Title" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Company name</label>
+                                <InputText class="form-control" @bind-Value="_model.CompanyName" />
+                                <ValidationMessage For="() => _model.CompanyName" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Message</label>
+                            <InputTextArea class="form-control" rows="2" @bind-Value="_model.Message" />
+                            <ValidationMessage For="() => _model.Message" />
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Icon</label>
+                                <InputText class="form-control" @bind-Value="_model.Icon" placeholder="e.g. fas fa-server" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Shade</label>
+                                <InputSelect class="form-select" @bind-Value="_model.Shade">
+                                    <option value="">(default)</option>
+                                    <option value="success">success</option>
+                                    <option value="warning">warning</option>
+                                    <option value="danger">danger</option>
+                                    <option value="info">info</option>
+                                    <option value="secondary">secondary</option>
+                                </InputSelect>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Image URL</label>
+                            <InputText class="form-control" @bind-Value="_model.ImageUrl" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content link</label>
+                            <InputText class="form-control" @bind-Value="_model.ContentLink" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Content (HTML)</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Content" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewMagicDashModel _model = new();
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.NewMagicDashAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class NewMagicDashModel
+    {
+        [Required]
+        public string? Title { get; set; }
+
+        [Required]
+        public string? Message { get; set; }
+
+        [Required]
+        public string? CompanyName { get; set; }
+
+        public string? Icon { get; set; }
+        public string? ImageUrl { get; set; }
+        public string? ContentLink { get; set; }
+        public string? Content { get; set; }
+        public string? Shade { get; set; }
+    }
+}

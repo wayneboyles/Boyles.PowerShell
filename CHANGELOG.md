@@ -38,6 +38,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `Remove-HuduLabelType`
   - Added `Set-HuduLabelType`
 
+- [**Hudu PS**] Added List functions
+  - Added `Get-HuduList`
+  - Added `New-HuduList`
+  - Added `Remove-HuduList`
+  - Added `Set-HuduList`
+
+- [**Hudu PS**] Added Magic Dash functions
+  - Added `Get-HuduMagicDash`
+  - Added `New-HuduMagicDash`
+  - Added `Remove-HuduMagicDash`
+
+- [**Hudu PS**] Added Network functions
+  - Added `Get-HuduNetwork`
+  - Added `New-HuduNetwork`
+  - Added `Remove-HuduNetwork`
+  - Added `Set-HuduNetwork`
+
+- [**Hudu C#**] Added HuduClient.Labels.cs for Label functions.
+
+- [**Hudu C#**] Added HuduClient.LabelTypes.cs for Label Type functions.
+
+- [**Hudu C#**] Added HuduClient.Lists.cs for List Type functions.
+
+- [**Hudu C#**] Added HuduClient.MagicDash.cs for Magic Dash functions.
+
+- [**Hudu C#**] Added HuduClient.Networks.cs for Network functions.
+
 ### Fixed
 
 - [**Hudu C#**] Updating an asset layout without a field list no longer deletes all of the layout's fields.
@@ -58,6 +85,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [**Hudu C#**] `GetAssetsAsync` now honours its `CancellationToken`
 
 - [**Demo C#**] Fixed the main menu. It now breaks into columns instead of one long menu list.
+
+- [**Core C#**] `GetAllPagesAsync` now longer pages indefinately if paging isn't supported. It will stop after the 2nd page of duplicate
+  results.
 
 ### Changed
 

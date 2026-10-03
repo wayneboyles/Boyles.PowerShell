@@ -132,7 +132,26 @@ public static class MenuDefinition
                 Link("Get Label Type", "/hudu/label-types/get-label-type"),
                 Link("Get Label Types", "/hudu/label-types/get-label-types"),
                 Link("New Label Type", "/hudu/label-types/new-label-type"),
-                Link("Update Label Type", "/hudu/label-types/update-label-type")))
+                Link("Update Label Type", "/hudu/label-types/update-label-type")),
+
+            Group("Lists", "ti ti-list",
+                Link("Delete List", "/hudu/lists/delete-list"),
+                Link("Get List", "/hudu/lists/get-list"),
+                Link("Get Lists", "/hudu/lists/get-lists"),
+                Link("New List", "/hudu/lists/new-list"),
+                Link("Update List", "/hudu/lists/update-list")),
+
+            Group("Magic Dash", "ti ti-layout-dashboard",
+                Link("Delete Magic Dash", "/hudu/magic-dash/delete-magic-dash"),
+                Link("Get Magic Dashes", "/hudu/magic-dash/get-magic-dashes"),
+                Link("New Magic Dash", "/hudu/magic-dash/new-magic-dash")),
+
+            Group("Networks", "ti ti-router",
+                Link("Delete Network", "/hudu/networks/delete-network"),
+                Link("Get Network", "/hudu/networks/get-network"),
+                Link("Get Networks", "/hudu/networks/get-networks"),
+                Link("New Network", "/hudu/networks/new-network"),
+                Link("Update Network", "/hudu/networks/update-network")))
     };
 
     /// <summary>

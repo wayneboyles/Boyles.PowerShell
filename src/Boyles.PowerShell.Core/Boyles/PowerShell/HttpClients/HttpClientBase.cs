@@ -101,6 +101,13 @@ namespace Boyles.PowerShell.HttpClients
         public int MaxRetries { get; set; } = 5;
 
         /// <summary>
+        /// Maximum number of pages GetAllPagesAsync will fetch for a single call before giving up with
+        /// an InvalidOperationException. A safety net for endpoints that never return a short page.
+        /// Defaults to 10,000.
+        /// </summary>
+        public int MaxPages { get; set; } = 10_000;
+
+        /// <summary>
         /// Default JSON serializer settings shared by all client instances that do not supply
         /// their own settings. PascalCase C# properties are mapped to snake_case JSON keys via
         /// SnakeCaseNamingStrategy; explicit [JsonProperty] names are honoured and not overridden;
@@ -259,6 +266,11 @@ namespace Boyles.PowerShell.HttpClients
         /// is returned, indicating no further records remain. Each page may be a bare JSON array or
         /// an envelope object with the array at itemsProperty.
         /// </summary>
+        /// <remarks>
+        /// Two guards stop endpoints that ignore the paging parameters from looping forever: a page
+        /// identical to the previous one ends the loop (its duplicate items are discarded), and
+        /// fetching <see cref="MaxPages"/> full pages throws.
+        /// </remarks>
         /// <typeparam name="T">The type of each item in the paged array.</typeparam>
         /// <param name="path">API path relative to BaseAddress (or baseOverride when supplied).</param>
         /// <param name="baseQuery">
@@ -296,10 +308,15 @@ namespace Boyles.PowerShell.HttpClients
         /// Thrown when any individual page request returns a non-2xx HTTP status code after
         /// all retry attempts have been exhausted.
         /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when <see cref="MaxPages"/> full pages have been fetched without reaching the end.
+        /// </exception>
         protected async Task<List<T>> GetAllPagesAsync<T>(string path, IReadOnlyDictionary<string, string>? baseQuery = null, int pageSize = 100, string itemsProperty = "items", string limitParam = "limit", string offsetParam = "offset", PaginationMode mode = PaginationMode.Offset, int firstPage = 1, AuthenticationHeaderValue? authOverride = null, Uri? baseOverride = null, CancellationToken ct = default, [CallerMemberName] string sourceMethod = "")
         {
             var all = new List<T>();
             int position = mode == PaginationMode.PageNumber ? firstPage : 0;
+            int pagesFetched = 0;
+            JArray? previousItems = null;
 
             while (true)
             {
@@ -335,6 +352,17 @@ namespace Boyles.PowerShell.HttpClients
                     items = obj[itemsProperty] as JArray;
                 }
 
+                // An endpoint that ignores the paging parameters returns the same full page every
+                // time, so "page shorter than pageSize" never happens. Treat an exact repeat of the
+                // previous page as the end, and don't add its (duplicate) items.
+                if (items != null && previousItems != null && items.Count > 0 && JToken.DeepEquals(items, previousItems))
+                {
+                    break;
+                }
+
+                previousItems = items;
+                pagesFetched++;
+
                 int pageCount = 0;
 
                 if (items != null)
@@ -357,6 +385,13 @@ namespace Boyles.PowerShell.HttpClients
                 if (pageCount < pageSize)
                 {
                     break;
+                }
+
+                if (pagesFetched >= MaxPages)
+                {
+                    throw new InvalidOperationException(
+                        $"Paged GET {path} returned {MaxPages} consecutive full pages without ending. The endpoint " +
+                        $"may not support '{offsetParam}'/'{limitParam}' paging; raise {nameof(MaxPages)} if the data set really is this large.");
                 }
             }
 

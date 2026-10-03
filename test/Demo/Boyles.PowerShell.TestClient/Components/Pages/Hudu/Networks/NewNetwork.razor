@@ -1,0 +1,126 @@
+@page "/hudu/networks/new-network"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · NewNetwork</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">NewNetwork</h2>
+    <div class="text-secondary"><code>HuduClient.NewNetworkAsync</code> — POST <code>/api/v1/networks</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="row row-cards">
+        <div class="col-md-7">
+            <div class="card">
+                <div class="card-body">
+                    <EditForm Model="_model" OnValidSubmit="RunAsync">
+                        <DataAnnotationsValidator />
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Name</label>
+                                <InputText class="form-control" @bind-Value="_model.Name" />
+                                <ValidationMessage For="() => _model.Name" />
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Address</label>
+                                <InputText class="form-control" @bind-Value="_model.Address" placeholder="e.g. 192.168.1.0/24" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Company Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.CompanyId" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Location Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.LocationId" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">VLAN Id</label>
+                                <InputNumber class="form-control" @bind-Value="_model.VlanId" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Network type</label>
+                                <InputNumber class="form-control" @bind-Value="_model.NetworkType" />
+                            </div>
+                            <div class="col-md-6 mb-3 form-check pt-4">
+                                <InputCheckbox class="form-check-input" id="archived" @bind-Value="_model.Archived" />
+                                <label class="form-check-label" for="archived">Archived</label>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" rows="3" @bind-Value="_model.Description" />
+                        </div>
+                        <button type="submit" class="btn btn-primary" disabled="@_busy">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Execute
+                        </button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private readonly NewNetworkModel _model = new();
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var result = await HuduConnection.Client!.NewNetworkAsync(_model);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private sealed class NewNetworkModel
+    {
+        [Required]
+        public string? Name { get; set; }
+
+        public string? Address { get; set; }
+        public string? Description { get; set; }
+        public int? NetworkType { get; set; }
+        public int? CompanyId { get; set; }
+        public int? LocationId { get; set; }
+        public int? VlanId { get; set; }
+        public bool Archived { get; set; }
+    }
+}

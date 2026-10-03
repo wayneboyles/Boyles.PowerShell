@@ -64,3 +64,7 @@ Register-BPSArgumentCompleter -CommandName Get-HuduCompany -ParameterName Name -
 Register-BPSArgumentCompleter -CommandName Get-HuduAsset -ParameterName AssetLayout -CacheSeconds 300 -ValueProperty Name -ToolTipProperty Id -ValueProvider {
     (Get-HuduClientInternal).GetAssetLayouts()
 }
+
+Register-BPSArgumentCompleter -CommandName New-HuduMagicDash -ParameterName CompanyName -CacheSeconds 300 -ValueProperty Name -ToolTipProperty Id -ValueProvider {
+    (Get-HuduClientInternal).GetCompanies()
+}

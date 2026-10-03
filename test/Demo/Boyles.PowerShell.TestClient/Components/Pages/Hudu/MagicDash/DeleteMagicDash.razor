@@ -1,0 +1,138 @@
+@page "/hudu/magic-dash/delete-magic-dash"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · DeleteMagicDash</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">DeleteMagicDash</h2>
+    <div class="text-secondary"><code>HuduClient.DeleteMagicDashAsync</code> — DELETE <code>/api/v1/magic_dash[/{id}]</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="mb-3">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="byId" checked="@(_byId)" @onchange="@(() => _byId = true)" />
+                    <label class="form-check-label" for="byId">By Id</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" id="byTitle" checked="@(!_byId)" @onchange="@(() => _byId = false)" />
+                    <label class="form-check-label" for="byTitle">By Title + Company name</label>
+                </div>
+            </div>
+
+            @if (_byId)
+            {
+                <div class="row g-2 align-items-end">
+                    <div class="col-auto">
+                        <label class="form-label">MagicDash Id</label>
+                        <input type="number" class="form-control" style="width: 160px;" @bind="_id" />
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-danger" @onclick="RunAsync" disabled="@(_busy || _id is null)">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="row g-2 align-items-end">
+                    <div class="col-auto">
+                        <label class="form-label">Title</label>
+                        <input class="form-control" @bind="_title" />
+                    </div>
+                    <div class="col-auto">
+                        <label class="form-label">Company name</label>
+                        <input class="form-control" @bind="_companyName" />
+                    </div>
+                    <div class="col-auto">
+                        <button class="btn btn-danger" @onclick="RunAsync" disabled="@(_busy || string.IsNullOrWhiteSpace(_title) || string.IsNullOrWhiteSpace(_companyName))">
+                            @if (_busy)
+                            {
+                                <span class="spinner-border spinner-border-sm me-2"></span>
+                            }
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    @if (_busy)
+    {
+        <div class="text-secondary">Running…</div>
+    }
+    else if (_error is not null)
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+    else if (_deleted)
+    {
+        <div class="alert alert-success">MagicDash deleted.</div>
+    }
+}
+
+@code {
+    private bool _busy;
+    private bool _deleted;
+    private string? _error;
+    private bool _byId = true;
+    private int? _id;
+    private string? _title;
+    private string? _companyName;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _deleted = false;
+        try
+        {
+            if (_byId)
+            {
+                if (_id is null)
+                {
+                    return;
+                }
+
+                await HuduConnection.Client!.DeleteMagicDashAsync(_id.Value);
+            }
+            else
+            {
+                var body = new Dictionary<string, object?>
+                {
+                    ["title"] = _title,
+                    ["company_name"] = _companyName
+                };
+
+                await HuduConnection.Client!.DeleteMagicDashAsync(0, body);
+            }
+
+            _deleted = true;
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

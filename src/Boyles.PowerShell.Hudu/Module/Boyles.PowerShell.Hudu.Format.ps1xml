@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Default output formatting for Boyles.PowerShell.Hudu.
+
+    Each model type returned by the module's cmdlets gets a <View> here. Views are
+    registered through FormatsToProcess in Boyles.PowerShell.Hudu.psd1.
+-->
+<Configuration>
+  <ViewDefinitions>
+
+    <!-- Boyles.PowerShell.Hudu.Models.HuduMagicDash -->
+    <View>
+      <Name>Boyles.PowerShell.Hudu.Models.HuduMagicDash</Name>
+      <ViewSelectedBy>
+        <TypeName>Boyles.PowerShell.Hudu.Models.HuduMagicDash</TypeName>
+      </ViewSelectedBy>
+      <TableControl>
+        <TableHeaders>
+          <TableColumnHeader>
+            <Label>Id</Label>
+            <Width>8</Width>
+            <Alignment>Right</Alignment>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Title</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Message</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Shade</Label>
+            <Width>10</Width>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Company</Label>
+          </TableColumnHeader>
+          <TableColumnHeader>
+            <Label>Position</Label>
+            <Width>8</Width>
+            <Alignment>Right</Alignment>
+          </TableColumnHeader>
+        </TableHeaders>
+        <TableRowEntries>
+          <TableRowEntry>
+            <TableColumnItems>
+              <TableColumnItem>
+                <PropertyName>Id</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Title</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Message</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Shade</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>CompanyName</PropertyName>
+              </TableColumnItem>
+              <TableColumnItem>
+                <PropertyName>Position</PropertyName>
+              </TableColumnItem>
+            </TableColumnItems>
+          </TableRowEntry>
+        </TableRowEntries>
+      </TableControl>
+    </View>
+
+  </ViewDefinitions>
+</Configuration>

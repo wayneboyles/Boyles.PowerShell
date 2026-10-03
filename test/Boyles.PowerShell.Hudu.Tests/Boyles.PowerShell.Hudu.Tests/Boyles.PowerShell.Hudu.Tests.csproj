@@ -25,4 +25,8 @@
 	  <Folder Include="Services\" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\src\Boyles.PowerShell.Hudu\Boyles.PowerShell.Hudu.csproj" />
+	</ItemGroup>
+
 </Project>

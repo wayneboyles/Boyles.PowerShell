@@ -54,9 +54,7 @@ namespace Boyles.PowerShell.Hudu.Models
         /// Derived from <see cref="Label"/> rather than transmitted by the API.
         /// </remarks>
         [JsonIgnore]
-        public string WireKey {
-            get { return HuduFieldSet.NormalizeLabel(Label); }
-        }
+        public string WireKey => HuduFieldSet.NormalizeLabel(Label);
 
         /// <summary>
         /// Returns the field value rendered as a string, or an empty string when unset.

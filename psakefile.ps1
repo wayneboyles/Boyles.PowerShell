@@ -232,6 +232,8 @@ Task BuildPowerShell -Depends BuildCSharp -PreCondition { -not $SkipBuild } {
 
         Copy-Item -Path "$modulePath\*.psd1" -Destination $moduleOutPath
         Copy-Item -Path "$modulePath\*.psm1" -Destination $moduleOutPath
+        Copy-Item -Path "$modulePath\*.ps1xml" -Destination $moduleOutPath
+        Copy-Item -Path "$modulePath\README.md" -Destination $moduleOutPath
 
         try {
             Copy-Item -Path "$modulePath\bin\*.dll" -Destination "$moduleOutPath\bin"

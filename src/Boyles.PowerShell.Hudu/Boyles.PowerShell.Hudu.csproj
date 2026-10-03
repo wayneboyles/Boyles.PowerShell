@@ -19,6 +19,10 @@
 		<ProjectReference Include="..\Boyles.PowerShell.Core\Boyles.PowerShell.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Boyles.PowerShell.Hudu.Tests" />
+	</ItemGroup>
+
 	<Target Name="CopyToPowerShellModule" AfterTargets="Build">
 		<ItemGroup>
 			<ModuleBinOutput Include="$(TargetDir)**\*.dll" />

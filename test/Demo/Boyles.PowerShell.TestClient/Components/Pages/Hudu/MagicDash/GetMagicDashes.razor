@@ -1,0 +1,90 @@
+@page "/hudu/magic-dash/get-magic-dashes"
+@inject HuduConnectionService HuduConnection
+
+<PageTitle>Hudu · GetMagicDashes</PageTitle>
+
+<div class="page-header d-print-none mb-3">
+    <h2 class="page-title">GetMagicDashes</h2>
+    <div class="text-secondary"><code>HuduClient.GetMagicDashesAsync</code> — paginated GET <code>/api/v1/magic_dash</code></div>
+</div>
+
+@if (!HuduConnection.IsConnected)
+{
+    <div class="alert alert-warning">Not connected. <a href="/hudu/connect">Connect to Hudu</a> first.</div>
+}
+else
+{
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label">Title (optional)</label>
+                    <input class="form-control" @bind="_title" />
+                </div>
+                <div class="col-auto">
+                    <label class="form-label">Company Id (optional)</label>
+                    <input type="number" class="form-control" style="width: 160px;" @bind="_companyId" />
+                </div>
+                <div class="col-auto">
+                    <button class="btn btn-primary" @onclick="RunAsync" disabled="@_busy">
+                        @if (_busy)
+                        {
+                            <span class="spinner-border spinner-border-sm me-2"></span>
+                        }
+                        Execute
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <ResultBlock Busy="@_busy" Error="@_error" Json="@_resultJson" />
+        </div>
+    </div>
+}
+
+@code {
+    private bool _busy;
+    private string? _error;
+    private string? _resultJson;
+    private string? _title;
+    private int? _companyId;
+
+    private async Task RunAsync()
+    {
+        _busy = true;
+        _error = null;
+        _resultJson = null;
+        try
+        {
+            var query = new Dictionary<string, string>();
+
+            if (!string.IsNullOrWhiteSpace(_title))
+            {
+                query["title"] = _title;
+            }
+
+            if (_companyId is not null)
+            {
+                query["company_id"] = _companyId.Value.ToString();
+            }
+
+            var result = await HuduConnection.Client!.GetMagicDashesAsync(query.Count > 0 ? query : null);
+            _resultJson = JsonConvert.SerializeObject(result, Formatting.Indented);
+        }
+        catch (ApiException ex)
+        {
+            _error = $"HTTP {(int)ex.StatusCode} {ex.StatusCode}\n{ex.ResponseBody}";
+        }
+        catch (Exception ex)
+        {
+            _error = ex.Message;
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+}

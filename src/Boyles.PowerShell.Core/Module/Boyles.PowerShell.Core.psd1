@@ -1,6 +1,6 @@
 @{
     RootModule           = 'Boyles.PowerShell.Core.psm1'
-    ModuleVersion        = '0.3.0'
+    ModuleVersion        = '0.4.0'
     GUID                 = '5b06397d-8350-4a54-8751-b7e44f80adb2'
     Author               = 'Wayne Boyles'
     CompanyName          = 'Wayne Boyles'
@@ -53,6 +53,7 @@
     FileList             = @(
         'Boyles.PowerShell.Core.psm1'
         'Boyles.PowerShell.Core.psd1'
+        'README.md'
     )
 
     PrivateData          = @{
@@ -60,6 +61,7 @@
             Tags         = @('Boyles', 'Http', 'Rest', 'Authentication')
             ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
             LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
+            IconUri      = 'https://raw.githubusercontent.com/wayneboyles/Boyles.PowerShell/main/assets/Logo-85x85.png'
             ReleaseNotes = ''
         }
     }

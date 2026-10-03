@@ -1,6 +1,6 @@
 @{
     RootModule           = 'Boyles.PowerShell.Hudu.psm1'
-    ModuleVersion        = '0.3.0'
+    ModuleVersion        = '0.4.0'
     GUID                 = 'e79d0665-d4dd-47e6-85de-a12d0f3c028c'
     Author               = 'Wayne Boyles'
     CompanyName          = 'Wayne Boyles'
@@ -11,7 +11,7 @@
     CompatiblePSEditions = @('Desktop', 'Core')
 
     RequiredModules      = @(
-        @{ ModuleName = 'Boyles.PowerShell.Core'; ModuleVersion = '0.3.0'; GUID = '5b06397d-8350-4a54-8751-b7e44f80adb2' }
+        @{ ModuleName = 'Boyles.PowerShell.Core'; ModuleVersion = '0.4.0'; GUID = '5b06397d-8350-4a54-8751-b7e44f80adb2' }
     )
 
     FunctionsToExport    = @(
@@ -104,14 +104,38 @@
         'New-HuduLabelType'
         'Remove-HuduLabelType'
         'Set-HuduLabelType'
+
+        # Lists
+        'Get-HuduList'
+        'New-HuduList'
+        'Remove-HuduList'
+        'Set-HuduList'
+
+        # Magic Dash
+        'Get-HuduMagicDash'
+        'New-HuduMagicDash'
+        'Remove-HuduMagicDash'
+
+        # Networks
+        'Get-HuduNetwork'
+        'New-HuduNetwork'
+        'Remove-HuduNetwork'
+        'Set-HuduNetwork'
     )
+
     CmdletsToExport      = @()
+
     VariablesToExport    = @()
+
     AliasesToExport      = @()
+
+    FormatsToProcess     = @('Boyles.PowerShell.Hudu.Format.ps1xml')
 
     FileList             = @(
         'Boyles.PowerShell.Hudu.psm1'
         'Boyles.PowerShell.Hudu.psd1'
+        'Boyles.PowerShell.Hudu.Format.ps1xml'
+        'README.md'
     )
 
     PrivateData          = @{
@@ -119,6 +143,7 @@
             Tags         = @('Boyles', 'Hudu', 'Documentation')
             ProjectUri   = 'https://github.com/wayneboyles/Boyles.PowerShell'
             LicenseUri   = 'https://github.com/wayneboyles/Boyles.PowerShell/blob/main/LICENSE'
+            IconUri      = 'https://raw.githubusercontent.com/wayneboyles/Boyles.PowerShell/main/assets/Logo-85x85.png'
             ReleaseNotes = ''
         }
     }
