@@ -13,7 +13,7 @@ C# class library that owns HTTP/auth concerns.
 
 # Active modules
 
-> [WARNING]
+> [!WARNING]
 > This repo is under active scaffolding. The contents and layout could change
 > as new code is pushed.
 
