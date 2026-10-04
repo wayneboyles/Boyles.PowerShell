@@ -132,4 +132,28 @@ nav:
           - 'Set-HuduFolder': 'Boyles.PowerShell.Hudu/Set-HuduFolder.md'
       - 'Groups':
           - 'Get-HuduGroup': 'Boyles.PowerShell.Hudu/Get-HuduGroup.md'
+      - 'Labels':
+          - 'Get-HuduLabel': 'Boyles.PowerShell.Hudu/Get-HuduLabel.md'
+          - 'New-HuduLabel': 'Boyles.PowerShell.Hudu/New-HuduLabel.md'
+          - 'Remove-HuduLabel': 'Boyles.PowerShell.Hudu/Remove-HuduLabel.md'
+          - 'Set-HuduLabel': 'Boyles.PowerShell.Hudu/Set-HuduLabel.md'
+      - 'Label Types':
+          - 'Get-HuduLabelType': 'Boyles.PowerShell.Hudu/Get-HuduLabelType.md'
+          - 'New-HuduLabelType': 'Boyles.PowerShell.Hudu/New-HuduLabelType.md'
+          - 'Remove-HuduLabelType': 'Boyles.PowerShell.Hudu/Remove-HuduLabelType.md'
+          - 'Set-HuduLabelType': 'Boyles.PowerShell.Hudu/Set-HuduLabelType.md'
+      - 'Lists':
+          - 'Get-HuduList': 'Boyles.PowerShell.Hudu/Get-HuduList.md'
+          - 'New-HuduList': 'Boyles.PowerShell.Hudu/New-HuduList.md'
+          - 'Remove-HuduList': 'Boyles.PowerShell.Hudu/Remove-HuduList.md'
+          - 'Set-HuduList': 'Boyles.PowerShell.Hudu/Set-HuduList.md'
+      - 'Magic Dash':
+          - 'Get-HuduMagicDash': 'Boyles.PowerShell.Hudu/Get-HuduMagicDash.md'
+          - 'New-HuduMagicDash': 'Boyles.PowerShell.Hudu/New-HuduMagicDash.md'
+          - 'Remove-HuduMagicDash': 'Boyles.PowerShell.Hudu/Remove-HuduMagicDash.md'
+      - 'Networks':
+          - 'Get-HuduNetwork': 'Boyles.PowerShell.Hudu/Get-HuduNetwork.md'
+          - 'New-HuduNetwork': 'Boyles.PowerShell.Hudu/New-HuduNetwork.md'
+          - 'Remove-HuduNetwork': 'Boyles.PowerShell.Hudu/Remove-HuduNetwork.md'
+          - 'Set-HuduNetwork': 'Boyles.PowerShell.Hudu/Set-HuduNetwork.md'
 # --- END GENERATED NAV ---

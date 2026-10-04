@@ -2,7 +2,7 @@
 
 Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentication and HTTP handling.
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 
 ## Activity Logs
 
@@ -123,3 +123,47 @@ Cmdlets for interacting with Hudu, built on Boyles.PowerShell.Core for authentic
 | Command | Synopsis |
 | ------- | -------- |
 | [Get-HuduGroup](Get-HuduGroup.md) | Retrieves one or more user groups from the connected Hudu instance. |
+
+## Labels
+
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduLabel](Get-HuduLabel.md) | Retrieves one or more labels from the connected Hudu instance. |
+| [New-HuduLabel](New-HuduLabel.md) | Applies a label to a record in the connected Hudu instance. |
+| [Remove-HuduLabel](Remove-HuduLabel.md) | Removes a label from the connected Hudu instance. |
+| [Set-HuduLabel](Set-HuduLabel.md) | Updates an existing label in the connected Hudu instance. |
+
+## Label Types
+
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduLabelType](Get-HuduLabelType.md) | Retrieves one or more label types from the connected Hudu instance. |
+| [New-HuduLabelType](New-HuduLabelType.md) | Creates a new label type in the connected Hudu instance. |
+| [Remove-HuduLabelType](Remove-HuduLabelType.md) | Removes a label type from the connected Hudu instance. |
+| [Set-HuduLabelType](Set-HuduLabelType.md) | Updates an existing label type in the connected Hudu instance. |
+
+## Lists
+
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduList](Get-HuduList.md) | Retrieves one or more lists from the connected Hudu instance. |
+| [New-HuduList](New-HuduList.md) | Creates a new list in the connected Hudu instance. |
+| [Remove-HuduList](Remove-HuduList.md) | Removes a list from the connected Hudu instance. |
+| [Set-HuduList](Set-HuduList.md) | Updates an existing list in the connected Hudu instance. |
+
+## Magic Dash
+
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduMagicDash](Get-HuduMagicDash.md) | Retrieves Magic Dash items from the connected Hudu instance. |
+| [New-HuduMagicDash](New-HuduMagicDash.md) | Creates or updates a Magic Dash item in the connected Hudu instance. |
+| [Remove-HuduMagicDash](Remove-HuduMagicDash.md) | Removes a Magic Dash item from the connected Hudu instance. |
+
+## Networks
+
+| Command | Synopsis |
+| ------- | -------- |
+| [Get-HuduNetwork](Get-HuduNetwork.md) | Retrieves one or more networks from the connected Hudu instance. |
+| [New-HuduNetwork](New-HuduNetwork.md) | Creates a new network in the connected Hudu instance. |
+| [Remove-HuduNetwork](Remove-HuduNetwork.md) | Removes a network from the connected Hudu instance. |
+| [Set-HuduNetwork](Set-HuduNetwork.md) | Updates an existing network in the connected Hudu instance. |

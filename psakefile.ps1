@@ -119,7 +119,7 @@ Task Test -Depends TestPowerShell
 
 Task Docs -Depends DocsBuild
 
-Task Full -Depends Build, Test
+Task Full -Depends Build, Test, DocsBuild
 
 Task Init -Depends Clean {
 

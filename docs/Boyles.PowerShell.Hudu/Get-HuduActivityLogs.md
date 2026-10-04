@@ -13,8 +13,8 @@ Retrieves activity logs from the connected Hudu instance.
 ## SYNTAX
 
 ```
-Get-HuduActivityLogs [[-Page] <Int32>] [[-PageNumber] <Int32>] [[-UserId] <Int32>] [[-UserEmail] <String>]
- [[-ResourceId] <Int32>] [[-ResourceType] <String>] [[-ActionMessage] <String>]
+Get-HuduActivityLogs [[-Page] <Int32>] [[-UserId] <Int32>] [[-UserEmail] <String>] [[-ResourceId] <Int32>]
+ [[-ResourceType] <String>] [[-ActionMessage] <String>]
  [<CommonParameters>]
 ```
 
@@ -61,7 +61,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 7
+Position: 6
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -84,23 +84,6 @@ Accept pipeline input: False
 Accept wildcard characters: False
 ```
 
-### -PageNumber
-Sent to Hudu as a 'page_number' query parameter.
-Currently has no effect: Hudu's activity
-log endpoint does not recognize 'page_number'.
-
-```yaml
-Type: Int32
-Parameter Sets: (All)
-Aliases:
-
-Required: False
-Position: 2
-Default value: 0
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
 ### -ResourceId
 Filters results to activity on the given resource ID.
 Must be specified together with
@@ -112,7 +95,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 5
+Position: 4
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -130,7 +113,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 6
+Position: 5
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -145,7 +128,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 4
+Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
@@ -160,7 +143,7 @@ Parameter Sets: (All)
 Aliases:
 
 Required: False
-Position: 3
+Position: 2
 Default value: 0
 Accept pipeline input: False
 Accept wildcard characters: False

@@ -1,4 +1,42 @@
-﻿function New-HuduLabelType {
+﻿<#
+.SYNOPSIS
+    Creates a new label type in the connected Hudu instance.
+
+.DESCRIPTION
+    Creates a label type via the connected HuduClient (see Connect-Hudu). Only the parameters
+    actually supplied are sent in the request body. Supports -WhatIf/-Confirm.
+
+.PARAMETER Name
+    Name of the label type.
+
+.PARAMETER Color
+    Color of the label type. Defaults to 'Red'.
+
+.PARAMETER AccessLevel
+    Access level controlling who can apply and see labels of this type.
+
+.PARAMETER ApplicableRecordTypes
+    IDs of the record types this label type can be applied to.
+
+.EXAMPLE
+    New-HuduLabelType -Name 'Critical'
+
+    Creates a red label type named 'Critical'.
+
+.EXAMPLE
+    New-HuduLabelType -Name 'Reviewed' -Color 'Light Green'
+
+    Creates a light green label type named 'Reviewed'.
+
+.EXAMPLE
+    New-HuduLabelType -Name 'Pending' -Color 'Yellow' -WhatIf
+
+    Shows what would happen without creating the label type.
+
+.OUTPUTS
+    Boyles.PowerShell.Hudu.Models.HuduLabelType
+#>
+function New-HuduLabelType {
     [CmdletBinding(SupportsShouldProcess)]
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduLabelType])]
     param (

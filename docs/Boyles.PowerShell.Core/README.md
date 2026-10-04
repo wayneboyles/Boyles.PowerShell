@@ -2,7 +2,7 @@
 
 Shared authentication, HTTP connection, and context primitives for the Boyles.PowerShell module family. Every Boyles.PowerShell.* service module depends on this module, the same way Az.* modules depend on Az.Accounts.
 
-**Version:** 0.3.0
+**Version:** 0.4.0
 
 ## Banner
 
