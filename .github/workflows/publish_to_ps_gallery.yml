@@ -1,0 +1,53 @@
+﻿name: Publish to PowerShell Gallery
+
+on:
+  release:
+    types: [published]
+  # Manual fallback: publish the assets of an existing release tag
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag to publish (e.g. v1.2.3)"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      TAG: ${{ github.event.release.tag_name || inputs.tag }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Download .nupkg assets from the release
+        run: |
+          mkdir -p packages
+          gh release download "$TAG" \
+            --repo "${{ github.repository }}" \
+            --pattern '*.nupkg' \
+            --dir packages
+          ls -l packages
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Push packages to PowerShell Gallery
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          shopt -s nullglob
+          files=(packages/*.nupkg)
+          if [ ${#files[@]} -eq 0 ]; then
+            echo "No .nupkg files found on release $TAG" >&2
+            exit 1
+          fi
+          for pkg in "${files[@]}"; do
+            echo "Publishing $pkg"
+            dotnet nuget push "$pkg" \
+              --source https://www.powershellgallery.com/api/v2/package/ \
+              --api-key "$PSGALLERY_API_KEY" \
+              --skip-duplicate
+          done
