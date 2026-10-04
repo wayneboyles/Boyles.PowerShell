@@ -1,5 +1,9 @@
 # Boyles.PowerShell
 
+![GitHub Release](https://img.shields.io/github/v/release/wayneboyles/Boyles.PowerShell?style=flat-square)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wayneboyles/Boyles.PowerShell/build_release_on_tag.yml?style=flat-square&label=Build)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/wayneboyles/Boyles.PowerShell/publish_to_ps_gallery.yml?style=flat-square&label=PS%20Gallery)
+
 ![Project Screenshot](assets/Logo-256x256.png)
 
 A multi-module PowerShell family, structured the way `Az` and `Microsoft.Graph`
@@ -7,8 +11,11 @@ are: one umbrella module, one shared `Boyles.PowerShell.Core` module, and one
 module per service - each service module pairs a thin PowerShell layer with a
 C# class library that owns HTTP/auth concerns.
 
-**This repo is under active scaffolding.** The layout below reflects what
-actually exists today.
+# Active modules
+
+> [WARNING]
+> This repo is under active scaffolding. The contents and layout could change
+> as new code is pushed.
 
 | Module                   | Purpose                                                                                                                                                 |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -16,7 +23,15 @@ actually exists today.
 | `Boyles.PowerShell.Core` | Shared authentication, HTTP transport, retry/pagination/JSON pipeline, diagnostics, and the client context cache. Every service module depends on this. |
 | `Boyles.PowerShell.Hudu` | Service module for [Hudu](https://www.hudu.com/), backed by a `HuduClient` C# library.                                                                  |
 
-## How the pieces connect
+# Planned modules
+
+| Module                         | Purpose                                                          |
+| ------------------------------ | ---------------------------------------------------------------- |
+| `Boyles.PowerShell.Halo`       | HaloPSA - tickets, assets, customers etc.                        |
+| `Boyles.PowerShell.InControl2` | InControl2 - management of organizations, groups + devices, etc. |
+| `Boyles.PowerShell.NinjaRmm`   | NinjaRMM - management of assets, procedures, policies, etc.      |
+
+# How the pieces connect
 
 - **`Boyles.PowerShell.Core`** owns authentication (`Authentication/`), HTTP
   transport (`Http/HttpTransport.cs`, a shared `SocketsHttpHandler` /
@@ -77,19 +92,6 @@ Invoke-Pester ./test/Pester             # run the Pester suites - requires a pop
 ```powershell
 Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1
 ```
-
-## Adding a new service module
-
-```powershell
-./tools/New-Submodule.ps1 -ServiceName ITGlue
-```
-
-This scaffolds `src/Boyles.PowerShell.ITGlue/...` in the same shape as
-`src/Boyles.PowerShell.Hudu`, adds the new `.csproj` to
-`Boyles.PowerShell.slnx`, and references `Boyles.PowerShell.Core`. It does
-**not** add the module to the umbrella - once it's ready to ship, list it by
-hand in `src/Boyles.PowerShell/Boyles.PowerShell.psd1`'s `RequiredModules`,
-the same way each `Az.*` module is added to `Az.psd1` deliberately.
 
 ## Architecture
 
