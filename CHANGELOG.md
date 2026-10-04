@@ -65,6 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [**Hudu C#**] Added HuduClient.Networks.cs for Network functions.
 
+- [**Hudu C#**] Added the remaining models to the project for upcoming functions.
+
 ### Fixed
 
 - [**Hudu C#**] Updating an asset layout without a field list no longer deletes all of the layout's fields.
@@ -91,7 +93,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
--
+- [**Hudu PS**] Fixed all parameters. Added validation parameters to all functions.
+
+- [**Hudu PS**] Updated the last of the functions to use the automatic query / body building
+  from parameters.
 
 ### Removed
 

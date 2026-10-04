@@ -59,6 +59,7 @@ function New-HuduFolder {
         [string] $Description,
 
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [BodyProperty('parent_folder_id')]
         [int] $ParentFolderId,
 

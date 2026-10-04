@@ -60,15 +60,18 @@ function Get-HuduIpAddress {
         [int] $NetworkId,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('address')]
         [string] $Address,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [ValidateSet('Assigned', 'Reserved', 'DHCP')]
         [QueryProperty('status')]
         [string] $Status,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('fqdn')]
         [string] $Fqdn,
 

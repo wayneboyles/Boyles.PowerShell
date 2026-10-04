@@ -4,6 +4,7 @@
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduMagicDash[]])]
     param (
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('title')]
         [string] $Title,
 

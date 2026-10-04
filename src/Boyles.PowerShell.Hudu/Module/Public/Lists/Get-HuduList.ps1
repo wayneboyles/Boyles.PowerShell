@@ -9,10 +9,12 @@
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('query')]
         [string] $Query,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('name')]
         [string] $Name
     )

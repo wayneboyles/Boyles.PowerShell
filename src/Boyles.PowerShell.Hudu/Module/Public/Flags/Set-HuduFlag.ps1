@@ -40,10 +40,12 @@ function Set-HuduFlag {
         [int] $Id,
 
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [BodyProperty('flag_type_id')]
         [int] $FlagTypeId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('description')]
         [string] $Description
     )

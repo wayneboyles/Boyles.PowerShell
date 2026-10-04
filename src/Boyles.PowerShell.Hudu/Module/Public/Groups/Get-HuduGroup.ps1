@@ -56,6 +56,7 @@ function Get-HuduGroup {
         [bool] $Default,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('search')]
         [string] $Search
     )

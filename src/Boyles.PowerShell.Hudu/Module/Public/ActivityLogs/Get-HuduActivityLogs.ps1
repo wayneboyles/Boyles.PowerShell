@@ -12,10 +12,6 @@
     Sent to Hudu as the 'page' query parameter. Currently has no effect: the client retrieves
     every page automatically and overwrites 'page' while paging.
 
-.PARAMETER PageNumber
-    Sent to Hudu as a 'page_number' query parameter. Currently has no effect: Hudu's activity
-    log endpoint does not recognize 'page_number'.
-
 .PARAMETER UserId
     Filters results to activity performed by the given user ID.
 
@@ -56,24 +52,32 @@ function Get-HuduActivityLogs {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduActivityLog[]])]
     param (
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Page,
 
         [Parameter()]
-        [int] $PageNumber,
-
-        [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
+        [QueryProperty('user_id')]
         [int] $UserId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [QueryProperty('user_email')]
         [string] $UserEmail,
 
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
+        [QueryProperty('resource_id')]
         [int] $ResourceId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [QueryProperty('resource_type')]
         [string] $ResourceType,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [QueryProperty('action_message')]
         [string] $ActionMessage
     )
 
@@ -83,18 +87,10 @@ function Get-HuduActivityLogs {
 
     $Client = Get-HuduClientInternal
 
-    $query = @{}
+    $query = ConvertTo-RequestQuery -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters | ConvertTo-StringDictionary
 
-    if ($PSBoundParameters.ContainsKey('Page')) { $query['page'] = $Page }
-    if ($PSBoundParameters.ContainsKey('PageNumber')) { $query['page_number'] = $PageNumber }
-    if ($PSBoundParameters.ContainsKey('UserId')) { $query['user_id'] = $UserId }
-    if ($PSBoundParameters.ContainsKey('UserEmail') -and (Test-HasValue $UserEmail)) { $query['user_email'] = $UserEmail }
-    if ($PSBoundParameters.ContainsKey('ResourceId')) { $query['resource_id'] = $ResourceId }
-    if ($PSBoundParameters.ContainsKey('ResourceType') -and (Test-HasValue $ResourceType)) { $query['resource_type'] = $ResourceType }
-    if ($PSBoundParameters.ContainsKey('ActionMessage') -and (Test-HasValue $ActionMessage)) { $query['action_message'] = $ActionMessage }
+    Write-Verbose "QUERY = $($query | ConvertTo-Json)"
 
-    $queryDict = ConvertTo-StringDictionary -Table $query
-
-    [Boyles.PowerShell.Hudu.Models.HuduActivityLog[]] $logs = $Client.GetActivityLogs($queryDict)
+    [Boyles.PowerShell.Hudu.Models.HuduActivityLog[]] $logs = $Client.GetActivityLogs($query)
     return $logs
 }

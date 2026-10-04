@@ -69,21 +69,26 @@ function Set-HuduAsset {
         [int] $CompanyId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('primary_serial')]
         [string] $PrimarySerial,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('primary_mail')]
         [string] $PrimaryMail,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('primary_model')]
         [string] $PrimaryModel,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('primary_manufacturer')]
         [string] $PrimaryManufacturer,
 

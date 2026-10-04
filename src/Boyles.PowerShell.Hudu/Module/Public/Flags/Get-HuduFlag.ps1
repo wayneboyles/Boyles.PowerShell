@@ -46,14 +46,17 @@ function Get-HuduFlag {
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [QueryProperty('flag_type_id')]
         [int] $FlagTypeId,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [QueryProperty('flagable_id')]
         [int] $FlagableId,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('description')]
         [string] $Description
     )

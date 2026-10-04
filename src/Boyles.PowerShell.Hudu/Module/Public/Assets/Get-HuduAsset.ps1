@@ -102,34 +102,38 @@ function Get-HuduAsset {
         [int] $Id,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter(ValueFromPipelineByPropertyName)]
-        [BodyProperty('company_id')]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('company_id')]
         [int] $CompanyId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [BodyProperty('primary_serial')]
         [string] $PrimarySerial,
 
         [Parameter(ParameterSetName = 'ByLayoutName')]
-        [BodyIgnore()]
         [ValidateNotNullOrEmpty()]
+        [BodyIgnore()]
         [string] $AssetLayout,
 
         [Parameter(ParameterSetName = 'ByLayoutId')]
-        [BodyProperty('asset_layout_id')]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('asset_layout_id')]
         [int] $AssetLayoutId,
 
         [Parameter()]
         [switch] $Archived,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Search
     )
     process {

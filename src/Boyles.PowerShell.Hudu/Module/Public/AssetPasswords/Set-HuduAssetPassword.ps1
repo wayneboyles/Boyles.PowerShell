@@ -66,9 +66,9 @@ function Set-HuduAssetPassword {
     [OutputType([Boyles.PowerShell.Hudu.Models.HuduAssetPassword])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Justification = 'Hudu takes a plain password')]
     param (
-        [BodyIgnore()]
         [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyIgnore()]
         [int] $Id,
 
         [Parameter()]
@@ -76,45 +76,53 @@ function Set-HuduAssetPassword {
         [string] $Name,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Password,
 
-        [BodyProperty('company_id')]
         [Parameter()]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('company_id')]
         [int] $CompanyId,
 
-        [BodyProperty('passwordable_type')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('passwordable_type')]
         [string] $PasswordableType,
 
-        [BodyProperty('passwordable_id')]
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('passwordable_id')]
         [int] $PasswordableId,
 
-        [BodyProperty('in_portal')]
         [Parameter()]
+        [BodyProperty('in_portal')]
         [bool] $InPortal,
 
-        [BodyProperty('otp_secret')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('otp_secret')]
         [string] $OtpSecret,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Url,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Username,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Description,
 
-        [BodyProperty('password_type')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('password_type')]
         [string] $PasswordType,
 
-        [BodyProperty('password_folder_id')]
         [Parameter()]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('password_folder_id')]
         [int] $PasswordFolderId
     )
     process {

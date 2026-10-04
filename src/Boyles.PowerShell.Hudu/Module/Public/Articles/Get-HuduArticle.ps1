@@ -81,31 +81,40 @@ function Get-HuduArticle {
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All', ValueFromPipelineByPropertyName)]
         [ValidateRange(1, [int]::MaxValue)]
+        [QueryIgnore()]
         [int] $CompanyId,
 
         [Parameter(ParameterSetName = 'All')]
         [bool] $Draft,
 
         [Parameter(ParameterSetName = 'All')]
+        [QueryProperty('enable_sharing')]
         [bool] $EnableSharing,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Search,
 
         [Parameter(ParameterSetName = 'All', ValueFromPipeline)]
+        [QueryIgnore()]
         [Boyles.PowerShell.Hudu.Models.HuduCompany] $InputObject,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Page,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
+        [QueryProperty('page_size')]
         [int] $PageSize
     )
     process {
@@ -139,13 +148,7 @@ function Get-HuduArticle {
             )
         }
 
-        $query = @{}
-
-        if ($PSBoundParameters.ContainsKey('Name')) { $query['name'] = $Name }
-        if ($PSBoundParameters.ContainsKey('Draft')) { $query['draft'] = $Draft.ToString().ToLowerInvariant() }
-        if ($PSBoundParameters.ContainsKey('EnableSharing')) { $query['enable_sharing'] = $EnableSharing.ToString().ToLowerInvariant() }
-        if ($PSBoundParameters.ContainsKey('Slug')) { $query['slug'] = $Slug }
-        if ($PSBoundParameters.ContainsKey('Search')) { $query['search'] = $Search }
+        $query = ConvertTo-RequestQuery -BoundParameters $PSBoundParameters -ParameterMetadata $MyInvocation.MyCommand.Parameters
 
         if ($PSBoundParameters.ContainsKey('InputObject')) {
             $query['company_id'] = $InputObject.Id
@@ -153,7 +156,9 @@ function Get-HuduArticle {
             $query['company_id'] = $CompanyId
         }
 
-        $queryDict = ConvertTo-StringDictionary -Table $query
+        $query = $query | ConvertTo-StringDictionary
+
+        Write-Verbose "QUERY = $($query | ConvertTo-Json)"
 
         if ($PSBoundParameters.ContainsKey('Page') -or $PSBoundParameters.ContainsKey('PageSize')) {
 
@@ -169,12 +174,12 @@ function Get-HuduArticle {
                 1
             }
 
-            [Boyles.PowerShell.Hudu.Models.HuduArticle[]] $articles = $client.GetArticlesPage($queryDict, $effectivePage, $effectivePageSize)
+            [Boyles.PowerShell.Hudu.Models.HuduArticle[]] $articles = $client.GetArticlesPage($query, $effectivePage, $effectivePageSize)
             return $articles
 
         }
 
-        [Boyles.PowerShell.Hudu.Models.HuduArticle[]] $articles = $client.GetArticles($queryDict)
+        [Boyles.PowerShell.Hudu.Models.HuduArticle[]] $articles = $client.GetArticles($query)
         return $articles
     }
 }

@@ -73,54 +73,67 @@ function New-HuduCompany {
         [string] $Name,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Nickname,
 
-        [BodyProperty('company_type')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('company_type')]
         [string] $CompanyType,
 
-        [BodyProperty('address_line_1')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('address_line_1')]
         [string] $AddressLine1,
 
-        [BodyProperty('address_line_2')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('address_line_2')]
         [string] $AddressLine2,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $City,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $State,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Zip,
 
-        [BodyProperty('country_name')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('country_name')]
         [string] $CountryName,
 
-        [BodyProperty('phone_number')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('phone_number')]
         [string] $PhoneNumber,
 
-        [BodyProperty('fax_number')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('fax_number')]
         [string] $FaxNumber,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Website,
 
-        [BodyProperty('id_number')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('id_number')]
         [string] $IdNumber,
 
-        [BodyProperty('parent_company_id')]
         [Parameter()]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('parent_company_id')]
         [int] $ParentCompanyId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Notes
     )
 

@@ -44,19 +44,21 @@ function New-HuduArticle {
         [string] $Name,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Content,
 
-        [BodyProperty('enable_sharing')]
         [Parameter()]
+        [BodyProperty('enable_sharing')]
         [bool] $EnableSharing,
 
-        [BodyProperty('folder_id')]
-        [Parameter()]
-        [int] $FolderId,
-
-        [BodyProperty('company_id')]
         [Parameter()]
         [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('folder_id')]
+        [int] $FolderId,
+
+        [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
+        [BodyProperty('company_id')]
         [int] $CompanyId
     )
 

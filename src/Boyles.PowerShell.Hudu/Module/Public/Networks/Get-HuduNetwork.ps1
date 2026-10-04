@@ -14,22 +14,27 @@
         [int] $CompanyId,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('name')]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('slug')]
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [QueryProperty('network_type')]
         [int] $NetworkType,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('address')]
         [string] $Address,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [QueryProperty('location_id')]
         [int] $LocationId,
 

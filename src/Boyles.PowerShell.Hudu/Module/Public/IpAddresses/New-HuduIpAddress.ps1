@@ -57,16 +57,20 @@ function New-HuduIpAddress {
         [string] $Address,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [ValidateSet('Unassigned', 'Assigned', 'Reserved', 'Deprecated', 'DHCP', 'SLAAC')]
         [string] $Status,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Fqdn,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Description,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Notes,
 
         [Parameter()]

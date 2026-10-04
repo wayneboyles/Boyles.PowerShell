@@ -77,33 +77,43 @@ function Get-HuduCompany {
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $IdNumber,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $PhoneNumber,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Website,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $City,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $State,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Search,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Page,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $PageSize
     )
 

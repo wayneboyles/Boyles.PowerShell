@@ -71,36 +71,39 @@ function New-HuduAssetLayout {
         [Boyles.PowerShell.Hudu.Models.HuduAssetLayoutField[]] $Fields,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Icon,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [string] $Color,
 
-        [BodyProperty('icon_color')]
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
+        [BodyProperty('icon_color')]
         [string] $IconColor,
 
         [Parameter()]
         [switch] $Inactive,
 
-        [BodyProperty('include_passwords')]
         [Parameter()]
+        [BodyProperty('include_passwords')]
         [switch] $IncludePasswords,
 
-        [BodyProperty('include_photos')]
         [Parameter()]
+        [BodyProperty('include_photos')]
         [switch] $IncludePhotos,
 
-        [BodyProperty('include_comments')]
         [Parameter()]
+        [BodyProperty('include_comments')]
         [switch] $IncludeComments,
 
-        [BodyProperty('include_files')]
         [Parameter()]
+        [BodyProperty('include_files')]
         [switch] $IncludeFiles,
 
-        [BodyProperty('include_processes')]
         [Parameter()]
+        [BodyProperty('include_processes')]
         [switch] $IncludeProcesses
     )
 

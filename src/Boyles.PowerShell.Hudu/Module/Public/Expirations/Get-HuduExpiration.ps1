@@ -52,14 +52,17 @@ function Get-HuduExpiration {
         [int] $CompanyId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('expiration_type')]
         [string] $ExpirationType,
 
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [QueryProperty('resource_id')]
         [int] $ResourceId,
 
         [Parameter()]
+        [ValidateNotNullOrEmpty()]
         [QueryProperty('resource_type')]
         [string] $ResourceType,
 

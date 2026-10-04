@@ -51,9 +51,11 @@ function Get-HuduAssetLayout {
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]

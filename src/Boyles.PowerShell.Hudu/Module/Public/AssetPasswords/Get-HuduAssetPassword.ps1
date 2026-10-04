@@ -73,6 +73,7 @@ function Get-HuduAssetPassword {
         [int] $Id,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Name,
 
         [Parameter(ParameterSetName = 'All', ValueFromPipelineByPropertyName)]
@@ -83,18 +84,22 @@ function Get-HuduAssetPassword {
         [bool] $Archived,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Slug,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateNotNullOrEmpty()]
         [string] $Search,
 
         [Parameter(ParameterSetName = 'All', ValueFromPipeline)]
         [Boyles.PowerShell.Hudu.Models.HuduCompany] $InputObject,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $Page,
 
         [Parameter(ParameterSetName = 'All')]
+        [ValidateRange(1, [int]::MaxValue)]
         [int] $PageSize
     )
     process {

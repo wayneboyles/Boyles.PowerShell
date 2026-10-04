@@ -20,6 +20,7 @@
         [string] $Description,
 
         [Parameter()]
+        [ValidateRange(1, [int]::MaxValue)]
         [BodyProperty('network_type')]
         [int] $NetworkType,
 
